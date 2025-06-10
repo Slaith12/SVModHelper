@@ -1,18 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
-		<RootNamespace>SVModHelper</RootNamespace>
+		<RootNamespace>DemoMod</RootNamespace>
 		<LangVersion>default</LangVersion>
 		<IsPackable>false</IsPackable>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<AssemblyName>SVModHelper</AssemblyName>
+		<AssemblyName>DemoMod</AssemblyName>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="CannonFire.png" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp-firstpass">
@@ -393,20 +396,19 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="CardImageFixer.cs" />
+		<Compile Include="CannonFire.cs" />
 		<Compile Include="Core.cs" />
-		<Compile Include="Il2CppUtils.cs" />
-		<Compile Include="ModCardModelDef.cs" />
-		<Compile Include="ModdedCardDefinition.cs" />
-		<Compile Include="ModdedCardFactory.cs" />
-		<Compile Include="NameFixer.cs" />
-		<Compile Include="PropertyFixer.cs" />
-		<Compile Include="SVModHelper.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Using Include="HarmonyLib" />
-	  <Using Include="Il2CppStarVaders" />
+	  <EmbeddedResource Include="CannonFire.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\SVModHelper\SVModHelper.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Using Include="Il2CppSystem.Collections.Generic">
 	    <Alias>Il2CppCollections</Alias>
 	  </Using>
