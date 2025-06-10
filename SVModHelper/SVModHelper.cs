@@ -11,7 +11,7 @@ namespace SVModHelper
 {
     public static class SVModHelper
     {
-        internal static List<ModdedCardDefinition> moddedCards;
+        internal static List<ModCard> moddedCards;
         internal static Dictionary<Type, CardName> moddedCardDict;
         internal static Dictionary<CardName, CardViewData> moddedCardVDs;
 
@@ -64,15 +64,15 @@ namespace SVModHelper
 
             Melon<Core>.Logger.Msg("All Resources Loaded.");
 
-            foreach(Type modCardDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(ModdedCardDefinition))))
+            foreach(Type modCardDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(ModCard))))
             {
                 Melon<Core>.Logger.Msg("Registering card " + modCardDef.Name);
-                RegisterCard(Activator.CreateInstance(modCardDef) as ModdedCardDefinition);
+                RegisterCard(Activator.CreateInstance(modCardDef) as ModCard);
             }
         }
 
 
-        public static CardName RegisterCard(ModdedCardDefinition modCardDef, string imageName = null)
+        public static CardName RegisterCard(ModCard modCardDef, string imageName = null)
         {
             Type cardType = modCardDef.GetType();
             if(moddedCardDict.ContainsKey(cardType))

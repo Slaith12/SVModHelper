@@ -10,11 +10,11 @@ namespace SVModHelper
     [MelonLoader.RegisterTypeInIl2Cpp]
     internal class ModCardModelDef : ACardModelDefinition
     {
-        public ModdedCardDefinition cardDef;
+        public ModCard cardDef;
         public CardName cardDefID;
 
         public ModCardModelDef(IntPtr ptr) : base(ptr) { }
-        public ModCardModelDef(ModdedCardDefinition definition, CardName id) : this(ClassInjector.DerivedConstructorPointer<ModCardModelDef>())
+        public ModCardModelDef(ModCard definition, CardName id) : this(ClassInjector.DerivedConstructorPointer<ModCardModelDef>())
         {
             ClassInjector.DerivedConstructorBody(this);
             OnCreateIDValue = new OnCreateIDValue();

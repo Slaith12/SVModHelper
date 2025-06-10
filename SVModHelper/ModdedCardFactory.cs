@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SVModHelper
 {
     [HarmonyPatch(typeof(CardFactory), nameof(CardFactory.CreateCardModel))]
-    public static class ModdedCardFactory
+    internal static class ModdedCardFactory
     {
         public static bool Prefix(CardName cardName, ref CardModel __result, CardFactory __instance)
         {
@@ -29,7 +29,7 @@ namespace SVModHelper
     }
 
     [HarmonyPatch(typeof(ContentGetter), nameof(ContentGetter.GetAllCards))]
-    public static class ModdedGetAllCards
+    internal static class ModdedGetAllCards
     {
         public static void Postfix(ref Il2CppCollections.List<CardModel> __result)
         {

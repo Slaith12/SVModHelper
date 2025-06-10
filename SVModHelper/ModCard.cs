@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SVModHelper
 {
-    public abstract class ModdedCardDefinition
+    public abstract class ModCard
     {
         public abstract string DisplayName { get; }
         public abstract string Description { get; }

@@ -5,7 +5,7 @@
 
 namespace DemoMod
 {
-    public class Core : MelonMod
+    internal class Core : MelonMod
     {
         public override void OnInitializeMelon()
         {

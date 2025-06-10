@@ -8,7 +8,7 @@ using SVModHelper;
 
 namespace DemoMod
 {
-    public class CannonFire : ModdedCardDefinition
+    public class CannonFire : ModCard
     {
         public override string DisplayName => "Cannon Fire!";
 
