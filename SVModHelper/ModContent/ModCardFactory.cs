@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SVModHelper
+namespace SVModHelper.ModContent
 {
     [HarmonyPatch(typeof(CardFactory), nameof(CardFactory.CreateCardModel))]
-    internal static class ModdedCardFactory
+    internal static class ModCardFactory
     {
         public static bool Prefix(CardName cardName, ref CardModel __result, CardFactory __instance)
         {

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -393,14 +393,22 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="CardImageFixer.cs" />
+		<Compile Include="EnumeratorLink.cs" />
+		<Compile Include="GameDebug.cs" />
+		<Compile Include="ImageFixer.cs" />
 		<Compile Include="Core.cs" />
 		<Compile Include="Il2CppUtils.cs" />
-		<Compile Include="ModCardModelDef.cs" />
-		<Compile Include="ModdedCardDefinition.cs" />
-		<Compile Include="ModdedCardFactory.cs" />
+		<Compile Include="ModContent\ModArtifactModelDef.cs" />
+		<Compile Include="ModContent\ModCardModelDef.cs" />
+		<Compile Include="ModContent\AModArtifact.cs" />
+		<Compile Include="ModContent\AModCard.cs" />
+		<Compile Include="ModContent\ModArtifactFactory.cs" />
+		<Compile Include="ModContent\ModCardFactory.cs" />
+		<Compile Include="ModContent\AModTask.cs" />
+		<Compile Include="ModContent\ModTaskInstance.cs" />
 		<Compile Include="NameFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
+		<Compile Include="SaveHelper.cs" />
 		<Compile Include="SVModHelper.cs" />
 	</ItemGroup>
 

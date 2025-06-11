@@ -396,6 +396,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Include="BlitzDrive.cs" />
+		<Compile Include="BlitzDriveTask.cs" />
 		<Compile Include="CannonFire.cs" />
 		<Compile Include="Core.cs" />
 	</ItemGroup>
@@ -406,12 +408,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\SVModHelper\SVModHelper.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Using Include="Il2CppSystem.Collections.Generic">
-	    <Alias>Il2CppCollections</Alias>
-	  </Using>
 	</ItemGroup>
 	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

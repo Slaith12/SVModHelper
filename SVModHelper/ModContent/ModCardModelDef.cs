@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SVModHelper
+namespace SVModHelper.ModContent
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
     internal class ModCardModelDef : ACardModelDefinition
     {
-        public ModCard cardDef;
+        public AModCard cardDef;
         public CardName cardDefID;
 
         public ModCardModelDef(IntPtr ptr) : base(ptr) { }
-        public ModCardModelDef(ModCard definition, CardName id) : this(ClassInjector.DerivedConstructorPointer<ModCardModelDef>())
+        public ModCardModelDef(AModCard definition, CardName id) : this(ClassInjector.DerivedConstructorPointer<ModCardModelDef>())
         {
             ClassInjector.DerivedConstructorBody(this);
             OnCreateIDValue = new OnCreateIDValue();

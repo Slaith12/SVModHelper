@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SVModHelper
+namespace SVModHelper.ModContent
 {
-    public abstract class ModCard
+    public abstract class AModCard
     {
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
@@ -66,7 +66,7 @@ namespace SVModHelper
         /// </summary>
         public virtual bool IsToken => false;
         /// <summary>
-        /// <para>If true, the card can not use energy from the battery for its cost.</para>
+        /// <para>If true, the card can only use energy from the battery for its cost.</para>
         /// <para>Has no effect on non-Stinger mechs.</para>
         /// </summary>
         public virtual bool IsPowerCellOnly => false;
@@ -130,8 +130,8 @@ namespace SVModHelper
         }
 
         /// <summary>
-        /// <para>Returns any effects that trigger when the card is played, before the player makes any selections.</para>
-        /// <para>If you're using a non-default selection, it's recommended to include all effects in GetPostSelectionTaskList.</para>
+        /// <para>Returns any effects that trigger when the card is played.</para>
+        /// <para>These tasks will be previewed when the player is hovering over the card, even before selections are made.</para>
         /// </summary>
         public virtual Il2CppCollections.List<ATask> GetPreSelectionTaskList(OnCreateIDValue cardID)
         {
@@ -139,8 +139,8 @@ namespace SVModHelper
         }
 
         /// <summary>
-        /// <para>Returns any effects that trigger when the card is played, after the player makes all selections.</para>
-        /// <para>If you're using the default selection, it's recommended to include all effects in GetPreSelectionTaskList.</para>
+        /// <para>Returns any effects that trigger when the card is played.</para>
+        /// <para>These tasks will only be previewed when the player is finishing the selections.</para>
         /// </summary>
         public virtual Il2CppCollections.List<ATask> GetPostSelectionTaskList(OnCreateIDValue cardID)
         {
@@ -155,7 +155,7 @@ namespace SVModHelper
             return new List<Selection>()
             {
                 new Selection(new DefaultSelectionCondition())
-            }.Convert();
+            }.ToILCPP();
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace SVModHelper
             return new List<SelectionTaskGroup>()
             {
                 new SelectionTaskGroup(GetPreSelectionTaskList(cardID), GetPostSelectionTaskList(cardID), GetSelections(cardID))
-            }.Convert();
+            }.ToILCPP();
         }
 
         /// <summary>
