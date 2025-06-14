@@ -15,7 +15,7 @@ namespace DemoMod
     {
         public BlitzDriveTask(AValue targetComp)
         {
-            args.Add(ArgKey.Value, targetComp);
+            SetArg(ArgKey.Value, targetComp);
             Melon<Core>.Logger.Msg("Blitz Drive Task initialized");
         }
 

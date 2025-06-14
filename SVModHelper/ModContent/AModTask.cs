@@ -10,7 +10,7 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModTask
     {
-        public IDictionary<ArgKey, Il2CppSystem.Object> args = new Dictionary<ArgKey, Il2CppSystem.Object>();
+        internal IDictionary<ArgKey, Il2CppSystem.Object> args = new Dictionary<ArgKey, Il2CppSystem.Object>();
 
         /// <summary>
         /// Can trigger effects be triggered by this task?
@@ -36,6 +36,11 @@ namespace SVModHelper.ModContent
         public ModTaskInstance Convert()
         {
             return new ModTaskInstance(this);
+        }
+
+        protected void SetArg(ArgKey key, Il2CppSystem.Object value)
+        {
+            args[key] = value;
         }
     }
 }

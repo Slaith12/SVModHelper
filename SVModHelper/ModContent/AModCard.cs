@@ -179,7 +179,7 @@ namespace SVModHelper.ModContent
             new EnoughManaToPlayCondition(new TargetValue()),
             new OrCondition(
                 new PlayerEntityExistsCondition(),
-                new EqualsCondition((Il2CppSystem.Object)RequiresPlayerEntity, (Il2CppSystem.Object)false)
+                new EqualsCondition(RequiresPlayerEntity, false)
             )
         );
     }

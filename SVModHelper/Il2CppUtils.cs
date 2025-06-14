@@ -14,6 +14,11 @@ namespace SVModHelper
             return id.BoxIl2CppObject().Cast<ID>();
         }
 
+        public static Il2CppSystem.Object ToObject(this Il2CppObjectBase obj)
+        {
+            return obj.Cast<Il2CppSystem.Object>();
+        }
+
         public static Il2CppSystem.Collections.IEnumerator ToILCPP(this System.Collections.IEnumerator enumerator)
         {
             return new EnumeratorLink(enumerator).Cast<Il2CppSystem.Collections.IEnumerator>();

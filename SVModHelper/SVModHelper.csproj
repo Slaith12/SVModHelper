@@ -398,6 +398,9 @@
 		<Compile Include="ImageFixer.cs" />
 		<Compile Include="Core.cs" />
 		<Compile Include="Il2CppUtils.cs" />
+		<Compile Include="ModContent\AModComponent.cs" />
+		<Compile Include="ModContent\AModEnemy.cs" />
+		<Compile Include="ModContent\AModItem.cs" />
 		<Compile Include="ModContent\ModArtifactModelDef.cs" />
 		<Compile Include="ModContent\ModCardModelDef.cs" />
 		<Compile Include="ModContent\AModArtifact.cs" />
@@ -405,6 +408,10 @@
 		<Compile Include="ModContent\ModArtifactFactory.cs" />
 		<Compile Include="ModContent\ModCardFactory.cs" />
 		<Compile Include="ModContent\AModTask.cs" />
+		<Compile Include="ModContent\ModComponentFactory.cs" />
+		<Compile Include="ModContent\ModComponentModelDef.cs" />
+		<Compile Include="ModContent\ModEnemyModelDef.cs" />
+		<Compile Include="ModContent\ModItemModelDef.cs" />
 		<Compile Include="ModContent\ModTaskInstance.cs" />
 		<Compile Include="NameFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />

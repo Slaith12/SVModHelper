@@ -37,4 +37,16 @@ namespace SVModHelper
             }
         }
     }
+
+    [HarmonyPatch(typeof(ComponentSpritesSO), nameof(ComponentSpritesSO.InitDictionary))]
+    internal static class ComponentImageFixer
+    {
+        public static void Postfix(ComponentSpritesSO __instance)
+        {
+            foreach (var vdPair in SVModHelper.moddedComponentVDs)
+            {
+                __instance._dict[vdPair.Key] = vdPair.Value;
+            }
+        }
+    }
 }

@@ -400,6 +400,9 @@
 		<Compile Include="BlitzDriveTask.cs" />
 		<Compile Include="CannonFire.cs" />
 		<Compile Include="Core.cs" />
+		<Compile Include="HeavyCannonFire.cs" />
+		<Compile Include="HeavyCannonFireTask.cs" />
+		<Compile Include="Persistent.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

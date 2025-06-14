@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using UnityEngine;
 using SVModHelper.ModContent;
+using static MelonLoader.MelonLogger;
 
 namespace SVModHelper
 {
@@ -19,6 +20,10 @@ namespace SVModHelper
         internal static List<AModArtifact> moddedArtifacts;
         internal static Dictionary<Type, ArtifactName> moddedArtifactDict;
         internal static Dictionary<ArtifactName, Sprite> moddedArtifactVDs;
+
+        internal static List<AModComponent> moddedComponents;
+        internal static Dictionary<Type, ComponentName> moddedComponentDict;
+        internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
 
         private static Dictionary<string, byte[]> contentData;
 
@@ -38,6 +43,10 @@ namespace SVModHelper
             moddedArtifacts = new();
             moddedArtifactDict = new();
             moddedArtifactVDs = new();
+
+            moddedComponents = new();
+            moddedComponentDict = new();
+            moddedComponentVDs = new();
 
             contentData = new();
         }
@@ -85,6 +94,11 @@ namespace SVModHelper
                 Melon<Core>.Logger.Msg("Registering artifact " + modArtifactDef.Name);
                 RegisterArtifact(Activator.CreateInstance(modArtifactDef) as AModArtifact);
             }
+            foreach (Type modComponentDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModComponent))))
+            {
+                Melon<Core>.Logger.Msg("Registering component " + modComponentDef.Name);
+                RegisterComponent(Activator.CreateInstance(modComponentDef) as AModComponent);
+            }
         }
 
         #region Cards
@@ -96,7 +110,7 @@ namespace SVModHelper
                 throw new InvalidOperationException("Can not register the same card multiple times.");
             }
 
-            CardName id = (CardName)(moddedCards.Count + MINCARDID);
+            CardName id = moddedCards.Count + MINCARDID;
             moddedCards.Add(modCardDef);
             moddedCardDict.Add(cardType, id);
 
@@ -169,7 +183,7 @@ namespace SVModHelper
                 throw new InvalidOperationException("Can not register the same artifact multiple times.");
             }
 
-            ArtifactName id = (ArtifactName)(moddedArtifacts.Count + MINCARDID);
+            ArtifactName id = moddedArtifacts.Count + MINARTIFACTID;
             moddedArtifacts.Add(modArtifactDef);
             moddedArtifactDict.Add(artifactType, id);
 
@@ -233,11 +247,138 @@ namespace SVModHelper
         }
         #endregion
 
+        #region Components
+        public static ComponentName RegisterComponent(AModComponent modComponentDef, string imageName = null)
+        {
+            Type componentType = modComponentDef.GetType();
+            if (moddedComponentDict.ContainsKey(componentType))
+            {
+                throw new InvalidOperationException("Can not register the same component multiple times.");
+            }
+
+            ComponentName id = moddedComponents.Count + MINCOMPID;
+            moddedComponents.Add(modComponentDef);
+            moddedComponentDict.Add(componentType, id);
+
+            if (string.IsNullOrEmpty(imageName))
+            {
+                imageName = componentType.Assembly.GetName().Name + "." + componentType.Name + ".png";
+            }
+            else
+            {
+                imageName = componentType.Assembly.GetName().Name + "." + imageName;
+            }
+            SetComponentTitle(id, modComponentDef.DisplayName);
+            SetComponentDesc(id, modComponentDef.Description);
+            SetComponentImage(id, imageName);
+
+            return id;
+        }
+
+        public static string SetComponentTitle(ComponentName componentName, string title)
+        {
+            string id = componentName.ToString() + "_CompTitle";
+            return SetLocalizedString(id, title);
+        }
+
+        public static string SetComponentDesc(ComponentName componentName, string desc)
+        {
+            string id = componentName.ToString() + "_CompDesc";
+            return SetLocalizedString(id, desc);
+        }
+
+        public static void SetComponentImage(ComponentName componentName, string imageName, float pixelsPerUnit = 100)
+        {
+            if (!contentData.TryGetValue(imageName, out byte[] imageData))
+                return;
+
+            Texture2D texture = new Texture2D(2, 2) { filterMode = FilterMode.Bilinear };
+            texture.LoadImage(imageData);
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+            SetComponentImage(componentName, sprite);
+        }
+
+        public static void SetComponentImage(ComponentName componentName, Sprite componentViewData)
+        {
+            moddedComponentVDs[componentName] = componentViewData;
+        }
+
+        public static ComponentName GetModComponentName<T>() where T : AModComponent
+        {
+            if (moddedComponentDict.TryGetValue(typeof(T), out ComponentName id))
+            {
+                return id;
+            }
+            return (ComponentName)(-1);
+        }
+
+        public static AModComponent GetModComponentInstance(ComponentName componentName)
+        {
+            if (componentName < MINCOMPID || componentName >= MINCOMPID + moddedComponents.Count)
+                return null;
+            return moddedComponents[componentName - MINCOMPID];
+        }
+        #endregion
+
         public static string SetLocalizedString(string stringID, string localizedString)
         {
             string oldString = NameFixer.extraLocalizedStrings.GetValueOrDefault(stringID);
             NameFixer.extraLocalizedStrings[stringID] = localizedString;
             return oldString;
+        }
+
+        public static EncounterValue GetAppropriateCostType(CardModel cardModel = null)
+        {
+            if (SceneLoader.IsSceneLoaded(SceneName.GlossarySceneAdditive) || SceneLoader.IsSceneLoaded(SceneName.HistoryScene))
+            {
+                switch (cardModel?.Class)
+                {
+                    case ClassName.Gunner:
+                        return EncounterValue.Heat;
+                    case ClassName.Melee:
+                        return EncounterValue.Power;
+                    case ClassName.Mystic:
+                        return EncounterValue.Mana;
+                    default:
+                        return (EncounterValue)(-1);
+                }
+            }
+            else if (SceneLoader.IsSceneLoaded(SceneName.DailyRunSceneAdditive))
+            {
+                switch (DailyRunController.ClassName)
+                {
+                    case ClassName.Gunner:
+                        return EncounterValue.Heat;
+                    case ClassName.Melee:
+                        return EncounterValue.Power;
+                    case ClassName.Mystic:
+                        return EncounterValue.Mana;
+                    default:
+                        return (EncounterValue)(-1);
+                }
+            }
+            else if (DataManager.PlayerHasRunInProgress())
+            {
+                return DataManager.PlayerData.ClassBaseEnergy;
+            }
+            else if (SceneLoader.IsSceneLoaded(SceneName.ChallengesSceneAdditive) && DataManager.PlayerData != null)
+            {
+                return DataManager.PlayerData.ClassBaseEnergy;
+            }
+            else
+            {
+                switch (cardModel?.Class)
+                {
+                    case ClassName.Gunner:
+                        return EncounterValue.Heat;
+                    case ClassName.Melee:
+                        return EncounterValue.Power;
+                    case ClassName.Mystic:
+                        return EncounterValue.Mana;
+                    default:
+                        return (EncounterValue)(-1);
+                }
+            }
         }
     }
 }
