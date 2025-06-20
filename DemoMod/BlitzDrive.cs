@@ -39,8 +39,11 @@ namespace DemoMod
             List<Il2CppSystem.ValueTuple<Trigger, ACondition>> triggerConditions = new()
             {
                 new (Trigger.PostTask, new AndCondition(
-                    new IsTypeCondition<PlayCardTask>(new RunningTaskValue()),
-                    new HasComponentCondition(new TaskArgValue(new RunningTaskValue<PlayCardTask>(), ArgKey.CardID))))
+                    new IsTypeCondition<PlayCardEndTask>(new RunningTaskValue()),
+                    new HasComponentCondition(new TaskArgValue(new RunningTaskValue<PlayCardEndTask>(), ArgKey.CardID))/*,
+                    new NotCondition(new IsChildOfTaskTypeCondition<BlitzDriveTask>())*/))
+                // Modded task types are not valid targets for type conditions!
+                // Custom conditions will be needed for this
             };
 
             List<ATask> triggerTasks = new()

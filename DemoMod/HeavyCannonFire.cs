@@ -24,7 +24,8 @@ namespace DemoMod
                 new SelectionTaskGroup(new List<ATask>()
                 {
                     new FireBulletTask(tileEffect: new HeavyCannonFireTask().Convert(), animationSourceCoord: new())
-                }.ToILCPP())
+                }.ToILCPP(),
+                selections: new List<Selection>() { new Selection(new DefaultSelectionCondition()) }.ToILCPP())
             }.ToILCPPEnumerable());
         }
     }

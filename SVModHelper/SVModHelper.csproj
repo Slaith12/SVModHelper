@@ -412,7 +412,7 @@
 		<Compile Include="ModContent\ModComponentModelDef.cs" />
 		<Compile Include="ModContent\ModEnemyModelDef.cs" />
 		<Compile Include="ModContent\ModItemModelDef.cs" />
-		<Compile Include="ModContent\ModTaskInstance.cs" />
+		<Compile Include="ModContent\ModTaskExecute.cs" />
 		<Compile Include="NameFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
 		<Compile Include="SaveHelper.cs" />

@@ -13,13 +13,18 @@ namespace DemoMod
 {
     internal class BlitzDriveTask : AModTask
     {
+        private BlitzDriveTask()
+        {
+
+        }
+
         public BlitzDriveTask(AValue targetComp)
         {
             SetArg(ArgKey.Value, targetComp);
             Melon<Core>.Logger.Msg("Blitz Drive Task initialized");
         }
 
-        public override IEnumerator Execute(ModTaskInstance taskInstance)
+        public override IEnumerator Execute(ATask taskInstance)
         {
             Melon<Core>.Logger.Msg("Beginning Blitz Drive execution.");
             ComponentName targetComponent = taskInstance.GetArg<ComponentName>(ArgKey.Value);

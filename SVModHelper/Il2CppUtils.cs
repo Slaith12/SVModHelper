@@ -59,14 +59,14 @@ namespace SVModHelper
             return newList;
         }
 
-        public static Il2CppCollections.IDictionary<TKey,TValue> ToILCPP<TKey, TValue>(this IDictionary<TKey, TValue> dict)
+        public static Il2CppCollections.Dictionary<TKey,TValue> ToILCPP<TKey, TValue>(this IDictionary<TKey, TValue> dict)
         {
             Il2CppCollections.Dictionary<TKey, TValue> newDict = new(dict.Count);
             foreach(KeyValuePair<TKey, TValue> kvp in dict)
             {
                 newDict.Add(kvp.Key, kvp.Value);
             }
-            return newDict.Cast<Il2CppCollections.IDictionary<TKey,TValue>>();
+            return newDict;
         }
     }
 }

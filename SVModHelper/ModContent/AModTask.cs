@@ -10,6 +10,8 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModTask
     {
+        public string customTaskID => SVModHelper.GetModTaskID(GetType());
+
         internal IDictionary<ArgKey, Il2CppSystem.Object> args = new Dictionary<ArgKey, Il2CppSystem.Object>();
 
         /// <summary>
@@ -17,25 +19,29 @@ namespace SVModHelper.ModContent
         /// </summary>
         public virtual bool IsTriggerEffectable => true;
 
-        public abstract IEnumerator Execute(ModTaskInstance taskInstance);
+        public abstract IEnumerator Execute(ATask taskInstance);
 
-        public virtual ModTaskInstance DeepClone(ModTaskInstance thisInstance)
-        {
-            ModTaskInstance newTask = new ModTaskInstance(this);
-            if(thisInstance.Args != null)
-            {
-                newTask.Args = thisInstance.Args.DeepClone().Cast<CloneableDict<ArgKey, Il2CppSystem.Object>>();
-            }
-            else
-            {
-                Melon<Core>.Logger.Warning("Cloned task instance had null args!");
-            }
-            return newTask;
-        }
+        //public virtual CustomTask DeepClone(CustomTask thisInstance)
+        //{
+        //    CustomTask newTask = new CustomTask(this);
+        //    if(thisInstance.Args != null)
+        //    {
+        //        newTask.Args = thisInstance.Args.DeepClone().Cast<CloneableDict<ArgKey, Il2CppSystem.Object>>();
+        //    }
+        //    else
+        //    {
+        //        Melon<Core>.Logger.Warning("Cloned task instance had null args!");
+        //    }
+        //    return newTask;
+        //}
 
-        public ModTaskInstance Convert()
+        public CustomTask Convert()
         {
-            return new ModTaskInstance(this);
+            if(customTaskID == SVModHelper.INVALIDTASKID)
+            {
+                throw new InvalidOperationException($"Attempted to use un-registered task {GetType()}.");
+            }
+            return new CustomTask(customTaskID, args.ToILCPP());
         }
 
         protected void SetArg(ArgKey key, Il2CppSystem.Object value)

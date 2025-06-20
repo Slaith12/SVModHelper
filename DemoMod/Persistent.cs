@@ -39,7 +39,7 @@ namespace DemoMod
                 new CardInPileCondition(cardID.ToObject(), Pile.Hand))) }.ToILCPP();
             return new List<TriggerEffect>()
             {
-                new TriggerEffect(startConditions, new List<ATask>() { new DuplicateCardTask(cardID.ToObject(), Pile.TopDraw) }.ToILCPP())
+                new TriggerEffect(startConditions, new List<ATask>() { new DuplicateCardTask(cardID.ToObject(), Pile.Draw) }.ToILCPP())
             }.ToILCPP();
         }
     }

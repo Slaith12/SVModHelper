@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Reflection;
 using UnityEngine;
 using SVModHelper.ModContent;
-using static MelonLoader.MelonLogger;
 
 namespace SVModHelper
 {
@@ -25,6 +24,9 @@ namespace SVModHelper
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
         internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
 
+        internal static Dictionary<Type, string> moddedTaskIDs;
+        internal static Dictionary<string, AModTask> moddedTaskInstances;
+
         private static Dictionary<string, byte[]> contentData;
 
         internal const CardName MINCARDID = (CardName)15000;
@@ -33,6 +35,14 @@ namespace SVModHelper
         internal const ItemName MINITEMID = (ItemName)15000;
         internal const EnemyName MINENEMYID = (EnemyName)15000;
         internal const ItemPackName MINPACKID = (ItemPackName)15000;
+
+        public const CardName INVALIDCARDID = (CardName)(-1);
+        public const ArtifactName INVALIDARTIFACTID = (ArtifactName)(-1);
+        public const ComponentName INVALIDCOMPID = (ComponentName)(-1);
+        public const ItemName INVALIDITEMID = (ItemName)(-1);
+        public const EnemyName INVALIDENEMYID = (EnemyName)(-1);
+        public const ItemPackName INVALIDPACKID = (ItemPackName)(-1);
+        public const string INVALIDTASKID = "";
 
         static SVModHelper()
         {
@@ -47,6 +57,9 @@ namespace SVModHelper
             moddedComponents = new();
             moddedComponentDict = new();
             moddedComponentVDs = new();
+
+            moddedTaskIDs = new();
+            moddedTaskInstances = new();
 
             contentData = new();
         }
@@ -98,6 +111,16 @@ namespace SVModHelper
             {
                 Melon<Core>.Logger.Msg("Registering component " + modComponentDef.Name);
                 RegisterComponent(Activator.CreateInstance(modComponentDef) as AModComponent);
+            }
+            foreach (Type modTaskDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModTask))))
+            {
+                if(modTaskDef.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, Type.EmptyTypes) == null)
+                {
+                    Melon<Core>.Logger.Warning($"Unable to register {modTaskDef.Name} due to lack of paramaterless constructor. Task must be registered manually.");
+                    continue;
+                }
+                Melon<Core>.Logger.Msg("Registering task " + modTaskDef.Name);
+                RegisterTask(Activator.CreateInstance(modTaskDef, true) as AModTask);
             }
         }
 
@@ -163,7 +186,7 @@ namespace SVModHelper
             {
                 return id;
             }
-            return (CardName)(-1);
+            return INVALIDCARDID;
         }
 
         public static AModCard GetModCardInstance(CardName cardName)
@@ -236,7 +259,7 @@ namespace SVModHelper
             {
                 return id;
             }
-            return (ArtifactName)(-1);
+            return INVALIDARTIFACTID;
         }
 
         public static AModArtifact GetModArtifactInstance(ArtifactName artifactName)
@@ -309,7 +332,7 @@ namespace SVModHelper
             {
                 return id;
             }
-            return (ComponentName)(-1);
+            return INVALIDCOMPID;
         }
 
         public static AModComponent GetModComponentInstance(ComponentName componentName)
@@ -318,6 +341,39 @@ namespace SVModHelper
                 return null;
             return moddedComponents[componentName - MINCOMPID];
         }
+        #endregion
+
+        #region Tasks
+
+        public static string RegisterTask(AModTask task)
+        {
+            Type taskType = task.GetType();
+            if(moddedTaskIDs.ContainsKey(taskType))
+            {
+                throw new InvalidOperationException("Can not register the same task multiple times.");
+            }
+
+            string id = taskType.FullName;
+            moddedTaskIDs.Add(taskType, id);
+            moddedTaskInstances.Add(id, task);
+            return id;
+        }
+
+        public static string GetModTaskID(Type taskType)
+        {
+            return moddedTaskIDs.GetValueOrDefault(taskType, INVALIDTASKID);
+        }
+
+        public static string GetModTaskID<T>() where T : AModTask
+        {
+            return GetModTaskID(typeof(T));
+        }
+
+        public static AModTask GetModTaskInstance(string id)
+        {
+            return moddedTaskInstances.GetValueOrDefault(id, null);
+        }
+
         #endregion
 
         public static string SetLocalizedString(string stringID, string localizedString)
