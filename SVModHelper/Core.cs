@@ -14,7 +14,8 @@ namespace SVModHelper
             ClassInjector.RegisterTypeInIl2Cpp<EnumeratorLink>(enumLinkOptions);
             foreach (MelonMod mod in RegisteredMelons)
             {
-                SVModHelper.RegisterMod(mod);
+                if(mod is SVMod svMod)
+                    ModContentManager.RegisterMod(svMod);
             }
         }
     }

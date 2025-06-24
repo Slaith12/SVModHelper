@@ -14,7 +14,7 @@ namespace SVModHelper
     {
         public static void Postfix(CardViewDataSO __instance)
         {
-            foreach(var vdPair in SVModHelper.moddedCardVDs)
+            foreach(var vdPair in ModContentManager.moddedCardVDs)
             {
                 if (vdPair.Value._material == null)
                     vdPair.Value._material = __instance.defaultMat;
@@ -31,7 +31,7 @@ namespace SVModHelper
     {
         public static void Postfix(ArtifactSpritesSO __instance)
         {
-            foreach (var vdPair in SVModHelper.moddedArtifactVDs)
+            foreach (var vdPair in ModContentManager.moddedArtifactVDs)
             {
                 __instance._dict[vdPair.Key] = vdPair.Value;
             }
@@ -43,7 +43,7 @@ namespace SVModHelper
     {
         public static void Postfix(ComponentSpritesSO __instance)
         {
-            foreach (var vdPair in SVModHelper.moddedComponentVDs)
+            foreach (var vdPair in ModContentManager.moddedComponentVDs)
             {
                 __instance._dict[vdPair.Key] = vdPair.Value;
             }

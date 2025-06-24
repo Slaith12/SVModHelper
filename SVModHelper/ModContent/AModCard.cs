@@ -4,13 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace SVModHelper.ModContent
 {
-    public abstract class AModCard
+    public abstract class AModCard : AModContent
     {
+        protected CardViewData GetStandardCardViewData(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear)
+        {
+            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter);
+            if (sprite == null)
+                return null;
+            return new CardViewData(CardName, sprite, null);
+        }
+
+        public CardName CardName => ModContentManager.GetModCardName(GetType());
+
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
+        public virtual CardViewData CardViewData => GetStandardCardViewData(GetType().Name + ".png");
 
         /// <summary>
         /// The main traits that the card has.

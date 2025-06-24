@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace SVModHelper.ModContent
 {
-    public abstract class AModComponent
+    public abstract class AModComponent : AModContent
     {
+        public ComponentName ComponentName => ModContentManager.GetModComponentName(GetType());
+
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
+        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png");
 
         /// <summary>
         /// The mech class this component is available to. Set to Neutral to allow any class to obtain it.

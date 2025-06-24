@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace SVModHelper.ModContent
 {
-    public abstract class AModArtifact
+    public abstract class AModArtifact : AModContent
     {
+        public ArtifactName ArtifactName => ModContentManager.GetModArtifactName(GetType());
+
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
+        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png");
 
         /// <summary>
         /// The mech class that's able to get this card. Set to Neutral to allow any class to get it. Set to UniquePack to restrict it to a pack.

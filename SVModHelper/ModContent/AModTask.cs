@@ -10,7 +10,7 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModTask
     {
-        public string customTaskID => SVModHelper.GetModTaskID(GetType());
+        public string customTaskID => ModContentManager.GetModTaskID(GetType());
 
         internal IDictionary<ArgKey, Il2CppSystem.Object> args = new Dictionary<ArgKey, Il2CppSystem.Object>();
 
@@ -37,7 +37,7 @@ namespace SVModHelper.ModContent
 
         public CustomTask Convert()
         {
-            if(customTaskID == SVModHelper.INVALIDTASKID)
+            if(customTaskID == ModContentManager.INVALIDTASKID)
             {
                 throw new InvalidOperationException($"Attempted to use un-registered task {GetType()}.");
             }

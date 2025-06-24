@@ -27,7 +27,7 @@ namespace DemoMod
 
         public override Il2CppCollections.HashSet<ComponentTrait> AllowedComponentTraits => new HashSet<ComponentTrait>() { ComponentTrait.Basic, ComponentTrait.SelectionLess, ComponentTrait.Attack, ComponentTrait.Bullet, ComponentTrait.Push }.ToILCPP();
         public override Il2CppCollections.HashSet<ComponentTrait> BlockedComponentTraits => new();
-        public override Il2CppCollections.HashSet<ComponentName> AllowedComponentNames => new HashSet<ComponentName>() { SVModHelper.SVModHelper.GetModComponentName<HeavyCannonFire>() }.ToILCPP();
+        public override Il2CppCollections.HashSet<ComponentName> AllowedComponentNames => new HashSet<ComponentName>() { ModContentManager.GetModComponentName<HeavyCannonFire>() }.ToILCPP();
         public override Il2CppCollections.HashSet<ComponentName> BlockedComponentNames => new HashSet<ComponentName>() { ComponentName.Breezy, ComponentName.Fiery }.ToILCPP();
 
         public override Il2CppCollections.List<ATask> GetPreSelectionTaskList(OnCreateIDValue cardID)

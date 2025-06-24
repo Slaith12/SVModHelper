@@ -11,7 +11,7 @@ namespace SVModHelper.ModContent
     {
         public static bool Prefix(ComponentName componentName, CardModel cardModel, ref AComponent __result)
         {
-            AModComponent component = SVModHelper.GetModComponentInstance(componentName);
+            AModComponent component = ModContentManager.GetModComponentInstance(componentName);
             if (component == null)
                 return true;
 
@@ -29,13 +29,13 @@ namespace SVModHelper.ModContent
     {
         public static void Postfix(CardModel __instance)
         {
-            AModComponent componentDef = SVModHelper.GetModComponentInstance(__instance.Component.ComponentName);
+            AModComponent componentDef = ModContentManager.GetModComponentInstance(__instance.Component.ComponentName);
             if (componentDef == null)
                 return;
 
             if(componentDef.BaseCostModifier != 0)
             {
-                switch(SVModHelper.GetAppropriateCostType(__instance))
+                switch(ModContentManager.GetAppropriateCostType(__instance))
                 {
                     case EncounterValue.Heat:
                         __instance.Component.BaseHeatCostModifier = componentDef.BaseCostModifier;
@@ -61,8 +61,8 @@ namespace SVModHelper.ModContent
     {
         public static void Postfix(ref Il2CppCollections.List<AComponent> __result)
         {
-            for (int i = 0; i < SVModHelper.moddedComponents.Count; i++)
-                __result.Add(ComponentFactory.CreateComponent(i + SVModHelper.MINCOMPID));
+            for (int i = 0; i < ModContentManager.moddedComponents.Count; i++)
+                __result.Add(ComponentFactory.CreateComponent(i + ModContentManager.MINCOMPID));
         }
     }
 
@@ -71,8 +71,8 @@ namespace SVModHelper.ModContent
     {
         public static void Postfix(CardModel cardModelOnCreate, ref Il2CppCollections.List<AComponent> __result)
         {
-            for (int i = 0; i < SVModHelper.moddedComponents.Count; i++)
-                __result.Add(ComponentFactory.CreateComponent(i + SVModHelper.MINCOMPID, cardModelOnCreate));
+            for (int i = 0; i < ModContentManager.moddedComponents.Count; i++)
+                __result.Add(ComponentFactory.CreateComponent(i + ModContentManager.MINCOMPID, cardModelOnCreate));
         }
     }
 }

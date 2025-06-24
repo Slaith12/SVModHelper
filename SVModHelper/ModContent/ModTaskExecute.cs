@@ -21,7 +21,7 @@ namespace SVModHelper.ModContent
     {
         public static void Postfix(CustomTask __instance, ref IEnumerator __result)
         {
-            AModTask taskDef = SVModHelper.GetModTaskInstance(__instance._customTaskID);
+            AModTask taskDef = ModContentManager.GetModTaskInstance(__instance._customTaskID);
             if (taskDef == null)
             {
                 throw new KeyNotFoundException($"Unable to find modded task {__instance._customTaskID}.");

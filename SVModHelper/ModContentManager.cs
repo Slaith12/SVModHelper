@@ -10,7 +10,7 @@ using SVModHelper.ModContent;
 
 namespace SVModHelper
 {
-    public static class SVModHelper
+    public static class ModContentManager
     {
         internal static List<AModCard> moddedCards;
         internal static Dictionary<Type, CardName> moddedCardDict;
@@ -27,7 +27,7 @@ namespace SVModHelper
         internal static Dictionary<Type, string> moddedTaskIDs;
         internal static Dictionary<string, AModTask> moddedTaskInstances;
 
-        private static Dictionary<string, byte[]> contentData;
+        internal static Dictionary<string, byte[]> contentData;
 
         internal const CardName MINCARDID = (CardName)15000;
         internal const ArtifactName MINARTIFACTID = (ArtifactName)15000;
@@ -44,7 +44,7 @@ namespace SVModHelper
         public const ItemPackName INVALIDPACKID = (ItemPackName)(-1);
         public const string INVALIDTASKID = "";
 
-        static SVModHelper()
+        static ModContentManager()
         {
             moddedCards = new();
             moddedCardDict = new();
@@ -64,7 +64,7 @@ namespace SVModHelper
             contentData = new();
         }
 
-        public static void RegisterMod(MelonMod mod)
+        public static void RegisterMod(SVMod mod)
         {
             Melon<Core>.Logger.Msg("Registering mod " + mod.Info.Name);
             Assembly modAsm = mod.MelonAssembly.Assembly;
@@ -125,7 +125,7 @@ namespace SVModHelper
         }
 
         #region Cards
-        public static CardName RegisterCard(AModCard modCardDef, string imageName = null)
+        public static CardName RegisterCard(AModCard modCardDef)
         {
             Type cardType = modCardDef.GetType();
             if(moddedCardDict.ContainsKey(cardType))
@@ -137,17 +137,9 @@ namespace SVModHelper
             moddedCards.Add(modCardDef);
             moddedCardDict.Add(cardType, id);
 
-            if(string.IsNullOrEmpty(imageName))
-            {
-                imageName = cardType.Assembly.GetName().Name + "." + cardType.Name + ".png";
-            }
-            else
-            {
-                imageName = cardType.Assembly.GetName().Name + "." + imageName;
-            }
             SetCardTitle(id, modCardDef.DisplayName);
             SetCardDesc(id, modCardDef.Description);
-            SetCardImage(id, imageName);
+            SetCardImage(id, modCardDef.CardViewData);
 
             return id;
         }
@@ -164,17 +156,6 @@ namespace SVModHelper
             return SetLocalizedString(id, desc);
         }
 
-        public static void SetCardImage(CardName cardName, string imageName, float pixelsPerUnit = 100)
-        {
-            if (!contentData.TryGetValue(imageName, out byte[] imageData))
-                return;
-
-            Texture2D texture = new Texture2D(2, 2) { filterMode = FilterMode.Bilinear };
-            texture.LoadImage(imageData);
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-            SetCardImage(cardName, new CardViewData(cardName, sprite, null));
-        }
-
         public static void SetCardImage(CardName cardName, CardViewData cardViewData)
         {
             moddedCardVDs[cardName] = cardViewData;
@@ -182,7 +163,12 @@ namespace SVModHelper
 
         public static CardName GetModCardName<T>() where T : AModCard
         {
-            if(moddedCardDict.TryGetValue(typeof(T), out CardName id))
+            return GetModCardName(typeof(T));
+        }
+
+        public static CardName GetModCardName(Type cardType)
+        {
+            if (moddedCardDict.TryGetValue(cardType, out CardName id))
             {
                 return id;
             }
@@ -220,7 +206,7 @@ namespace SVModHelper
             }
             SetArtifactTitle(id, modArtifactDef.DisplayName);
             SetArtifactDesc(id, modArtifactDef.Description);
-            SetArtifactImage(id, imageName);
+            SetArtifactImage(id, modArtifactDef.Sprite);
 
             return id;
         }
@@ -237,17 +223,6 @@ namespace SVModHelper
             return SetLocalizedString(id, desc);
         }
 
-        public static void SetArtifactImage(ArtifactName artifactName, string imageName, float pixelsPerUnit = 100)
-        {
-            if (!contentData.TryGetValue(imageName, out byte[] imageData))
-                return;
-
-            Texture2D texture = new Texture2D(2, 2) { filterMode = FilterMode.Bilinear };
-            texture.LoadImage(imageData);
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-            SetArtifactImage(artifactName, sprite);
-        }
-
         public static void SetArtifactImage(ArtifactName artifactName, Sprite artifactViewData)
         {
             moddedArtifactVDs[artifactName] = artifactViewData;
@@ -255,7 +230,12 @@ namespace SVModHelper
 
         public static ArtifactName GetModArtifactName<T>() where T : AModArtifact
         {
-            if (moddedArtifactDict.TryGetValue(typeof(T), out ArtifactName id))
+            return GetModArtifactName(typeof(T));
+        }
+
+        public static ArtifactName GetModArtifactName(Type artifactType)
+        {
+            if (moddedArtifactDict.TryGetValue(artifactType, out ArtifactName id))
             {
                 return id;
             }
@@ -293,7 +273,7 @@ namespace SVModHelper
             }
             SetComponentTitle(id, modComponentDef.DisplayName);
             SetComponentDesc(id, modComponentDef.Description);
-            SetComponentImage(id, imageName);
+            SetComponentImage(id, modComponentDef.Sprite);
 
             return id;
         }
@@ -310,25 +290,19 @@ namespace SVModHelper
             return SetLocalizedString(id, desc);
         }
 
-        public static void SetComponentImage(ComponentName componentName, string imageName, float pixelsPerUnit = 100)
+        public static void SetComponentImage(ComponentName componentName, Sprite sprite)
         {
-            if (!contentData.TryGetValue(imageName, out byte[] imageData))
-                return;
-
-            Texture2D texture = new Texture2D(2, 2) { filterMode = FilterMode.Bilinear };
-            texture.LoadImage(imageData);
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-            SetComponentImage(componentName, sprite);
-        }
-
-        public static void SetComponentImage(ComponentName componentName, Sprite componentViewData)
-        {
-            moddedComponentVDs[componentName] = componentViewData;
+            moddedComponentVDs[componentName] = sprite;
         }
 
         public static ComponentName GetModComponentName<T>() where T : AModComponent
         {
-            if (moddedComponentDict.TryGetValue(typeof(T), out ComponentName id))
+            return GetModComponentName(typeof(T));
+        }
+
+        public static ComponentName GetModComponentName(Type componentType)
+        {
+            if (moddedComponentDict.TryGetValue(componentType, out ComponentName id))
             {
                 return id;
             }

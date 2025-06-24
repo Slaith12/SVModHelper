@@ -1,12 +1,13 @@
-﻿using System;
+﻿using MelonLoader;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SVModHelper.ModContent
+namespace SVModHelper
 {
-    public class AModEnemy : AModContent
+    public class SVMod : MelonMod
     {
 
     }

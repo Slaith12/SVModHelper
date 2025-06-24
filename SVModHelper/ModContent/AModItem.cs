@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SVModHelper.ModContent
 {
-    internal class AModItem
+    public class AModItem : AModContent
     {
     }
 }
