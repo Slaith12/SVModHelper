@@ -402,6 +402,7 @@
 		<Compile Include="ModContent\AModContent.cs" />
 		<Compile Include="ModContent\AModEnemy.cs" />
 		<Compile Include="ModContent\AModItem.cs" />
+		<Compile Include="ModContent\AModPack.cs" />
 		<Compile Include="ModContent\ArtifactModification.cs" />
 		<Compile Include="ModContent\CardModification.cs" />
 		<Compile Include="ModContent\ComponentModification.cs" />

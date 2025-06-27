@@ -16,6 +16,8 @@
 	<ItemGroup>
 	  <None Remove="CannonFire.png" />
 	  <None Remove="NewAntiMag.png" />
+	  <None Remove="ScarletPack.png" />
+	  <None Remove="UnusedPack.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -404,11 +406,14 @@
 		<Compile Include="HeavyCannonFire.cs" />
 		<Compile Include="HeavyCannonFireTask.cs" />
 		<Compile Include="Persistent.cs" />
+		<Compile Include="UnusedPack.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Include="CannonFire.png" />
 	  <EmbeddedResource Include="NewAntiMag.png" />
+	  <EmbeddedResource Include="ScarletPack.png" />
+	  <EmbeddedResource Include="UnusedPack.png" />
 	</ItemGroup>
 
 	<ItemGroup>

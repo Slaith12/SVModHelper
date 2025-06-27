@@ -15,7 +15,7 @@ namespace DemoMod
         public override string Description => 
             "When you play a card with a component, draw and play every card with the same component for free.";
 
-        public override ClassName Class => ClassName.Neutral;
+        public override ClassName Class => ClassName.UniquePack;
 
         public override Rarity Rarity => Rarity.Legendary;
 

@@ -17,6 +17,7 @@ namespace SVModHelper.ModContent
         public string description;
         public Sprite sprite;
 
+        public ClassName? newClass;
         public Rarity? newRarity;
 
         public HashSet<ComponentTrait> extraComponentTraits = new();
@@ -37,6 +38,8 @@ namespace SVModHelper.ModContent
                 other.description = description;
             if (sprite != null)
                 other.sprite = sprite;
+            if (newClass != null)
+                other.newClass = newClass;
             if (newRarity != null)
                 other.newRarity = newRarity;
             if (extraComponentTraits != null)
@@ -49,6 +52,8 @@ namespace SVModHelper.ModContent
 
         internal void ApplyTo(AComponent component)
         {
+            if (newClass != null)
+                component.Class = newClass.Value;
             if (newRarity != null)
                 component.Rarity = newRarity.Value;
 

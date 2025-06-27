@@ -17,6 +17,8 @@ namespace SVModHelper.ModContent
         public string description;
         public Sprite sprite;
 
+        public ClassName? newClass;
+        public PilotName? newPilot;
         public Rarity? newRarity;
         public bool? canBeDuplicated;
 
@@ -34,6 +36,10 @@ namespace SVModHelper.ModContent
                 other.description = description;
             if (sprite != null)
                 other.sprite = sprite;
+            if (newClass != null)
+                other.newClass = newClass;
+            if (newPilot != null)
+                other.newPilot = newPilot;
             if (newRarity != null)
                 other.newRarity = newRarity;
             if (canBeDuplicated != null)
@@ -42,6 +48,10 @@ namespace SVModHelper.ModContent
 
         internal void ApplyTo(ArtifactModel artifact)
         {
+            if (newClass != null)
+                artifact.Class = newClass.Value;
+            if (newPilot != null)
+                artifact.PilotUnique = newPilot.Value;
             if (newRarity != null)
                 artifact.Rarity = newRarity.Value;
             if (canBeDuplicated != null)

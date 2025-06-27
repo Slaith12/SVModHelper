@@ -8,6 +8,8 @@ using System.Reflection;
 using UnityEngine;
 using SVModHelper.ModContent;
 using Il2CppStarVaders;
+using static UnityEngine.Rendering.ReloadAttribute;
+using static Il2CppSystem.Xml.Schema.XsdDuration;
 
 namespace SVModHelper
 {
@@ -39,6 +41,8 @@ namespace SVModHelper
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
         internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
 
+        internal static List<AModPack> moddedPacks;
+        internal static Dictionary<Type, ItemPackName> moddedPackDict;
         internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
 
         internal static Dictionary<Type, string> moddedTaskIDs;
@@ -83,6 +87,8 @@ namespace SVModHelper
             moddedComponentDict = new();
             moddedComponentVDs = new();
 
+            moddedPacks = new();
+            moddedPackDict = new();
             moddedPackVDs = new();
 
             moddedTaskIDs = new();
@@ -174,6 +180,12 @@ namespace SVModHelper
 
         private static void ApplyPackMods()
         {
+            foreach (AModPack pack in moddedPacks)
+            {
+                ItemPack newPack = pack.Convert();
+                ItemPackData.AllPackData.Add(newPack);
+            }
+
             activePackMods = new();
             foreach (PackModification packMod in packModifications)
             {
@@ -194,6 +206,18 @@ namespace SVModHelper
                 if (activeMod.sprite != null)
                     SetPackImage(activeMod.targetPack, activeMod.sprite);
             }
+
+            foreach(ItemPack pack in ItemPackData.AllPackData)
+            {
+                if(activePackMods.TryGetValue(pack.ItemPackName, out PackModification mod))
+                {
+                    mod.ApplyTo(pack);
+                }
+            }
+
+            //doing this so that A: all changes applied to AllPackData also apply to ClassicPackData
+            //and B: so that I don't have to worry about vanilla packs being duplicated instead of shared between the two lists.
+            ItemPackData._TrueClassicPackData_k__BackingField = ItemPackData.AllPackData.ToMono().Where(pack => !pack.IsHidden).ToList().ToILCPP();
         }
         #endregion
 
@@ -337,6 +361,32 @@ namespace SVModHelper
         {
             if (sprite != null)
                 moddedPackVDs[packName] = sprite;
+        }
+
+        public static ItemPackName GetModPackName<T>() where T : AModPack
+        {
+            return GetModPackName(typeof(T));
+        }
+
+        public static ItemPackName GetModPackName(Type packType)
+        {
+            if (moddedPackDict.TryGetValue(packType, out ItemPackName id))
+            {
+                return id;
+            }
+            return INVALIDPACKID;
+        }
+
+        public static AModPack GetModPackInstance(ItemPackName packName)
+        {
+            if (packName < MINPACKID || packName >= MINPACKID + moddedPacks.Count)
+                return null;
+            return moddedPacks[packName - MINPACKID];
+        }
+
+        public static AModPack GetModPackInstance<T>() where T : AModPack
+        {
+            return GetModPackInstance(GetModPackName<T>());
         }
         #endregion
 

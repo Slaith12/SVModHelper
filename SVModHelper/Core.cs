@@ -27,6 +27,21 @@ namespace SVModHelper
                     }
                 }
             }
+
+            foreach (MelonMod mod in RegisteredMelons)
+            {
+                if (mod is SVMod svMod)
+                {
+                    try
+                    {
+                        svMod.LateRegisterMod();
+                    }
+                    catch (Exception ex)
+                    {
+                        Melon<Core>.Logger.Error($"The following error occured when late registering {svMod.Info.Name}:\n{ex}");
+                    }
+                }
+            }
         }
 
         public override void OnLateInitializeMelon()

@@ -1,4 +1,6 @@
-﻿namespace SVModHelper.ModContent
+﻿using Il2CppStarVaders;
+
+namespace SVModHelper.ModContent
 {
     public class CardModification
     {
@@ -15,6 +17,8 @@
         public string description;
         public CardViewData cardView;
 
+        public ClassName? newClass;
+        public PilotName? newPilot;
         public Rarity? newRarity;
         public bool? isToken;
         public bool? isShowable;
@@ -41,6 +45,10 @@
                 other.description = description;
             if (cardView != null)
                 other.cardView = cardView;
+            if (newClass != null)
+                other.newClass = newClass;
+            if (newPilot != null)
+                other.newPilot = newPilot;
             if (newRarity != null)
                 other.newRarity = newRarity;
             if (isToken != null)
@@ -63,6 +71,10 @@
 
         internal void ApplyTo(CardModel card)
         {
+            if (newClass != null)
+                card.Class = newClass.Value;
+            if (newPilot != null)
+                card.PilotUnique = newPilot.Value;
             if (newRarity != null)
                 card.Rarity = newRarity.Value;
             if (isToken != null)

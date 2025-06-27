@@ -53,6 +53,17 @@ namespace SVModHelper
                     LoggerInstance.Error($"The following error occured while registering component {modComponentDef.Name}.\n" + ex);
                 }
             }
+            foreach (Type modPackDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModPack))))
+            {
+                try
+                {
+                    RegisterPack(Activator.CreateInstance(modPackDef, true) as AModPack);
+                }
+                catch (Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering pack {modPackDef.Name}.\n" + ex);
+                }
+            }
             foreach (Type modTaskDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModTask))))
             {
                 try
@@ -65,6 +76,8 @@ namespace SVModHelper
                 }
             }
         }
+
+        protected internal virtual void LateRegisterMod() { }
 
         protected void RegisterResource(string resourceName)
         {
@@ -154,6 +167,26 @@ namespace SVModHelper
             return id;
         }
 
+        protected ItemPackName RegisterPack(AModPack modPackDef)
+        {
+            ModContentManager.CheckInitStatus();
+            Type packType = modPackDef.GetType();
+            if (ModContentManager.moddedPackDict.ContainsKey(packType))
+            {
+                throw new InvalidOperationException("Can not register the same pack multiple times.");
+            }
+
+            ItemPackName id = ModContentManager.moddedPacks.Count + ModContentManager.MINPACKID;
+            ModContentManager.moddedPacks.Add(modPackDef);
+            ModContentManager.moddedPackDict.Add(packType, id);
+
+            ModContentManager.SetPackTitle(id, modPackDef.DisplayName);
+            ModContentManager.SetPackDesc(id, modPackDef.Description);
+            ModContentManager.SetPackImage(id, modPackDef.Sprite);
+
+            return id;
+        }
+
         protected string RegisterTask(AModTask task)
         {
             ModContentManager.CheckInitStatus();
@@ -193,13 +226,13 @@ namespace SVModHelper
             ModContentManager.componentModifications.Insert(index, componentMod);
         }
 
-        //protected void RegisterContentMod(PackModification packMod)
-        //{
-        //    packMod.m_Source = this;
-        //    int index;
-        //    for (index = 0; index < ModContentManager.packModifications.Count && ModContentManager.packModifications[index].priority < packMod.priority; index++) ;
-        //    ModContentManager.packModifications.Insert(index, packMod);
-        //}
+        protected void RegisterContentMod(PackModification packMod)
+        {
+            packMod.m_Source = this;
+            int index;
+            for (index = 0; index < ModContentManager.packModifications.Count && ModContentManager.packModifications[index].priority < packMod.priority; index++) ;
+            ModContentManager.packModifications.Insert(index, packMod);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool TryGetContentData(string fileName, out byte[] data)
