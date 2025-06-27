@@ -1,14 +1,243 @@
 ﻿using MelonLoader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SVModHelper.ModContent;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace SVModHelper
 {
     public class SVMod : MelonMod
     {
+        protected internal virtual void RegisterMod()
+        {
+            Assembly modAsm = MelonAssembly.Assembly;
 
+            LoggerInstance.Msg("Registering Resources");
+            foreach (string fileName in modAsm.GetManifestResourceNames())
+            {
+                RegisterResource(fileName);
+            }
+            LoggerInstance.Msg("All Resources Loaded.");
+
+            LoggerInstance.Msg("Registering Content");
+            foreach (Type modCardDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModCard))))
+            {
+                try
+                {
+                    RegisterCard(Activator.CreateInstance(modCardDef, true) as AModCard);
+                }
+                catch(Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering card {modCardDef.Name}.\n" + ex);
+                }
+            }
+            foreach (Type modArtifactDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModArtifact))))
+            {
+                try
+                {
+                    RegisterArtifact(Activator.CreateInstance(modArtifactDef, true) as AModArtifact);
+                }
+                catch (Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering artifact {modArtifactDef.Name}.\n" + ex);
+                }
+            }
+            foreach (Type modComponentDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModComponent))))
+            {
+                try
+                {
+                    RegisterComponent(Activator.CreateInstance(modComponentDef, true) as AModComponent);
+                }
+                catch (Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering component {modComponentDef.Name}.\n" + ex);
+                }
+            }
+            foreach (Type modTaskDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModTask))))
+            {
+                try
+                {
+                    RegisterTask(Activator.CreateInstance(modTaskDef, true) as AModTask);
+                }
+                catch (Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering task {modTaskDef.Name}.\n" + ex);
+                }
+            }
+        }
+
+        protected void RegisterResource(string resourceName)
+        {
+            byte[] arr;
+            Melon<Core>.Logger.Msg("  Loading resource " + resourceName);
+            using (Stream stream = MelonAssembly.Assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream == null)
+                    return;
+
+                if (stream is MemoryStream memStream)
+                {
+                    arr = memStream.ToArray();
+                }
+                else
+                {
+                    using (memStream = new MemoryStream())
+                    {
+                        stream.CopyTo(memStream);
+                        arr = memStream.ToArray();
+                    }
+                }
+            }
+            ModContentManager.contentData.Add(resourceName, arr);
+            Melon<Core>.Logger.Msg("  Resource Loaded");
+        }
+
+        protected CardName RegisterCard(AModCard modCardDef)
+        {
+            ModContentManager.CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering card " + modCardDef.GetType().Name);
+            Type cardType = modCardDef.GetType();
+            if (ModContentManager.moddedCardDict.ContainsKey(cardType))
+            {
+                throw new InvalidOperationException("Can not register the same card multiple times.");
+            }
+
+            CardName id = ModContentManager.moddedCards.Count + ModContentManager.MINCARDID;
+            ModContentManager.moddedCards.Add(modCardDef);
+            ModContentManager.moddedCardDict.Add(cardType, id);
+
+            ModContentManager.SetCardTitle(id, modCardDef.DisplayName);
+            ModContentManager.SetCardDesc(id, modCardDef.Description);
+            ModContentManager.SetCardImage(id, modCardDef.CardViewData);
+
+            return id;
+        }
+
+        protected ArtifactName RegisterArtifact(AModArtifact modArtifactDef)
+        {
+            ModContentManager.CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering artifact " + modArtifactDef.GetType().Name);
+            Type artifactType = modArtifactDef.GetType();
+            if (ModContentManager.moddedArtifactDict.ContainsKey(artifactType))
+            {
+                throw new InvalidOperationException("Can not register the same artifact multiple times.");
+            }
+
+            ArtifactName id = ModContentManager.moddedArtifacts.Count + ModContentManager.MINARTIFACTID;
+            ModContentManager.moddedArtifacts.Add(modArtifactDef);
+            ModContentManager.moddedArtifactDict.Add(artifactType, id);
+
+            ModContentManager.SetArtifactTitle(id, modArtifactDef.DisplayName);
+            ModContentManager.SetArtifactDesc(id, modArtifactDef.Description);
+            ModContentManager.SetArtifactImage(id, modArtifactDef.Sprite);
+
+            return id;
+        }
+
+        protected ComponentName RegisterComponent(AModComponent modComponentDef)
+        {
+            ModContentManager.CheckInitStatus();
+            Type componentType = modComponentDef.GetType();
+            if (ModContentManager.moddedComponentDict.ContainsKey(componentType))
+            {
+                throw new InvalidOperationException("Can not register the same component multiple times.");
+            }
+
+            ComponentName id = ModContentManager.moddedComponents.Count + ModContentManager.MINCOMPID;
+            ModContentManager.moddedComponents.Add(modComponentDef);
+            ModContentManager.moddedComponentDict.Add(componentType, id);
+
+            ModContentManager.SetComponentTitle(id, modComponentDef.DisplayName);
+            ModContentManager.SetComponentDesc(id, modComponentDef.Description);
+            ModContentManager.SetComponentImage(id, modComponentDef.Sprite);
+
+            return id;
+        }
+
+        protected string RegisterTask(AModTask task)
+        {
+            ModContentManager.CheckInitStatus();
+            Type taskType = task.GetType();
+            if (ModContentManager.moddedTaskIDs.ContainsKey(taskType))
+            {
+                throw new InvalidOperationException("Can not register the same task multiple times.");
+            }
+
+            string id = taskType.FullName;
+            ModContentManager.moddedTaskIDs.Add(taskType, id);
+            ModContentManager.moddedTaskInstances.Add(id, task);
+            return id;
+        }
+
+        protected void RegisterContentMod(CardModification cardMod)
+        {
+            cardMod.m_Source = this;
+            int index;
+            for (index = 0; index < ModContentManager.cardModifications.Count && ModContentManager.cardModifications[index].priority < cardMod.priority; index++) ;
+            ModContentManager.cardModifications.Insert(index, cardMod);
+        }
+
+        protected void RegisterContentMod(ArtifactModification artifactMod)
+        {
+            artifactMod.m_Source = this;
+            int index;
+            for (index = 0; index < ModContentManager.artifactModifications.Count && ModContentManager.artifactModifications[index].priority < artifactMod.priority; index++) ;
+            ModContentManager.artifactModifications.Insert(index, artifactMod);
+        }
+
+        protected void RegisterContentMod(ComponentModification componentMod)
+        {
+            componentMod.m_Source = this;
+            int index;
+            for (index = 0; index < ModContentManager.componentModifications.Count && ModContentManager.componentModifications[index].priority < componentMod.priority; index++) ;
+            ModContentManager.componentModifications.Insert(index, componentMod);
+        }
+
+        //protected void RegisterContentMod(PackModification packMod)
+        //{
+        //    packMod.m_Source = this;
+        //    int index;
+        //    for (index = 0; index < ModContentManager.packModifications.Count && ModContentManager.packModifications[index].priority < packMod.priority; index++) ;
+        //    ModContentManager.packModifications.Insert(index, packMod);
+        //}
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected bool TryGetContentData(string fileName, out byte[] data)
+        {
+            return ModContentManager.contentData.TryGetValue(GetContentKeyString(fileName), out data);
+        }
+
+        //TODO: Update this function to cache textures for future calls
+        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear)
+        {
+            if (!TryGetContentData(imageName, out byte[] data))
+                return null;
+            Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
+            texture.LoadImage(data);
+            return texture;
+        }
+
+        //TODO: Update this function to cache sprites for future calls
+        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear)
+        {
+            Texture2D texture = GetTexture(imageName, filter);
+            if (texture == null)
+                return null;
+            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+        }
+
+        protected CardViewData GetStandardCardViewData(CardName cardName, string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear)
+        {
+            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter);
+            if (sprite == null)
+                return null;
+            return new CardViewData(cardName, sprite, null);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private string GetContentKeyString(string fileName)
+        {
+            return GetType().Assembly.GetName().Name + "." + fileName;
+        }
     }
 }

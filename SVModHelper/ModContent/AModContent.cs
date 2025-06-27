@@ -38,7 +38,7 @@ namespace SVModHelper.ModContent
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private string GetContentKeyString(string fileName)
         {
-            return GetType().Assembly.GetName().Name + "::" + fileName;
+            return GetType().Assembly.GetName().Name + "." + fileName;
         }
     }
 }

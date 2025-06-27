@@ -29,6 +29,11 @@ namespace SVModHelper
             return list.ToILCPP().Cast<Il2CppCollections.IEnumerable<T>>();
         }
 
+        public static Il2CppCollections.IEnumerable<T> ToILCPPEnumerable<T>(this HashSet<T> set)
+        {
+            return set.ToILCPP().Cast<Il2CppCollections.IEnumerable<T>>();
+        }
+
         public static Il2CppCollections.List<T> ToILCPP<T>(this IList<T> list)
         {
             Il2CppCollections.List<T> newList = new(list.Count);

@@ -49,4 +49,16 @@ namespace SVModHelper
             }
         }
     }
+
+    [HarmonyPatch(typeof(ItemPackSpritesSO), nameof(ItemPackSpritesSO.InitDictionary))]
+    internal static class PackImageFixer
+    {
+        public static void Postfix(ItemPackSpritesSO __instance)
+        {
+            foreach (var vdPair in ModContentManager.moddedPackVDs)
+            {
+                __instance._dict[vdPair.Key] = vdPair.Value;
+            }
+        }
+    }
 }

@@ -15,6 +15,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="CannonFire.png" />
+	  <None Remove="NewAntiMag.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -407,6 +408,7 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="CannonFire.png" />
+	  <EmbeddedResource Include="NewAntiMag.png" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -399,8 +399,12 @@
 		<Compile Include="Core.cs" />
 		<Compile Include="Il2CppUtils.cs" />
 		<Compile Include="ModContent\AModComponent.cs" />
+		<Compile Include="ModContent\AModContent.cs" />
 		<Compile Include="ModContent\AModEnemy.cs" />
 		<Compile Include="ModContent\AModItem.cs" />
+		<Compile Include="ModContent\ArtifactModification.cs" />
+		<Compile Include="ModContent\CardModification.cs" />
+		<Compile Include="ModContent\ComponentModification.cs" />
 		<Compile Include="ModContent\ModArtifactModelDef.cs" />
 		<Compile Include="ModContent\ModCardModelDef.cs" />
 		<Compile Include="ModContent\AModArtifact.cs" />
@@ -413,10 +417,13 @@
 		<Compile Include="ModContent\ModEnemyModelDef.cs" />
 		<Compile Include="ModContent\ModItemModelDef.cs" />
 		<Compile Include="ModContent\ModTaskExecute.cs" />
+		<Compile Include="ModContent\PackModification.cs" />
+		<Compile Include="ModContent\SpellModification.cs" />
 		<Compile Include="NameFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
 		<Compile Include="SaveHelper.cs" />
-		<Compile Include="SVModHelper.cs" />
+		<Compile Include="ModContentManager.cs" />
+		<Compile Include="SVMod.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

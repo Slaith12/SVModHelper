@@ -7,11 +7,26 @@ using System.Threading.Tasks;
 using System.Reflection;
 using UnityEngine;
 using SVModHelper.ModContent;
+using Il2CppStarVaders;
 
 namespace SVModHelper
 {
     public static class ModContentManager
     {
+        internal static bool postInit;
+
+        internal static List<CardModification> cardModifications;
+        internal static List<ArtifactModification> artifactModifications;
+        internal static List<ComponentModification> componentModifications;
+        internal static List<PackModification> packModifications;
+        internal static List<SpellModification> spellModifications;
+
+        internal static Dictionary<CardName, CardModification> activeCardMods;
+        internal static Dictionary<ArtifactName, ArtifactModification> activeArtifactMods;
+        internal static Dictionary<ComponentName, ComponentModification> activeComponentMods;
+        internal static Dictionary<ItemPackName, PackModification> activePackMods;
+        internal static Dictionary<ArtifactName, SpellModification> activeSpellMods;
+
         internal static List<AModCard> moddedCards;
         internal static Dictionary<Type, CardName> moddedCardDict;
         internal static Dictionary<CardName, CardViewData> moddedCardVDs;
@@ -23,6 +38,8 @@ namespace SVModHelper
         internal static List<AModComponent> moddedComponents;
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
         internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
+
+        internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
 
         internal static Dictionary<Type, string> moddedTaskIDs;
         internal static Dictionary<string, AModTask> moddedTaskInstances;
@@ -46,6 +63,14 @@ namespace SVModHelper
 
         static ModContentManager()
         {
+            postInit = false;
+
+            cardModifications = new();
+            artifactModifications = new();
+            componentModifications = new();
+            packModifications = new();
+            spellModifications = new();
+
             moddedCards = new();
             moddedCardDict = new();
             moddedCardVDs = new();
@@ -58,107 +83,137 @@ namespace SVModHelper
             moddedComponentDict = new();
             moddedComponentVDs = new();
 
+            moddedPackVDs = new();
+
             moddedTaskIDs = new();
             moddedTaskInstances = new();
 
             contentData = new();
         }
 
-        public static void RegisterMod(SVMod mod)
+        #region Modifications
+        internal static void ApplyMods()
         {
-            Melon<Core>.Logger.Msg("Registering mod " + mod.Info.Name);
-            Assembly modAsm = mod.MelonAssembly.Assembly;
+            ApplyCardMods();
+            ApplyArtifactMods();
+            ApplyComponentMods();
+            ApplyPackMods();
+        }
 
-            foreach(string fileName in modAsm.GetManifestResourceNames())
+        private static void ApplyCardMods()
+        {
+            activeCardMods = new();
+            foreach(CardModification cardMod in cardModifications)
             {
-                byte[] arr;
-                Melon<Core>.Logger.Msg("  Loading resource " + fileName);
-                using (Stream stream = modAsm.GetManifestResourceStream(fileName))
+                if(!activeCardMods.TryGetValue(cardMod.targetCard, out CardModification activeMod))
                 {
-                    if (stream == null)
-                        continue;
-
-                    if (stream is MemoryStream memStream)
-                    {
-                        arr = memStream.ToArray();
-                    }
-                    else
-                    {
-                        using (memStream = new MemoryStream())
-                        {
-                            stream.CopyTo(memStream);
-                            arr = memStream.ToArray();
-                        }
-                    }
+                    activeMod = new CardModification(cardMod.targetCard);
+                    activeCardMods.Add(cardMod.targetCard, activeMod);
                 }
-                contentData.Add(fileName, arr);
-                Melon<Core>.Logger.Msg("  Resource Loaded");
+                cardMod.CopyTo(activeMod);
             }
 
-            Melon<Core>.Logger.Msg("All Resources Loaded.");
-
-            foreach(Type modCardDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModCard))))
+            foreach(CardModification activeMod in activeCardMods.Values)
             {
-                Melon<Core>.Logger.Msg("Registering card " + modCardDef.Name);
-                RegisterCard(Activator.CreateInstance(modCardDef) as AModCard);
-            }
-            foreach (Type modArtifactDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModArtifact))))
-            {
-                Melon<Core>.Logger.Msg("Registering artifact " + modArtifactDef.Name);
-                RegisterArtifact(Activator.CreateInstance(modArtifactDef) as AModArtifact);
-            }
-            foreach (Type modComponentDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModComponent))))
-            {
-                Melon<Core>.Logger.Msg("Registering component " + modComponentDef.Name);
-                RegisterComponent(Activator.CreateInstance(modComponentDef) as AModComponent);
-            }
-            foreach (Type modTaskDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModTask))))
-            {
-                if(modTaskDef.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, Type.EmptyTypes) == null)
-                {
-                    Melon<Core>.Logger.Warning($"Unable to register {modTaskDef.Name} due to lack of paramaterless constructor. Task must be registered manually.");
-                    continue;
-                }
-                Melon<Core>.Logger.Msg("Registering task " + modTaskDef.Name);
-                RegisterTask(Activator.CreateInstance(modTaskDef, true) as AModTask);
+                if (activeMod.displayName != null)
+                    SetCardTitle(activeMod.targetCard, activeMod.displayName);
+                if (activeMod.description != null)
+                    SetCardDesc(activeMod.targetCard, activeMod.description);
+                if (activeMod.cardView != null)
+                    SetCardImage(activeMod.targetCard, activeMod.cardView);
             }
         }
+
+        private static void ApplyArtifactMods()
+        {
+            activeArtifactMods = new();
+            foreach (ArtifactModification artifactMod in artifactModifications)
+            {
+                if (!activeArtifactMods.TryGetValue(artifactMod.targetArtifact, out ArtifactModification activeMod))
+                {
+                    activeMod = new ArtifactModification(artifactMod.targetArtifact);
+                    activeArtifactMods.Add(artifactMod.targetArtifact, activeMod);
+                }
+                artifactMod.CopyTo(activeMod);
+            }
+
+            foreach (ArtifactModification activeMod in activeArtifactMods.Values)
+            {
+                if (activeMod.displayName != null)
+                    SetArtifactTitle(activeMod.targetArtifact, activeMod.displayName);
+                if (activeMod.description != null)
+                    SetArtifactDesc(activeMod.targetArtifact, activeMod.description);
+                if (activeMod.sprite != null)
+                    SetArtifactImage(activeMod.targetArtifact, activeMod.sprite);
+            }
+        }
+
+        private static void ApplyComponentMods()
+        {
+            activeComponentMods = new();
+            foreach (ComponentModification componentMod in componentModifications)
+            {
+                if (!activeComponentMods.TryGetValue(componentMod.targetComponent, out ComponentModification activeMod))
+                {
+                    activeMod = new ComponentModification(componentMod.targetComponent);
+                    activeComponentMods.Add(componentMod.targetComponent, activeMod);
+                }
+                componentMod.CopyTo(activeMod);
+            }
+
+            foreach (ComponentModification activeMod in activeComponentMods.Values)
+            {
+                if (activeMod.displayName != null)
+                    SetComponentTitle(activeMod.targetComponent, activeMod.displayName);
+                if (activeMod.description != null)
+                    SetComponentDesc(activeMod.targetComponent, activeMod.description);
+                if (activeMod.sprite != null)
+                    SetComponentImage(activeMod.targetComponent, activeMod.sprite);
+            }
+        }
+
+        private static void ApplyPackMods()
+        {
+            activePackMods = new();
+            foreach (PackModification packMod in packModifications)
+            {
+                if (!activePackMods.TryGetValue(packMod.targetPack, out PackModification activeMod))
+                {
+                    activeMod = new PackModification(packMod.targetPack);
+                    activePackMods.Add(packMod.targetPack, activeMod);
+                }
+                packMod.CopyTo(activeMod);
+            }
+
+            foreach (PackModification activeMod in activePackMods.Values)
+            {
+                if (activeMod.displayName != null)
+                    SetPackTitle(activeMod.targetPack, activeMod.displayName);
+                if (activeMod.description != null)
+                    SetPackDesc(activeMod.targetPack, activeMod.description);
+                if (activeMod.sprite != null)
+                    SetPackImage(activeMod.targetPack, activeMod.sprite);
+            }
+        }
+        #endregion
 
         #region Cards
-        public static CardName RegisterCard(AModCard modCardDef)
-        {
-            Type cardType = modCardDef.GetType();
-            if(moddedCardDict.ContainsKey(cardType))
-            {
-                throw new InvalidOperationException("Can not register the same card multiple times.");
-            }
-
-            CardName id = moddedCards.Count + MINCARDID;
-            moddedCards.Add(modCardDef);
-            moddedCardDict.Add(cardType, id);
-
-            SetCardTitle(id, modCardDef.DisplayName);
-            SetCardDesc(id, modCardDef.Description);
-            SetCardImage(id, modCardDef.CardViewData);
-
-            return id;
-        }
-
-        public static string SetCardTitle(CardName cardName, string title)
+        internal static string SetCardTitle(CardName cardName, string title)
         {
             string id = cardName.ToString() + "_CardTitle";
             return SetLocalizedString(id, title);
         }
 
-        public static string SetCardDesc(CardName cardName, string desc)
+        internal static string SetCardDesc(CardName cardName, string desc)
         {
             string id = cardName.ToString() + "_CardDesc";
             return SetLocalizedString(id, desc);
         }
 
-        public static void SetCardImage(CardName cardName, CardViewData cardViewData)
+        internal static void SetCardImage(CardName cardName, CardViewData cardViewData)
         {
-            moddedCardVDs[cardName] = cardViewData;
+            if(cardViewData != null)
+                moddedCardVDs[cardName] = cardViewData;
         }
 
         public static CardName GetModCardName<T>() where T : AModCard
@@ -184,48 +239,22 @@ namespace SVModHelper
         #endregion
 
         #region Artifacts
-        public static ArtifactName RegisterArtifact(AModArtifact modArtifactDef, string imageName = null)
-        {
-            Type artifactType = modArtifactDef.GetType();
-            if (moddedArtifactDict.ContainsKey(artifactType))
-            {
-                throw new InvalidOperationException("Can not register the same artifact multiple times.");
-            }
-
-            ArtifactName id = moddedArtifacts.Count + MINARTIFACTID;
-            moddedArtifacts.Add(modArtifactDef);
-            moddedArtifactDict.Add(artifactType, id);
-
-            if (string.IsNullOrEmpty(imageName))
-            {
-                imageName = artifactType.Assembly.GetName().Name + "." + artifactType.Name + ".png";
-            }
-            else
-            {
-                imageName = artifactType.Assembly.GetName().Name + "." + imageName;
-            }
-            SetArtifactTitle(id, modArtifactDef.DisplayName);
-            SetArtifactDesc(id, modArtifactDef.Description);
-            SetArtifactImage(id, modArtifactDef.Sprite);
-
-            return id;
-        }
-
-        public static string SetArtifactTitle(ArtifactName artifactName, string title)
+        internal static string SetArtifactTitle(ArtifactName artifactName, string title)
         {
             string id = artifactName.ToString() + "_ArtiTitle";
             return SetLocalizedString(id, title);
         }
 
-        public static string SetArtifactDesc(ArtifactName artifactName, string desc)
+        internal static string SetArtifactDesc(ArtifactName artifactName, string desc)
         {
             string id = artifactName.ToString() + "_ArtiDesc";
             return SetLocalizedString(id, desc);
         }
 
-        public static void SetArtifactImage(ArtifactName artifactName, Sprite artifactViewData)
+        internal static void SetArtifactImage(ArtifactName artifactName, Sprite sprite)
         {
-            moddedArtifactVDs[artifactName] = artifactViewData;
+            if (sprite != null)
+                moddedArtifactVDs[artifactName] = sprite;
         }
 
         public static ArtifactName GetModArtifactName<T>() where T : AModArtifact
@@ -251,48 +280,22 @@ namespace SVModHelper
         #endregion
 
         #region Components
-        public static ComponentName RegisterComponent(AModComponent modComponentDef, string imageName = null)
-        {
-            Type componentType = modComponentDef.GetType();
-            if (moddedComponentDict.ContainsKey(componentType))
-            {
-                throw new InvalidOperationException("Can not register the same component multiple times.");
-            }
-
-            ComponentName id = moddedComponents.Count + MINCOMPID;
-            moddedComponents.Add(modComponentDef);
-            moddedComponentDict.Add(componentType, id);
-
-            if (string.IsNullOrEmpty(imageName))
-            {
-                imageName = componentType.Assembly.GetName().Name + "." + componentType.Name + ".png";
-            }
-            else
-            {
-                imageName = componentType.Assembly.GetName().Name + "." + imageName;
-            }
-            SetComponentTitle(id, modComponentDef.DisplayName);
-            SetComponentDesc(id, modComponentDef.Description);
-            SetComponentImage(id, modComponentDef.Sprite);
-
-            return id;
-        }
-
-        public static string SetComponentTitle(ComponentName componentName, string title)
+        internal static string SetComponentTitle(ComponentName componentName, string title)
         {
             string id = componentName.ToString() + "_CompTitle";
             return SetLocalizedString(id, title);
         }
 
-        public static string SetComponentDesc(ComponentName componentName, string desc)
+        internal static string SetComponentDesc(ComponentName componentName, string desc)
         {
             string id = componentName.ToString() + "_CompDesc";
             return SetLocalizedString(id, desc);
         }
 
-        public static void SetComponentImage(ComponentName componentName, Sprite sprite)
+        internal static void SetComponentImage(ComponentName componentName, Sprite sprite)
         {
-            moddedComponentVDs[componentName] = sprite;
+            if (sprite != null)
+                moddedComponentVDs[componentName] = sprite;
         }
 
         public static ComponentName GetModComponentName<T>() where T : AModComponent
@@ -317,22 +320,27 @@ namespace SVModHelper
         }
         #endregion
 
-        #region Tasks
-
-        public static string RegisterTask(AModTask task)
+        #region Packs
+        internal static string SetPackTitle(ItemPackName packName, string title)
         {
-            Type taskType = task.GetType();
-            if(moddedTaskIDs.ContainsKey(taskType))
-            {
-                throw new InvalidOperationException("Can not register the same task multiple times.");
-            }
-
-            string id = taskType.FullName;
-            moddedTaskIDs.Add(taskType, id);
-            moddedTaskInstances.Add(id, task);
-            return id;
+            string id = packName.ToString() + "_Misc";
+            return SetLocalizedString(id, title);
         }
 
+        internal static string SetPackDesc(ItemPackName packName, string desc)
+        {
+            string id = packName.ToString() + "_Desc_Misc";
+            return SetLocalizedString(id, desc);
+        }
+
+        internal static void SetPackImage(ItemPackName packName, Sprite sprite)
+        {
+            if (sprite != null)
+                moddedPackVDs[packName] = sprite;
+        }
+        #endregion
+
+        #region Tasks
         public static string GetModTaskID(Type taskType)
         {
             return moddedTaskIDs.GetValueOrDefault(taskType, INVALIDTASKID);
@@ -347,11 +355,17 @@ namespace SVModHelper
         {
             return moddedTaskInstances.GetValueOrDefault(id, null);
         }
-
         #endregion
+
+        internal static void CheckInitStatus()
+        {
+            if (postInit)
+                throw new InvalidOperationException("Can not register/modify content after initialization.");
+        }
 
         public static string SetLocalizedString(string stringID, string localizedString)
         {
+            CheckInitStatus();
             string oldString = NameFixer.extraLocalizedStrings.GetValueOrDefault(stringID);
             NameFixer.extraLocalizedStrings[stringID] = localizedString;
             return oldString;

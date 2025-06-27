@@ -14,9 +14,25 @@ namespace SVModHelper
             ClassInjector.RegisterTypeInIl2Cpp<EnumeratorLink>(enumLinkOptions);
             foreach (MelonMod mod in RegisteredMelons)
             {
-                if(mod is SVMod svMod)
-                    ModContentManager.RegisterMod(svMod);
+                if (mod is SVMod svMod)
+                {
+                    Melon<Core>.Logger.Msg("Registering mod " + svMod.Info.Name);
+                    try
+                    {
+                        svMod.RegisterMod();
+                    }
+                    catch(Exception ex)
+                    {
+                        Melon<Core>.Logger.Error($"The following error occured when registering {svMod.Info.Name}:\n{ex}");
+                    }
+                }
             }
+        }
+
+        public override void OnLateInitializeMelon()
+        {
+            ModContentManager.ApplyMods();
+            ModContentManager.postInit = true;
         }
     }
 }
