@@ -405,6 +405,7 @@
 		<Compile Include="Core.cs" />
 		<Compile Include="HeavyCannonFire.cs" />
 		<Compile Include="HeavyCannonFireTask.cs" />
+		<Compile Include="MedusaSpell.cs" />
 		<Compile Include="Persistent.cs" />
 		<Compile Include="UnusedPack.cs" />
 	</ItemGroup>

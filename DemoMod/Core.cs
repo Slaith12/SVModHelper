@@ -34,7 +34,8 @@ namespace DemoMod
             {
                 displayName = "Weird Movement Device",
                 sprite = GetStandardSprite("NewAntiMag.png"),
-                newRarity = Rarity.Rare
+                newRarity = Rarity.Rare,
+                isCurseModifier = true
             });
 
             RegisterContentMod(new ComponentModification(ComponentName.Echo)
@@ -114,6 +115,18 @@ namespace DemoMod
                 description = "When an entity is pushed, push any entity it collides with.",
                 newClass = ClassName.UniquePack,
                 newRarity = Rarity.Common
+            });
+
+            RegisterContentMod(new ArtifactModification(ArtifactName.AegisInvaders)
+            {
+                isEncounterModifier = false,
+                isCurseModifier = false
+            });
+
+            RegisterContentMod(new ArtifactModification(ArtifactName.Doomed)
+            {
+                isEncounterModifier = true,
+                isCurseModifier = true
             });
 
             LoggerInstance.Msg("Done!");

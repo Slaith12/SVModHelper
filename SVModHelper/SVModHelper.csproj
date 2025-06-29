@@ -403,9 +403,11 @@
 		<Compile Include="ModContent\AModEnemy.cs" />
 		<Compile Include="ModContent\AModItem.cs" />
 		<Compile Include="ModContent\AModPack.cs" />
+		<Compile Include="ModContent\AModSpell.cs" />
 		<Compile Include="ModContent\ArtifactModification.cs" />
 		<Compile Include="ModContent\CardModification.cs" />
 		<Compile Include="ModContent\ComponentModification.cs" />
+		<Compile Include="ModContent\IHasArtifactID.cs" />
 		<Compile Include="ModContent\ModArtifactModelDef.cs" />
 		<Compile Include="ModContent\ModCardModelDef.cs" />
 		<Compile Include="ModContent\AModArtifact.cs" />
@@ -420,6 +422,7 @@
 		<Compile Include="ModContent\ModTaskExecute.cs" />
 		<Compile Include="ModContent\PackModification.cs" />
 		<Compile Include="ModContent\SpellModification.cs" />
+		<Compile Include="ModifierFixer.cs" />
 		<Compile Include="NameFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
 		<Compile Include="SaveHelper.cs" />

@@ -10,11 +10,11 @@ namespace SVModHelper.ModContent
     [MelonLoader.RegisterTypeInIl2Cpp]
     internal class ModArtifactModelDef : AArtifactModelDefinition
     {
-        public AModArtifact artifactDef;
+        public IHasArtifactID artifactDef;
         public ArtifactName artifactDefID;
 
         public ModArtifactModelDef(IntPtr ptr) : base(ptr) { }
-        public ModArtifactModelDef(AModArtifact definition, ArtifactName id) : this(ClassInjector.DerivedConstructorPointer<ModArtifactModelDef>())
+        public ModArtifactModelDef(IHasArtifactID definition, ArtifactName id) : this(ClassInjector.DerivedConstructorPointer<ModArtifactModelDef>())
         {
             ClassInjector.DerivedConstructorBody(this);
             OnCreateIDValue = new OnCreateIDValue();
@@ -26,8 +26,8 @@ namespace SVModHelper.ModContent
         public override bool CanBeDuplicated => artifactDef.CanBeDuplicated;
         public override ClassName Class => artifactDef.Class;
         public override ContextPreviewType ContextPreviewType => artifactDef.ContextPreviewType;
-        public override int Cooldown => 1;
-        public override bool IsSpell => false;
+        public override int Cooldown => artifactDef.Cooldown;
+        public override bool IsSpell => artifactDef.IsSpell;
         public override Il2CppCollections.HashSet<CardName> MoreInfoCards => artifactDef.MoreInfoCards;
         public override Il2CppCollections.HashSet<EnemyName> MoreInfoEnemies => artifactDef.MoreInfoEnemies;
         public override Il2CppCollections.HashSet<ItemName> MoreInfoItems => artifactDef.MoreInfoItems;

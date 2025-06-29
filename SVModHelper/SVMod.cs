@@ -64,6 +64,17 @@ namespace SVModHelper
                     LoggerInstance.Error($"The following error occured while registering pack {modPackDef.Name}.\n" + ex);
                 }
             }
+            foreach (Type modSpellDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModSpell))))
+            {
+                try
+                {
+                    RegisterSpell(Activator.CreateInstance(modSpellDef, true) as AModSpell);
+                }
+                catch (Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering spell {modSpellDef.Name}.\n" + ex);
+                }
+            }
             foreach (Type modTaskDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModTask))))
             {
                 try
@@ -183,6 +194,27 @@ namespace SVModHelper
             ModContentManager.SetPackTitle(id, modPackDef.DisplayName);
             ModContentManager.SetPackDesc(id, modPackDef.Description);
             ModContentManager.SetPackImage(id, modPackDef.Sprite);
+
+            return id;
+        }
+
+        protected ArtifactName RegisterSpell(AModSpell modSpellDef)
+        {
+            ModContentManager.CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering spell " + modSpellDef.GetType().Name);
+            Type artifactType = modSpellDef.GetType();
+            if (ModContentManager.moddedArtifactDict.ContainsKey(artifactType))
+            {
+                throw new InvalidOperationException("Can not register the same spell multiple times.");
+            }
+
+            ArtifactName id = ModContentManager.moddedArtifacts.Count + ModContentManager.MINARTIFACTID;
+            ModContentManager.moddedArtifacts.Add(modSpellDef);
+            ModContentManager.moddedArtifactDict.Add(artifactType, id);
+
+            ModContentManager.SetArtifactTitle(id, modSpellDef.DisplayName);
+            ModContentManager.SetArtifactDesc(id, modSpellDef.Description);
+            ModContentManager.SetArtifactImage(id, modSpellDef.Sprite);
 
             return id;
         }

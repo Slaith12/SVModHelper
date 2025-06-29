@@ -33,7 +33,7 @@ namespace SVModHelper
         internal static Dictionary<Type, CardName> moddedCardDict;
         internal static Dictionary<CardName, CardViewData> moddedCardVDs;
 
-        internal static List<AModArtifact> moddedArtifacts;
+        internal static List<IHasArtifactID> moddedArtifacts;
         internal static Dictionary<Type, ArtifactName> moddedArtifactDict;
         internal static Dictionary<ArtifactName, Sprite> moddedArtifactVDs;
 
@@ -132,7 +132,26 @@ namespace SVModHelper
 
         private static void ApplyArtifactMods()
         {
+            HashSet<ArtifactName> extraEncounterModifiers = new();
+            HashSet<ArtifactName> extraCurseModifiers = new();
+            HashSet<ArtifactName> removedEncounterModifiers = new();
+            HashSet<ArtifactName> removedCurseModifiers = new();
+
             activeArtifactMods = new();
+            foreach (IHasArtifactID artifact in moddedArtifacts)
+            {
+                if (artifact is AModArtifact modArtifact)
+                {
+                    if (modArtifact.IsEncounterModifier)
+                    {
+                        extraEncounterModifiers.Add(modArtifact.ArtifactName);
+                    }
+                    if(modArtifact.IsCurseModifier)
+                    {
+                        extraCurseModifiers.Add(modArtifact.ArtifactName);
+                    }
+                }
+            }
             foreach (ArtifactModification artifactMod in artifactModifications)
             {
                 if (!activeArtifactMods.TryGetValue(artifactMod.targetArtifact, out ArtifactModification activeMod))
@@ -151,7 +170,29 @@ namespace SVModHelper
                     SetArtifactDesc(activeMod.targetArtifact, activeMod.description);
                 if (activeMod.sprite != null)
                     SetArtifactImage(activeMod.targetArtifact, activeMod.sprite);
+
+                if(activeMod.isEncounterModifier == true)
+                {
+                    extraEncounterModifiers.Add(activeMod.targetArtifact);
+                }
+                else if(activeMod.isEncounterModifier == false)
+                {
+                    extraEncounterModifiers.Remove(activeMod.targetArtifact);
+                    removedEncounterModifiers.Add(activeMod.targetArtifact);
+                }
+                if(activeMod.isCurseModifier == true)
+                {
+                    extraCurseModifiers.Add(activeMod.targetArtifact);
+                }
+                else
+                {
+                    extraCurseModifiers.Remove(activeMod.targetArtifact);
+                    removedCurseModifiers.Add(activeMod.targetArtifact);
+                }
             }
+
+            EncounterModifierFixer.SetMods(extraEncounterModifiers, removedEncounterModifiers);
+            CurseModifierFixer.SetMods(extraCurseModifiers, removedCurseModifiers);
         }
 
         private static void ApplyComponentMods()
@@ -281,7 +322,7 @@ namespace SVModHelper
                 moddedArtifactVDs[artifactName] = sprite;
         }
 
-        public static ArtifactName GetModArtifactName<T>() where T : AModArtifact
+        public static ArtifactName GetModArtifactName<T>() where T : IHasArtifactID
         {
             return GetModArtifactName(typeof(T));
         }
@@ -295,7 +336,7 @@ namespace SVModHelper
             return INVALIDARTIFACTID;
         }
 
-        public static AModArtifact GetModArtifactInstance(ArtifactName artifactName)
+        public static IHasArtifactID GetModArtifactInstance(ArtifactName artifactName)
         {
             if (artifactName < MINARTIFACTID || artifactName >= MINARTIFACTID + moddedArtifacts.Count)
                 return null;

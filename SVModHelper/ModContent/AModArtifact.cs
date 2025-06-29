@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SVModHelper.ModContent
 {
-    public abstract class AModArtifact : AModContent
+    public abstract class AModArtifact : AModContent, IHasArtifactID
     {
         public ArtifactName ArtifactName => ModContentManager.GetModArtifactName(GetType());
 
@@ -30,7 +30,17 @@ namespace SVModHelper.ModContent
         /// <para>Can this artifact be duplicated by certain events?</para>
         /// <para>By default, this only affects the "Two Copies of a Common Artifact" special reward.</para>
         /// </summary>
-        public virtual bool CanBeDuplicated { get; }
+        public virtual bool CanBeDuplicated => false;
+        /// <summary>
+        /// <para>Can this artifact appear as a temporary modifier for an encounter?</para>
+        /// <para>It is recommended to set the rarity to "Modifier" if this is true.</para>
+        /// </summary>
+        public virtual bool IsEncounterModifier => false;
+        /// <summary>
+        /// <para>Can this artifact appear as a permanent modifier from a special encounter/strange offer?</para>
+        /// <para>It is recommended to set the rarity to "Modifier" if this is true.</para>
+        /// </summary>
+        public virtual bool IsCurseModifier => false;
 
         /// <summary>
         /// The type of preview shown when the card is highlighted in the shop/reward screens.
@@ -87,5 +97,8 @@ namespace SVModHelper.ModContent
         {
             return new();
         }
+
+        int IHasArtifactID.Cooldown => 1;
+        bool IHasArtifactID.IsSpell => false;
     }
 }

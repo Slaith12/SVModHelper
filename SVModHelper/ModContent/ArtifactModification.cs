@@ -21,6 +21,8 @@ namespace SVModHelper.ModContent
         public PilotName? newPilot;
         public Rarity? newRarity;
         public bool? canBeDuplicated;
+        public bool? isEncounterModifier;
+        public bool? isCurseModifier;
 
         public ArtifactModification(ArtifactName target, int priority = 0)
         {
@@ -44,6 +46,10 @@ namespace SVModHelper.ModContent
                 other.newRarity = newRarity;
             if (canBeDuplicated != null)
                 other.canBeDuplicated = canBeDuplicated;
+            if (isEncounterModifier != null)
+                other.isEncounterModifier = isEncounterModifier;
+            if (isCurseModifier != null)
+                other.isCurseModifier = isCurseModifier;
         }
 
         internal void ApplyTo(ArtifactModel artifact)

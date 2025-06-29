@@ -31,7 +31,7 @@ namespace SVModHelper.ModContent
     {
         public static void Postfix(ArtifactName artifactName, PlayerDataSO __instance)
         {
-            AModArtifact modArtifact = ModContentManager.GetModArtifactInstance(artifactName);
+            IHasArtifactID modArtifact = ModContentManager.GetModArtifactInstance(artifactName);
             if(modArtifact != null)
             {
                 modArtifact.OnObtain(__instance);
