@@ -1,7 +1,7 @@
 ﻿using MelonLoader;
 using Il2CppInterop.Runtime.Injection;
 
-[assembly: MelonInfo(typeof(SVModHelper.Core), "StarVaders Mod Helper", "0.0.1", "Slaith", null)]
+[assembly: MelonInfo(typeof(SVModHelper.Core), "StarVaders Mod Helper", "0.1.0", "Slaith", null)]
 [assembly: MelonGame("Pengonauts", "StarVaders")]
 
 namespace SVModHelper
