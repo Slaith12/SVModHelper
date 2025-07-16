@@ -11,7 +11,7 @@ namespace SVModHelper.ModContent
     {
         public static bool Prefix(ArtifactName artifactName, ref ArtifactModel __result, ArtifactFactory __instance)
         {
-            if (artifactName >= (ArtifactName)15000 && artifactName < (ArtifactName)(ModContentManager.moddedArtifacts.Count + 15000))
+            if (artifactName >= (ArtifactName)15000)
             {
                 ArtifactID artifactID = new ArtifactID(__instance._artifactCount);
                 __instance._artifactCount++;

@@ -12,7 +12,7 @@ namespace SVModHelper.ModContent
     {
         public static bool Prefix(CardName cardName, ref CardModel __result, CardFactory __instance)
         {
-            if(cardName >= (CardName)15000 && cardName < (CardName)(ModContentManager.moddedCards.Count+15000))
+            if(cardName >= (CardName)15000)
             {
                 CardID cardID = new CardID(cardName, __instance._cardCount);
                 __instance._cardCount++;

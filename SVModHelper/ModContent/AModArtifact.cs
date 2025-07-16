@@ -9,6 +9,12 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModArtifact : AModContent, IHasArtifactID
     {
+		/// <summary>
+		/// If assigned, this artifact will be registered with this ArtifactName instead of the default one. Must be greater or equal to 15000.
+		/// This is useful when setting up AModPilot.
+		/// </summary>
+		public virtual ArtifactName ArtifactNameOverride => ModContentManager.INVALIDARTIFACTID;
+
         public ArtifactName ArtifactName => ModContentManager.GetModArtifactName(GetType());
 
         public abstract string DisplayName { get; }

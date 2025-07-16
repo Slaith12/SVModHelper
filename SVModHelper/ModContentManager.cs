@@ -1,15 +1,15 @@
-﻿using MelonLoader;
+﻿using Il2CppStarVaders;
+using MelonLoader;
+using SVModHelper.ModContent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Reflection;
 using UnityEngine;
-using SVModHelper.ModContent;
-using Il2CppStarVaders;
-using static UnityEngine.Rendering.ReloadAttribute;
 using static Il2CppSystem.Xml.Schema.XsdDuration;
+using static UnityEngine.Rendering.ReloadAttribute;
 
 namespace SVModHelper
 {
@@ -45,6 +45,9 @@ namespace SVModHelper
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
         internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
 
+        internal static List<AModPilot> moddedPilots;
+        internal static Dictionary<Type, PilotName> moddedPilotDict;
+
         internal static Dictionary<Type, string> moddedTaskIDs;
         internal static Dictionary<string, AModTask> moddedTaskInstances;
 
@@ -56,6 +59,8 @@ namespace SVModHelper
         internal const ItemName MINITEMID = (ItemName)15000;
         internal const EnemyName MINENEMYID = (EnemyName)15000;
         internal const ItemPackName MINPACKID = (ItemPackName)15000;
+        internal const PilotName MINPILOTID = (PilotName)1000;
+
 
         public const CardName INVALIDCARDID = (CardName)(-1);
         public const ArtifactName INVALIDARTIFACTID = (ArtifactName)(-1);
@@ -90,6 +95,9 @@ namespace SVModHelper
             moddedPacks = new();
             moddedPackDict = new();
             moddedPackVDs = new();
+
+            moddedPilots = new();
+            moddedPilotDict = new();
 
             moddedTaskIDs = new();
             moddedTaskInstances = new();
@@ -428,6 +436,14 @@ namespace SVModHelper
         public static AModPack GetModPackInstance<T>() where T : AModPack
         {
             return GetModPackInstance(GetModPackName<T>());
+        }
+        #endregion
+
+        #region Pilots
+        internal static void SetPilotStrings(PilotName pilotName, AModPilot pilot)
+        {
+            SetLocalizedString(pilotName.ToString() + "_PilotTitle", pilot.DisplayName);
+            SetLocalizedString(pilotName.ToString() + "_PilotDesc", pilot.Description);
         }
         #endregion
 
