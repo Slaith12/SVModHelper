@@ -29,8 +29,7 @@ namespace SVModHelper
         internal static Dictionary<ItemPackName, PackModification> activePackMods;
         internal static Dictionary<ArtifactName, SpellModification> activeSpellMods;
 
-        internal static List<AModCard> moddedCards;
-        internal static Dictionary<Type, CardName> moddedCardDict;
+		internal static Dictionary<Type, CardName> moddedCardDict;
         internal static Dictionary<CardName, CardViewData> moddedCardVDs;
 
         internal static List<IHasArtifactID> moddedArtifacts;
@@ -45,10 +44,10 @@ namespace SVModHelper
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
         internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
 
-        internal static List<AModPilot> moddedPilots;
-        internal static Dictionary<Type, PilotName> moddedPilotDict;
+        internal static Dictionary<AModPilot, PilotName> moddedPilotDict;
+        internal static Dictionary<ItemPackName, PilotDataSO> moddedPilotDatas;
 
-        internal static Dictionary<Type, string> moddedTaskIDs;
+		internal static Dictionary<Type, string> moddedTaskIDs;
         internal static Dictionary<string, AModTask> moddedTaskInstances;
 
         internal static Dictionary<string, byte[]> contentData;
@@ -80,7 +79,6 @@ namespace SVModHelper
             packModifications = new();
             spellModifications = new();
 
-            moddedCards = new();
             moddedCardDict = new();
             moddedCardVDs = new();
 
@@ -96,8 +94,8 @@ namespace SVModHelper
             moddedPackDict = new();
             moddedPackVDs = new();
 
-            moddedPilots = new();
             moddedPilotDict = new();
+            moddedPilotDatas = new();
 
             moddedTaskIDs = new();
             moddedTaskInstances = new();
@@ -302,13 +300,6 @@ namespace SVModHelper
             }
             return INVALIDCARDID;
         }
-
-        public static AModCard GetModCardInstance(CardName cardName)
-        {
-            if (cardName < MINCARDID || cardName >= MINCARDID + moddedCards.Count)
-                return null;
-            return moddedCards[cardName - MINCARDID];
-        }
         #endregion
 
         #region Artifacts
@@ -346,9 +337,9 @@ namespace SVModHelper
 
         public static IHasArtifactID GetModArtifactInstance(ArtifactName artifactName)
         {
-            if (artifactName < MINARTIFACTID || artifactName >= MINARTIFACTID + moddedArtifacts.Count)
+            if (artifactName < MINARTIFACTID)
                 return null;
-            return moddedArtifacts[artifactName - MINARTIFACTID];
+            return moddedArtifacts.First(arti => arti.ArtifactName == (artifactName));
         }
         #endregion
 

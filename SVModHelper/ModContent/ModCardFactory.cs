@@ -12,11 +12,23 @@ namespace SVModHelper.ModContent
     {
         public static bool Prefix(CardName cardName, ref CardModel __result, CardFactory __instance)
         {
-            if(cardName >= (CardName)15000)
+            if(cardName >= (CardName)ModContentManager.MINCARDID)
             {
                 CardID cardID = new CardID(cardName, __instance._cardCount);
                 __instance._cardCount++;
-                ModCardModelDef cardModelDef = new ModCardModelDef(ModContentManager.moddedCards[(int)cardName-15000], cardName);
+
+                var type = ModContentManager.moddedCardDict.FirstOrDefault(pair => pair.Value == cardName).Key;
+
+                if (type == null)
+				{
+					MelonLogger.Error($"CardName {cardName} not found in modded card dictionary.");
+					__result = null;
+					return false;
+				}
+
+				AModCard modCard = Activator.CreateInstance(type, true) as AModCard;
+
+				ModCardModelDef cardModelDef = new ModCardModelDef(modCard, cardName);
                 CardModel cardModel = new CardModel(cardModelDef, cardID);
 
                 cardModel.SetComponent(ComponentFactory.CreateComponent(ComponentName.None, cardModel));
@@ -34,8 +46,8 @@ namespace SVModHelper.ModContent
         public static void Postfix(ref Il2CppCollections.List<CardModel> __result)
         {
             CardFactory cardFactory = new CardFactory();
-            for(int i = 0; i < ModContentManager.moddedCards.Count; i++)
-                __result.Add(cardFactory.CreateCardModel((CardName)(i+15000)));
+            foreach(CardName cardName in ModContentManager.moddedCardDict.Values)
+                __result.Add(cardFactory.CreateCardModel(cardName));
         }
     }
 }

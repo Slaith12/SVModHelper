@@ -145,10 +145,15 @@ namespace SVModHelper
             }
             else
             {
-                id = ModContentManager.moddedCards.Count + ModContentManager.MINCARDID;
+                id = ModContentManager.moddedCardDict.Count + ModContentManager.MINCARDID;
             }
 
-            ModContentManager.moddedCards.Add(modCardDef);
+            // Check if the assigned ID already exists in the dictionary
+            if (ModContentManager.moddedCardDict.ContainsValue(id))
+            {
+                throw new InvalidOperationException($"Card ID {id} is already registered. Cannot register card {modCardDef.GetType().Name} with the same ID.");
+            }
+
             ModContentManager.moddedCardDict.Add(cardType, id);
 
             ModContentManager.SetCardTitle(id, modCardDef.DisplayName);
@@ -177,6 +182,12 @@ namespace SVModHelper
             else
             {
                 id = ModContentManager.moddedArtifacts.Count + ModContentManager.MINARTIFACTID;
+            }
+
+            // Check if the assigned ID already exists in the dictionary
+            if (ModContentManager.moddedArtifactDict.ContainsValue(id))
+            {
+                throw new InvalidOperationException($"Artifact ID {id} is already registered. Cannot register artifact {modArtifactDef.GetType().Name} with the same ID.");
             }
 
             ModContentManager.moddedArtifacts.Add(modArtifactDef);
@@ -255,14 +266,13 @@ namespace SVModHelper
             ModContentManager.CheckInitStatus();
             Melon<Core>.Logger.Msg("Registering pilot " + modPilot.GetType().Name);
             Type pilotType = modPilot.GetType();
-            if (ModContentManager.moddedPilotDict.ContainsKey(pilotType))
+            if (ModContentManager.moddedPilotDict.Keys.Any(pilot => pilot.GetType() == pilotType))
             {
 				throw new InvalidOperationException("Can not register the same pilot multiple times.");
             }
 
-            PilotName id = ModContentManager.moddedPilots.Count + ModContentManager.MINPILOTID;
-            ModContentManager.moddedPilots.Add(modPilot);
-            ModContentManager.moddedPilotDict.Add(pilotType, id);
+            PilotName id = ModContentManager.moddedPilotDict.Count + ModContentManager.MINPILOTID;
+            ModContentManager.moddedPilotDict.Add(modPilot, id);
 
             // Set the localization strings for the pilot
             ModContentManager.SetPilotStrings(id, modPilot);

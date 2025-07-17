@@ -393,6 +393,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Include="PilotFixer.cs" />
 		<Compile Include="ModContent\AModPilot.cs" />
 		<Compile Include="EnumeratorLink.cs" />
 		<Compile Include="GameDebug.cs" />

@@ -12,12 +12,14 @@ namespace SVModHelper.ModContent
 	{
         public static void Postfix(PilotSelectionController __instance, Il2CppCollections.List<PlayerDataSO> __result)
         {
-	        foreach (AModPilot modPilot in ModContentManager.moddedPilots.Where(moddedPilot => moddedPilot.ClassName == __instance.PlayerDataSOs._items.First().ClassName))
+	        foreach (AModPilot modPilot in ModContentManager.moddedPilotDict.Keys.Where(modPilot => modPilot.ClassName == __instance.PlayerDataSOs._items.First().ClassName))
 	        {
 		        PlayerDataSO playerDataSO = ScriptableObject.CreateInstance<PlayerDataSO>();
 
+		        playerDataSO.starbucksAmount = 75;
+
 		        playerDataSO.ClassName = modPilot.ClassName;
-		        playerDataSO.PilotName = ModContentManager.moddedPilotDict[modPilot.GetType()];
+		        playerDataSO.PilotName = ModContentManager.moddedPilotDict[modPilot];
 
 		        foreach (var card in modPilot.StartingCards)
 		        {
