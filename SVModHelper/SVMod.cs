@@ -266,13 +266,29 @@ namespace SVModHelper
             ModContentManager.CheckInitStatus();
             Melon<Core>.Logger.Msg("Registering pilot " + modPilot.GetType().Name);
             Type pilotType = modPilot.GetType();
-            if (ModContentManager.moddedPilotDict.Keys.Any(pilot => pilot.GetType() == pilotType))
+            if (ModContentManager.moddedPilotDict.Values.Any(pilot => pilot.GetType() == pilotType))
             {
 				throw new InvalidOperationException("Can not register the same pilot multiple times.");
             }
 
-            PilotName id = ModContentManager.moddedPilotDict.Count + ModContentManager.MINPILOTID;
-            ModContentManager.moddedPilotDict.Add(modPilot, id);
+            PilotName id;
+
+            if (modPilot.PilotNameOverride != ModContentManager.INVALIDPILOTID)
+            {
+                id = modPilot.PilotNameOverride;
+            }
+            else
+            {
+                id = ModContentManager.moddedPilotDict.Count + ModContentManager.MINPILOTID;
+            }
+
+            // Check if the assigned ID already exists in the dictionary
+            if (ModContentManager.moddedPilotDict.ContainsKey(id))
+            {
+                throw new InvalidOperationException($"Pilot ID {id} is already registered. Cannot register pilot {modPilot.GetType().Name} with the same ID.");
+            }
+
+            ModContentManager.moddedPilotDict.Add(id, modPilot);
 
             // Set the localization strings for the pilot
             ModContentManager.SetPilotStrings(id, modPilot);

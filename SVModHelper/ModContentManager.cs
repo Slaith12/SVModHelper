@@ -8,8 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using static Il2CppSystem.Xml.Schema.XsdDuration;
-using static UnityEngine.Rendering.ReloadAttribute;
 
 namespace SVModHelper
 {
@@ -44,8 +42,7 @@ namespace SVModHelper
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
         internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
 
-        internal static Dictionary<AModPilot, PilotName> moddedPilotDict;
-        internal static Dictionary<ItemPackName, PilotDataSO> moddedPilotDatas;
+        internal static Dictionary<PilotName, AModPilot> moddedPilotDict;
 
 		internal static Dictionary<Type, string> moddedTaskIDs;
         internal static Dictionary<string, AModTask> moddedTaskInstances;
@@ -67,6 +64,7 @@ namespace SVModHelper
         public const ItemName INVALIDITEMID = (ItemName)(-1);
         public const EnemyName INVALIDENEMYID = (EnemyName)(-1);
         public const ItemPackName INVALIDPACKID = (ItemPackName)(-1);
+        public const PilotName INVALIDPILOTID = (PilotName)(-1);
         public const string INVALIDTASKID = "";
 
         static ModContentManager()
@@ -95,7 +93,6 @@ namespace SVModHelper
             moddedPackVDs = new();
 
             moddedPilotDict = new();
-            moddedPilotDatas = new();
 
             moddedTaskIDs = new();
             moddedTaskInstances = new();
