@@ -35,7 +35,7 @@ namespace DemoMod
 
         public override Il2CppCollections.HashSet<ComponentName> BlockedComponentNames => new HashSet<ComponentName>()
         {
-            ComponentName.Tactical
+            ComponentName.Fiery
         }.ToILCPP();
 
         //Other properties (still important!)
