@@ -41,7 +41,7 @@ namespace SVModHelper
 
         internal static List<AModItem> moddedItems;
         internal static Dictionary<Type, ItemName> moddedItemDict;
-        internal static Dictionary<ItemName, Sprite> moddedItemVDs;
+        internal static Dictionary<ItemName, AEntityViewDataSO> moddedItemVDs;
 
         internal static List<AModPack> moddedPacks;
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
@@ -429,7 +429,7 @@ namespace SVModHelper
             return SetLocalizedString(id, desc);
         }
 
-        internal static void SetItemImage(ItemName itemName, Sprite sprite)
+        internal static void SetItemImage(ItemName itemName, ItemViewDataSO sprite)
         {
             if (sprite != null)
                 moddedItemVDs[itemName] = sprite;

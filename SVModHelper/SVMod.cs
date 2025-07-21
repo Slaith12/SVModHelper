@@ -53,6 +53,17 @@ namespace SVModHelper
                     LoggerInstance.Error($"The following error occured while registering component {modComponentDef.Name}.\n" + ex);
                 }
             }
+            foreach (Type modItemDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModItem))))
+            {
+                try
+                {
+                    RegisterItem(Activator.CreateInstance(modItemDef, true) as AModItem);
+                }
+                catch (Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering item {modItemDef.Name}.\n" + ex);
+                }
+            }
             foreach (Type modPackDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModPack))))
             {
                 try
@@ -174,6 +185,26 @@ namespace SVModHelper
             ModContentManager.SetComponentTitle(id, modComponentDef.DisplayName);
             ModContentManager.SetComponentDesc(id, modComponentDef.Description);
             ModContentManager.SetComponentImage(id, modComponentDef.Sprite);
+
+            return id;
+        }
+
+        protected ItemName RegisterItem(AModItem modItemDef)
+        {
+            ModContentManager.CheckInitStatus();
+            Type itemType = modItemDef.GetType();
+            if (ModContentManager.moddedItemDict.ContainsKey(itemType))
+            {
+                throw new InvalidOperationException("Can not register the same item multiple times.");
+            }
+
+            ItemName id = ModContentManager.moddedItems.Count + ModContentManager.MINITEMID;
+            ModContentManager.moddedItems.Add(modItemDef);
+            ModContentManager.moddedItemDict.Add(itemType, id);
+
+            ModContentManager.SetItemTitle(id, modItemDef.DisplayName);
+            ModContentManager.SetItemDesc(id, modItemDef.Description);
+            ModContentManager.SetItemImage(id, modItemDef.ItemViewData);
 
             return id;
         }
