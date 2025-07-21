@@ -10,6 +10,8 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModContent
     {
+        internal static Sprite shadowSprite;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool TryGetContentData(string fileName, out byte[] data)
         {
@@ -33,6 +35,11 @@ namespace SVModHelper.ModContent
             if (texture == null)
                 return null;
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+        }
+
+        public static Sprite GetDefaultShadowSprite()
+        {
+            return shadowSprite;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
