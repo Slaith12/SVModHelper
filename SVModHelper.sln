@@ -1,14 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SVModHelper", "SVModHelper\SVModHelper.csproj", "{4812495E-7890-4154-91F2-955A3C480A1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SVModHelper", "SVModHelper\SVModHelper.csproj", "{4812495E-7890-4154-91F2-955A3C480A1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoMod", "DemoMod\DemoMod.csproj", "{52581D77-5B68-4681-A355-BA7CBD461C8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoMod", "DemoMod\DemoMod.csproj", "{52581D77-5B68-4681-A355-BA7CBD461C8F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4812495E-7890-4154-91F2-955A3C480A1A} = {4812495E-7890-4154-91F2-955A3C480A1A}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuffyTest", "..\..\LuffyTest\LuffyTest\LuffyTest.csproj", "{8891A8CD-6125-49E0-893F-7A6B21EF386A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +26,10 @@ Global
 		{52581D77-5B68-4681-A355-BA7CBD461C8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52581D77-5B68-4681-A355-BA7CBD461C8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52581D77-5B68-4681-A355-BA7CBD461C8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8891A8CD-6125-49E0-893F-7A6B21EF386A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8891A8CD-6125-49E0-893F-7A6B21EF386A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8891A8CD-6125-49E0-893F-7A6B21EF386A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8891A8CD-6125-49E0-893F-7A6B21EF386A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
