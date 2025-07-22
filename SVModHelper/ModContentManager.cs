@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using SVModHelper.ModContent;
+using Il2CppStarVaders;
 
 namespace SVModHelper
 {
@@ -38,6 +40,10 @@ namespace SVModHelper
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
         internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
 
+        internal static List<AModItem> moddedItems;
+        internal static Dictionary<Type, ItemName> moddedItemDict;
+        internal static Dictionary<ItemName, AEntityViewDataSO> moddedItemVDs;
+
         internal static List<AModPack> moddedPacks;
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
         internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
@@ -67,7 +73,7 @@ namespace SVModHelper
         public const PilotName INVALIDPILOTID = (PilotName)(-1);
         public const string INVALIDTASKID = "";
 
-        static ModContentManager()
+        internal static void Init()
         {
             postInit = false;
 
@@ -88,6 +94,10 @@ namespace SVModHelper
             moddedComponentDict = new();
             moddedComponentVDs = new();
 
+            moddedItems = new();
+            moddedItemDict = new();
+            moddedItemVDs = new();
+
             moddedPacks = new();
             moddedPackDict = new();
             moddedPackVDs = new();
@@ -98,6 +108,31 @@ namespace SVModHelper
             moddedTaskInstances = new();
 
             contentData = new();
+
+            //I was originally planning on automatically grabbing the shadow sprite from the game directly,
+            //but I'm not sure how to do that so I'm just adding the shadow sprite to the build instead.
+            Texture2D shadowTexture = new Texture2D(2, 2);
+            byte[] arr;
+            using (Stream stream = typeof(ModContentManager).Assembly.GetManifestResourceStream("shadow.png"))
+            {
+                if (stream == null)
+                    return;
+
+                if (stream is MemoryStream memStream)
+                {
+                    arr = memStream.ToArray();
+                }
+                else
+                {
+                    using (memStream = new MemoryStream())
+                    {
+                        stream.CopyTo(memStream);
+                        arr = memStream.ToArray();
+                    }
+                }
+            }
+            shadowTexture.LoadImage(arr);
+            AModContent.shadowSprite = Sprite.Create(shadowTexture, new Rect(0, 0, shadowTexture.width, shadowTexture.height), new Vector2(0.5f, 0.5f));
         }
 
         #region Modifications
@@ -378,6 +413,47 @@ namespace SVModHelper
             if (componentName < MINCOMPID || componentName >= MINCOMPID + moddedComponents.Count)
                 return null;
             return moddedComponents[componentName - MINCOMPID];
+        }
+        #endregion
+
+        #region Items
+        internal static string SetItemTitle(ItemName itemName, string title)
+        {
+            string id = itemName.ToString() + "_EntityTitle";
+            return SetLocalizedString(id, title);
+        }
+
+        internal static string SetItemDesc(ItemName itemName, string desc)
+        {
+            string id = itemName.ToString() + "_EntityDesc";
+            return SetLocalizedString(id, desc);
+        }
+
+        internal static void SetItemImage(ItemName itemName, ItemViewDataSO sprite)
+        {
+            if (sprite != null)
+                moddedItemVDs[itemName] = sprite;
+        }
+
+        public static ItemName GetModItemName<T>() where T : AModItem
+        {
+            return GetModItemName(typeof(T));
+        }
+
+        public static ItemName GetModItemName(Type itemType)
+        {
+            if (moddedItemDict.TryGetValue(itemType, out ItemName id))
+            {
+                return id;
+            }
+            return INVALIDITEMID;
+        }
+
+        public static AModItem GetModItemInstance(ItemName itemName)
+        {
+            if (itemName < MINITEMID || itemName >= MINITEMID + moddedItems.Count)
+                return null;
+            return moddedItems[itemName - MINITEMID];
         }
         #endregion
 

@@ -6,6 +6,7 @@ using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace SVModHelper
 {
@@ -59,6 +60,19 @@ namespace SVModHelper
             {
                 __instance._dict[vdPair.Key] = vdPair.Value;
             }
+        }
+    }
+
+    //Items and Enemies use addressables for their view data assets, which makes this a lot harder.
+    [HarmonyPatch(typeof(ItemViewDataListSO), nameof(ItemViewDataListSO.GetData))]
+    internal static class ItemImageFixer
+    {
+        public static bool Prefix(ItemName entry, ref AsyncOperationHandle<AEntityViewDataSO> __result, ItemViewDataListSO __instance)
+        {
+            if (!ModContentManager.moddedItemVDs.TryGetValue(entry, out var viewData))
+                return true;
+            __result = __instance.GetData(ItemName.HealPackage);
+            return false;
         }
     }
 }

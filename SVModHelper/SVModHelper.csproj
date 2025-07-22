@@ -13,6 +13,9 @@
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="shadow.png" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp-firstpass">
@@ -421,6 +424,7 @@
 		<Compile Include="ModContent\ModComponentFactory.cs" />
 		<Compile Include="ModContent\ModComponentModelDef.cs" />
 		<Compile Include="ModContent\ModEnemyModelDef.cs" />
+		<Compile Include="ModContent\ModItemFactory.cs" />
 		<Compile Include="ModContent\ModItemModelDef.cs" />
 		<Compile Include="ModContent\ModTaskExecute.cs" />
 		<Compile Include="ModContent\PackModification.cs" />
@@ -432,6 +436,10 @@
 		<Compile Include="SaveHelper.cs" />
 		<Compile Include="ModContentManager.cs" />
 		<Compile Include="SVMod.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="shadow.png" />
 	</ItemGroup>
 
 	<ItemGroup>

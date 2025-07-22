@@ -8,6 +8,13 @@ namespace SVModHelper
 {
     internal class Core : MelonMod
     {
+        public override void OnEarlyInitializeMelon()
+        {
+            base.OnEarlyInitializeMelon();
+
+            ModContentManager.Init();
+        }
+
         public override void OnInitializeMelon()
         {
             RegisterTypeOptions enumLinkOptions = new RegisterTypeOptions() { Interfaces = new Il2CppInterfaceCollection([typeof(Il2CppSystem.Collections.IEnumerator)]) };
