@@ -28,12 +28,42 @@ namespace SVModHelper
 	{
 		public static bool Prefix(PilotName entry, PilotDataDictSO __instance, ref PilotDataSO __result)
 		{
-			if (entry >= ModContentManager.MINPILOTID)
+			if (ModContentManager.moddedPilotDict.ContainsKey(entry))
 			{
+				//MelonLogger.Msg($"Modded PilotDataDictSO.GetData called for {entry}.");
 				__result = ModContentManager.moddedPilotDict[entry].GetPilotData();
 	
 				return false;
 			}
+			return true;
+		}
+	}
+
+	[HarmonyPatch(typeof(PilotView), nameof(PilotView.UpdatePilotPanel))]
+	internal static class PilotViewFixer
+	{
+		public static void Postfix(PilotSelectionController pilotSelectionController, PilotView __instance)
+		{
+			if (ModContentManager.moddedPilotDict.ContainsKey(pilotSelectionController.CurrentPlayerData.PilotName))
+			{
+				__instance.PilotName.SetText(ModContentManager.moddedPilotDict[pilotSelectionController.CurrentPlayerData.PilotName].DisplayName);
+			}
+		}
+	}
+
+	[HarmonyPatch(typeof(PresetChallengesDictSO), nameof(PresetChallengesDictSO.GetPilotChallenges))]
+	internal static class PresetChallengesFixer
+	{
+		// If it's a modded pilot, return an empty list of specific challenges.
+		// In the future, we can allow for custom challenges to be added for modded pilots.
+		public static bool Prefix(PilotName pilotName, ref Il2CppCollections.List<ChallengeSO> __result)
+		{
+			if (ModContentManager.moddedPilotDict.ContainsKey(pilotName))
+			{
+				__result = new();
+				return false;
+			}
+
 			return true;
 		}
 	}

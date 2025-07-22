@@ -431,7 +431,7 @@ namespace SVModHelper
         internal static void SetPilotStrings(PilotName pilotName, AModPilot pilot)
         {
             SetLocalizedString(pilotName.ToString() + "_PilotTitle", pilot.DisplayName);
-            SetLocalizedString(pilotName.ToString() + "_PilotDesc", pilot.Description);
+            SetLocalizedString("PilotDescription" + pilotName.ToString() + "_Misc", pilot.Description);
         }
         #endregion
 
