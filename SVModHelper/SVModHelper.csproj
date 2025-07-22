@@ -433,7 +433,6 @@
 		<Compile Include="NameFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
 		<Compile Include="SpriteHelper.cs" />
-		<Compile Include="SaveHelper.cs" />
 		<Compile Include="ModContentManager.cs" />
 		<Compile Include="SVMod.cs" />
 	</ItemGroup>
