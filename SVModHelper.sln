@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoMod", "DemoMod\DemoMod.
 		{4812495E-7890-4154-91F2-955A3C480A1A} = {4812495E-7890-4154-91F2-955A3C480A1A}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuffyTest", "..\..\LuffyTest\LuffyTest\LuffyTest.csproj", "{8891A8CD-6125-49E0-893F-7A6B21EF386A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuffyTest", "LuffyTest\LuffyTest.csproj", "{7033A6D9-F2A0-4266-8B1F-6E420D8E0515}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,10 +26,10 @@ Global
 		{52581D77-5B68-4681-A355-BA7CBD461C8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52581D77-5B68-4681-A355-BA7CBD461C8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52581D77-5B68-4681-A355-BA7CBD461C8F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8891A8CD-6125-49E0-893F-7A6B21EF386A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8891A8CD-6125-49E0-893F-7A6B21EF386A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8891A8CD-6125-49E0-893F-7A6B21EF386A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8891A8CD-6125-49E0-893F-7A6B21EF386A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7033A6D9-F2A0-4266-8B1F-6E420D8E0515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7033A6D9-F2A0-4266-8B1F-6E420D8E0515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7033A6D9-F2A0-4266-8B1F-6E420D8E0515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7033A6D9-F2A0-4266-8B1F-6E420D8E0515}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

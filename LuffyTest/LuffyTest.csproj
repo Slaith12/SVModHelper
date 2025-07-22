@@ -422,7 +422,6 @@
 		<Compile Include="Tasks\MakeAllCardsInHandFreeThisTurnTask.cs" />
 		<Compile Include="LuffyPilot.cs" />
 		<Compile Include="Core.cs" />
-		<Compile Include="RunStartPatch.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -436,7 +435,6 @@
 	  <EmbeddedResource Include="Meat.png" />
 	  <EmbeddedResource Include="Pistol.png" />
 	  <EmbeddedResource Include="Rocket.png" />
-	  <EmbeddedResource Include="T_IrisSelect.png" />
 	</ItemGroup>
 	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
