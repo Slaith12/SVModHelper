@@ -59,6 +59,7 @@ namespace LuffyTest
 						card.CardName != CardName.SayHello &&
 						card.CardName != CardName.BigBang &&
 						card.CardName != CardName.Annihilation &&
+						card.CardName != CardName.HellFire &&
 						card.CardName != CardName.FoolsGold &&
 						card.CardName != CardName.Awaken &&
 						card.CardName != CardName.Levitate &&
