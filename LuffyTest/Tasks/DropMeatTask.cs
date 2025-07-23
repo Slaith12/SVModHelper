@@ -33,7 +33,7 @@ namespace LuffyTest
 			if (gridModel.IsMoveableCoord(coord) && !gridModel.TryGetPickupAtCoord(coord, out var s))
 			{
 				yield return taskInstance.TaskEngine.ProcessTask(
-					new CreateCardTask(17000, Pile:Pile.Pickup, coord: coord.BoxIl2CppObject(), rarity: new Il2CppSystem.Nullable<Rarity>())
+					new CreateCardTask((int) ModContentManager.GetModCardName<Meat>(), Pile:Pile.Pickup, coord: coord.BoxIl2CppObject(), rarity: new Il2CppSystem.Nullable<Rarity>())
 				).Cast<Il2CppSystem.Object>();
 			}
 
