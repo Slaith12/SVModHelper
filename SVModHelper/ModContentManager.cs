@@ -584,12 +584,6 @@ namespace SVModHelper
                 SetPilotSprite(pilotName, pilot.VictoryPhoto, pilot.CreateSprite(pilot.VictoryPhoto));
         }
 
-        internal static void SetPilotImage(ArtifactName artifactName, Sprite sprite)
-        {
-            if (sprite != null)
-                moddedArtifactVDs[artifactName] = sprite;
-        }
-
         public static PilotName GetModPilotName<T>() where T : AModPilot
         {
             return GetModPilotName(typeof(T));

@@ -50,7 +50,7 @@ namespace LuffyTest
 				.Where(coord => Coord.ManhattanDistance(playerCoord, coord) <= 3 && coord != playerCoord)
 				.ToList();
 
-			var randCoords = coordList.ToILCPPEnumerable().PickRandom(7, random: taskEngine.EncounterModel.Random).ToList();
+			var randCoords = coordList.ToILCPPEnumerable().PickRandom(9, random: taskEngine.EncounterModel.Random).ToList();
 
 			foreach (var c in randCoords)
 			{

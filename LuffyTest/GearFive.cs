@@ -19,7 +19,7 @@ namespace LuffyTest
 			"Entities have a 25% chance to drop a MEAT!!! on their tile when destroyed. \nAfter your play 5 Junk cards, transform all Junk cards into random Legendary cards and draw them. Cards in your hand are free this turn.";
 
 		public override ClassName Class => ClassName.Melee;
-		public override PilotName PilotUnique => (PilotName) 11000; // Luffy
+		public override PilotName PilotUnique => ModContentManager.GetModPilotName<LuffyPilot>(); // Luffy
 
 		public override Rarity Rarity => Rarity.Starter;
 		

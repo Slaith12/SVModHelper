@@ -21,7 +21,7 @@ namespace LuffyTest
 
 		public override Rarity Rarity => Rarity.Starter;
 		public override ClassName Class => ClassName.Melee;
-		public override PilotName PilotUnique => (PilotName) 11000;
+		public override PilotName PilotUnique => ModContentManager.GetModPilotName<LuffyPilot>();
 
 		public override int ClassBaseCost => 1;
 		public override bool RequiresPlayerEntity => true;

@@ -15,14 +15,14 @@ namespace LuffyTest
 
 		public override string DisplayName => "Gum-Gum Gatling";
 
-		public override string Description => "Strike 7 random tiles in a radius of 3 around you.";
+		public override string Description => "Strike 9 random tiles in a radius of 3 around you.";
 
 		public override Il2CppCollections.HashSet<CardTrait> Traits => new HashSet<CardTrait>() { CardTrait.Attack }.ToILCPP();
 		public override Il2CppCollections.HashSet<CardTrait> HiddenTraits => new HashSet<CardTrait> { CardTrait.Flow }.ToILCPP();
 
 		public override Rarity Rarity => Rarity.Common;
 		public override ClassName Class => ClassName.Melee;
-		public override PilotName PilotUnique => (PilotName)11000;
+		public override PilotName PilotUnique => ModContentManager.GetModPilotName<LuffyPilot>();
 
 		public override int ClassBaseCost => 1;
 		public override bool RequiresPlayerEntity => true;
