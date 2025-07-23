@@ -530,14 +530,18 @@ namespace SVModHelper
 	        {
                 if (moddedPilotSprites.TryGetValue(pilotName, out var pilotSprites) && pilotSprites.TryGetValue(spriteKey, out var sprite))
                 {
-                    MelonLoader.MelonLogger.Msg($"[GetPilotSprite] Found sprite for key '{spriteKey}', sprite is null: {sprite == null}");
-
-                    if (sprite == null)
+                    if (sprite == null) // This code shouldn't actually be reached, but it's a workaround for now.
                     {
 	                    // TODO: Use the sprites cached in moddedPilotSprites instead of creating new ones each time.
 	                    // This is a temporary fix because the cached sprites are becoming null at some point post-initialization.
-	                    return GetModPilotInstance(pilotName).CreateSprite(spriteKey);
+
+                        MelonLoader.MelonLogger.Msg($"[GetPilotSprite] Sprite for pilot {pilotName} - key '{spriteKey}' is null, creating new sprite instance.");
+
+	                    var newSprite = GetModPilotInstance(pilotName).CreateSprite(spriteKey);
+                        SetPilotSprite(pilotName, spriteKey, newSprite);
+                        return newSprite;
 					}
+                    
 
 					return sprite;
                 }
