@@ -50,7 +50,7 @@ namespace LuffyTest
 				}
 
 				var legendaryCard = ContentGetter.GetAllCards().ToMono()
-					.Where(card => card.Class == DataManager.PlayerData.ClassName || card.Class == ClassName.Neutral)
+					.Where(card => card.Class == DataManager.PlayerData.ClassName || card.Class == ClassName.Neutral || card.Class == ClassName.Gunner)
 					.Where(card => card.PilotUnique == DataManager.PlayerData.PilotName || card.PilotUnique == PilotName.None)
 					.Where(card => card.Rarity == Rarity.Legendary)
 					.Where(card => !card.IsToken)
