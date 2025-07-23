@@ -9,6 +9,8 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModArtifact : AModContent, IHasArtifactID
     {
+
+
         public ArtifactName ArtifactName => ModContentManager.GetModArtifactName(GetType());
 
         public abstract string DisplayName { get; }

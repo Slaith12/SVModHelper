@@ -18,6 +18,8 @@ namespace SVModHelper.ModContent
             return new CardViewData(CardName, sprite, null);
         }
 
+
+
         public CardName CardName => ModContentManager.GetModCardName(GetType());
 
         public abstract string DisplayName { get; }
