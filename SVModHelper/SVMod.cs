@@ -285,6 +285,7 @@ namespace SVModHelper
 
             // Set the localization strings for the pilot
             ModContentManager.SetPilotDesc(id, modPilot.Description);
+            ModContentManager.SetPilotSprites(id, modPilot);
 
             return id;
         }

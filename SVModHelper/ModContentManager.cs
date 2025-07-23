@@ -1,5 +1,7 @@
 ﻿using Il2CppStarVaders;
+using Il2CppStarVaders;
 using MelonLoader;
+using SVModHelper.ModContent;
 using SVModHelper.ModContent;
 using System;
 using System.Collections.Generic;
@@ -8,8 +10,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using SVModHelper.ModContent;
-using Il2CppStarVaders;
 
 namespace SVModHelper
 {
@@ -523,33 +523,28 @@ namespace SVModHelper
             SetLocalizedString("PilotDescription" + pilotName.ToString() + "_Misc", desc);
         }
 
-        internal static void SetPilotSprite(PilotName pilotName, string spriteKey, Sprite sprite)
-        {
-            CheckInitStatus();
-            if (!moddedPilotSprites.ContainsKey(pilotName))
-            {
-                moddedPilotSprites[pilotName] = new Dictionary<string, Sprite>();
-            }
-            if (sprite != null)
-            {
-                moddedPilotSprites[pilotName][spriteKey] = sprite;
-            }
-        }
 
         internal static Sprite GetPilotSprite(PilotName pilotName, string spriteKey)
-        {
-            if (moddedPilotSprites.TryGetValue(pilotName, out var pilotSprites) && 
-                pilotSprites.TryGetValue(spriteKey, out var sprite))
-            {
-                return sprite;
-            }
+        {            
+	        if (!string.IsNullOrEmpty(spriteKey))
+	        {
+                // TODO: Use the sprites cached in moddedPilotSprites instead of creating new ones each time.
+                // This is a temporary fix because the cached sprites are becoming null at some point post-initialization.
+                return GetModPilotInstance(pilotName).CreateSprite(spriteKey);
+
+                if (moddedPilotSprites.TryGetValue(pilotName, out var pilotSprites) && pilotSprites.TryGetValue(spriteKey, out var sprite))
+                {
+                    MelonLoader.MelonLogger.Msg($"[GetPilotSprite] Found sprite for key '{spriteKey}', sprite is null: {sprite == null}");
+
+                    return sprite;
+                }
+			}
+            
             return SpriteHelper.GetTransparentSprite();
         }
 
-        internal static void PopulatePilotSprites(PilotName pilotName, AModPilot pilot)
+        internal static void SetPilotSprites(PilotName pilotName, AModPilot pilot)
         {
-            CheckInitStatus();
-            
             if (!moddedPilotSprites.ContainsKey(pilotName))
             {
                 moddedPilotSprites[pilotName] = new Dictionary<string, Sprite>();
@@ -558,33 +553,60 @@ namespace SVModHelper
             // Populate sprites based on the pilot's image properties using filenames as keys
             if (!string.IsNullOrEmpty(pilot.FrontPortrait))
                 SetPilotSprite(pilotName, pilot.FrontPortrait, pilot.CreateSprite(pilot.FrontPortrait));
-            
+
             if (!string.IsNullOrEmpty(pilot.FrontPortraitParallax))
                 SetPilotSprite(pilotName, pilot.FrontPortraitParallax, pilot.CreateSprite(pilot.FrontPortraitParallax));
-            
+
             if (!string.IsNullOrEmpty(pilot.PilotTitleSprite))
                 SetPilotSprite(pilotName, pilot.PilotTitleSprite, pilot.CreateSprite(pilot.PilotTitleSprite));
-            
+
             if (!string.IsNullOrEmpty(pilot.CombatPortraitNeutral))
                 SetPilotSprite(pilotName, pilot.CombatPortraitNeutral, pilot.CreateSprite(pilot.CombatPortraitNeutral));
-            
+
             if (!string.IsNullOrEmpty(pilot.CombatPortraitPositive))
                 SetPilotSprite(pilotName, pilot.CombatPortraitPositive, pilot.CreateSprite(pilot.CombatPortraitPositive));
-            
+
             if (!string.IsNullOrEmpty(pilot.CombatPortraitNegative))
                 SetPilotSprite(pilotName, pilot.CombatPortraitNegative, pilot.CreateSprite(pilot.CombatPortraitNegative));
-            
+
             if (!string.IsNullOrEmpty(pilot.CombatPortraitBurning))
                 SetPilotSprite(pilotName, pilot.CombatPortraitBurning, pilot.CreateSprite(pilot.CombatPortraitBurning));
-            
+
             if (!string.IsNullOrEmpty(pilot.CampaignPortrait))
                 SetPilotSprite(pilotName, pilot.CampaignPortrait, pilot.CreateSprite(pilot.CampaignPortrait));
-            
+
             if (!string.IsNullOrEmpty(pilot.VictoryPhoto))
                 SetPilotSprite(pilotName, pilot.VictoryPhoto, pilot.CreateSprite(pilot.VictoryPhoto));
+	        
+            foreach (var pilotEntry in moddedPilotSprites)
+            {
+                var pilotNameKey = pilotEntry.Key;
+                var spriteDict = pilotEntry.Value;
+                foreach (var spriteEntry in spriteDict)
+                {
+                    var spriteKey = spriteEntry.Key;
+                    var sprite = spriteEntry.Value;
+                    MelonLoader.MelonLogger.Msg($"[PilotSpriteCheck] Pilot: {pilotNameKey}, SpriteKey: '{spriteKey}', Sprite is null: {sprite == null}");
+                }
+            }
         }
 
-        public static PilotName GetModPilotName<T>() where T : AModPilot
+        private static void SetPilotSprite(PilotName pilotName, string spriteKey, Sprite sprite)
+        {
+	        if (!moddedPilotSprites.ContainsKey(pilotName))
+	        {
+		        moddedPilotSprites[pilotName] = new Dictionary<string, Sprite>();
+	        }
+            if (sprite != null)
+            {
+                moddedPilotSprites[pilotName][spriteKey] = sprite;
+
+                MelonLoader.MelonLogger.Msg($"[SetPilotSprite] Set sprite for {pilotName} with key {spriteKey}");
+            }
+	        
+        }
+
+		public static PilotName GetModPilotName<T>() where T : AModPilot
         {
             return GetModPilotName(typeof(T));
         }

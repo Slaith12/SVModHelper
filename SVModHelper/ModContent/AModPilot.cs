@@ -70,7 +70,6 @@ namespace SVModHelper.ModContent
                 string.IsNullOrEmpty(CombatPortraitBurning) ? CombatPortraitNeutral : CombatPortraitBurning);
 
             result.CampaignPortrait = ModContentManager.GetPilotSprite(result.PilotName, CampaignPortrait);
-            
             result.VictoryPhoto = ModContentManager.GetPilotSprite(result.PilotName, VictoryPhoto);
 
             return result;

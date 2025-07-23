@@ -30,7 +30,6 @@ namespace SVModHelper
 		{
 			if (ModContentManager.moddedPilotDict.ContainsKey(entry))
 			{
-				//MelonLogger.Msg($"Modded PilotDataDictSO.GetData called for {entry}.");
 				__result = ModContentManager.moddedPilotDict[entry].GetPilotData();
 	
 				return false;
