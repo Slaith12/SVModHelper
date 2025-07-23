@@ -284,7 +284,7 @@ namespace SVModHelper
             ModContentManager.moddedPilotDict.Add(id, modPilot);
 
             // Set the localization strings for the pilot
-            ModContentManager.SetPilotStrings(id, modPilot);
+            ModContentManager.SetPilotDesc(id, modPilot.Description);
 
             return id;
         }

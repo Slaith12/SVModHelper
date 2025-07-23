@@ -51,6 +51,8 @@ namespace SVModHelper
 
         internal static Dictionary<PilotName, AModPilot> moddedPilotDict;
 
+        internal static Dictionary<PilotName, Dictionary<string, Sprite>> moddedPilotSprites;
+
 		internal static Dictionary<Type, string> moddedTaskIDs;
         internal static Dictionary<string, AModTask> moddedTaskInstances;
 
@@ -105,6 +107,7 @@ namespace SVModHelper
             moddedPackVDs = new();
 
             moddedPilotDict = new();
+            moddedPilotSprites = new();
 
             moddedTaskIDs = new();
             moddedTaskInstances = new();
@@ -513,10 +516,78 @@ namespace SVModHelper
         #endregion
 
         #region Pilots
-        internal static void SetPilotStrings(PilotName pilotName, AModPilot pilot)
+        internal static void SetPilotDesc(PilotName pilotName, string desc)
         {
-            SetLocalizedString(pilotName.ToString() + "_PilotTitle", pilot.DisplayName);
-            SetLocalizedString("PilotDescription" + pilotName.ToString() + "_Misc", pilot.Description);
+            // The title in the Pilot Selection scene is not localized.
+
+            SetLocalizedString("PilotDescription" + pilotName.ToString() + "_Misc", desc);
+        }
+
+        internal static void SetPilotSprite(PilotName pilotName, string spriteKey, Sprite sprite)
+        {
+            CheckInitStatus();
+            if (!moddedPilotSprites.ContainsKey(pilotName))
+            {
+                moddedPilotSprites[pilotName] = new Dictionary<string, Sprite>();
+            }
+            if (sprite != null)
+            {
+                moddedPilotSprites[pilotName][spriteKey] = sprite;
+            }
+        }
+
+        internal static Sprite GetPilotSprite(PilotName pilotName, string spriteKey)
+        {
+            if (moddedPilotSprites.TryGetValue(pilotName, out var pilotSprites) && 
+                pilotSprites.TryGetValue(spriteKey, out var sprite))
+            {
+                return sprite;
+            }
+            return SpriteHelper.GetTransparentSprite();
+        }
+
+        internal static void PopulatePilotSprites(PilotName pilotName, AModPilot pilot)
+        {
+            CheckInitStatus();
+            
+            if (!moddedPilotSprites.ContainsKey(pilotName))
+            {
+                moddedPilotSprites[pilotName] = new Dictionary<string, Sprite>();
+            }
+
+            // Populate sprites based on the pilot's image properties using filenames as keys
+            if (!string.IsNullOrEmpty(pilot.FrontPortrait))
+                SetPilotSprite(pilotName, pilot.FrontPortrait, pilot.CreateSprite(pilot.FrontPortrait));
+            
+            if (!string.IsNullOrEmpty(pilot.FrontPortraitParallax))
+                SetPilotSprite(pilotName, pilot.FrontPortraitParallax, pilot.CreateSprite(pilot.FrontPortraitParallax));
+            
+            if (!string.IsNullOrEmpty(pilot.PilotTitleSprite))
+                SetPilotSprite(pilotName, pilot.PilotTitleSprite, pilot.CreateSprite(pilot.PilotTitleSprite));
+            
+            if (!string.IsNullOrEmpty(pilot.CombatPortraitNeutral))
+                SetPilotSprite(pilotName, pilot.CombatPortraitNeutral, pilot.CreateSprite(pilot.CombatPortraitNeutral));
+            
+            if (!string.IsNullOrEmpty(pilot.CombatPortraitPositive))
+                SetPilotSprite(pilotName, pilot.CombatPortraitPositive, pilot.CreateSprite(pilot.CombatPortraitPositive));
+            
+            if (!string.IsNullOrEmpty(pilot.CombatPortraitNegative))
+                SetPilotSprite(pilotName, pilot.CombatPortraitNegative, pilot.CreateSprite(pilot.CombatPortraitNegative));
+            
+            if (!string.IsNullOrEmpty(pilot.CombatPortraitBurning))
+                SetPilotSprite(pilotName, pilot.CombatPortraitBurning, pilot.CreateSprite(pilot.CombatPortraitBurning));
+            
+            if (!string.IsNullOrEmpty(pilot.CampaignPortrait))
+                SetPilotSprite(pilotName, pilot.CampaignPortrait, pilot.CreateSprite(pilot.CampaignPortrait));
+            
+            if (!string.IsNullOrEmpty(pilot.VictoryPhoto))
+                SetPilotSprite(pilotName, pilot.VictoryPhoto, pilot.CreateSprite(pilot.VictoryPhoto));
+        }
+
+        internal static void SetPilotImage(ArtifactName artifactName, Sprite sprite)
+        {
+            if (sprite != null)
+                moddedArtifactVDs[artifactName] = sprite;
         }
 
         public static PilotName GetModPilotName<T>() where T : AModPilot
@@ -527,7 +598,16 @@ namespace SVModHelper
         public static PilotName GetModPilotName(Type pilotType)
         {
             var pilotEntry = moddedPilotDict.FirstOrDefault(kvp => kvp.Value.GetType() == pilotType);
-            return pilotEntry.Key;
+            return pilotEntry.Value != null ? pilotEntry.Key : INVALIDPILOTID;
+        }
+
+        public static AModPilot GetModPilotInstance(PilotName pilotName)
+        {
+            if (moddedPilotDict.TryGetValue(pilotName, out AModPilot pilot))
+            {
+                return pilot;
+            }
+            return null;
         }
         #endregion
 

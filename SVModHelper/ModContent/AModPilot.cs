@@ -42,8 +42,6 @@ namespace SVModHelper.ModContent
         /// </summary>
         public abstract Il2CppCollections.List<ArtifactName> StartingArtifacts { get; }
 
-        private Dictionary<string, Sprite> _spriteCache = new();
-
         public PilotDataSO GetPilotData()
         {
             var result = ScriptableObject.CreateInstance<PilotDataSO>();
@@ -57,20 +55,23 @@ namespace SVModHelper.ModContent
 
             result.Complexity = Complexity;
 
-            // Use cached sprites or create new ones.
-            result.FrontPortrait = GetCachedSprite(FrontPortrait);
-            result.FrontPortraitParallax = GetCachedSprite(FrontPortraitParallax);
-            result.PilotTitleSprite = GetCachedSprite(PilotTitleSprite);
-            result.CombatPortraitNeutral = GetCachedSprite(CombatPortraitNeutral);
+            // Use centralized sprite management with filenames as keys
+            result.FrontPortrait = ModContentManager.GetPilotSprite(result.PilotName, FrontPortrait);
+            result.FrontPortraitParallax = ModContentManager.GetPilotSprite(result.PilotName, FrontPortraitParallax);
+            result.PilotTitleSprite = ModContentManager.GetPilotSprite(result.PilotName, PilotTitleSprite);
+            result.CombatPortraitNeutral = ModContentManager.GetPilotSprite(result.PilotName, CombatPortraitNeutral);
 
             // Default to CombatPortraitNeutral if other CombatPortraits are not provided.
-            result.CombatPortraitPositive = GetCachedSprite(string.IsNullOrEmpty(CombatPortraitPositive) ? CombatPortraitNeutral : CombatPortraitPositive);
-            result.CombatPortraitNegative = GetCachedSprite(string.IsNullOrEmpty(CombatPortraitNegative) ? CombatPortraitNeutral : CombatPortraitNegative);
-            result.CombatPortraitBurning = GetCachedSprite(string.IsNullOrEmpty(CombatPortraitBurning) ? CombatPortraitNeutral : CombatPortraitBurning);
+            result.CombatPortraitPositive = ModContentManager.GetPilotSprite(result.PilotName, 
+                string.IsNullOrEmpty(CombatPortraitPositive) ? CombatPortraitNeutral : CombatPortraitPositive);
+            result.CombatPortraitNegative = ModContentManager.GetPilotSprite(result.PilotName, 
+                string.IsNullOrEmpty(CombatPortraitNegative) ? CombatPortraitNeutral : CombatPortraitNegative);
+            result.CombatPortraitBurning = ModContentManager.GetPilotSprite(result.PilotName, 
+                string.IsNullOrEmpty(CombatPortraitBurning) ? CombatPortraitNeutral : CombatPortraitBurning);
 
-            result.CampaignPortrait = GetCachedSprite(CampaignPortrait);
+            result.CampaignPortrait = ModContentManager.GetPilotSprite(result.PilotName, CampaignPortrait);
             
-            result.VictoryPhoto = GetCachedSprite(VictoryPhoto);
+            result.VictoryPhoto = ModContentManager.GetPilotSprite(result.PilotName, VictoryPhoto);
 
             return result;
         }
@@ -119,18 +120,12 @@ namespace SVModHelper.ModContent
             return playerDataSO;
 		}
         
-        
-        private Sprite GetCachedSprite(string imageName)
+        public Sprite CreateSprite(string imageName)
         {
             if (string.IsNullOrEmpty(imageName))
                 return SpriteHelper.GetTransparentSprite();
-                
-            if (_spriteCache.TryGetValue(imageName, out Sprite cachedSprite))
-                return cachedSprite;
-                
-            Sprite newSprite = GetStandardSprite(imageName);
-            _spriteCache[imageName] = newSprite;
-            return newSprite;
+            return GetStandardSprite(imageName);
         }
+
     }
 }
