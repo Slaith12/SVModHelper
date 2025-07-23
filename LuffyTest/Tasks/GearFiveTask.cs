@@ -50,10 +50,26 @@ namespace LuffyTest
 				}
 
 				var legendaryCard = ContentGetter.GetAllCards().ToMono()
-					.Where(card => card.Class == DataManager.PlayerData.ClassName || card.Class == ClassName.Neutral || card.Class == ClassName.Gunner)
-					.Where(card => card.PilotUnique == DataManager.PlayerData.PilotName || card.PilotUnique == PilotName.None)
+					//.Where(card => card.Class == DataManager.PlayerData.ClassName || card.Class == ClassName.Neutral || card.Class == ClassName.Gunner)
+					//.Where(card => card.PilotUnique == DataManager.PlayerData.PilotName || card.PilotUnique == PilotName.None)
 					.Where(card => card.Rarity == Rarity.Legendary)
 					.Where(card => !card.IsToken)
+					.Where(card => 
+						card.CardName != CardName.FireEverything &&
+						card.CardName != CardName.SayHello &&
+						card.CardName != CardName.BigBang &&
+						card.CardName != CardName.Annihilation &&
+						card.CardName != CardName.FoolsGold &&
+						card.CardName != CardName.Awaken &&
+						card.CardName != CardName.Levitate &&
+						card.CardName != CardName.FoolsGold &&
+						card.CardName != CardName.ManaGem &&
+						card.CardName != CardName.SpawnOru &&
+						card.CardName != CardName.RaiseArmy &&
+						card.CardName != CardName.BurnBook &&
+						card.CardName != CardName.DeathsTouch &&
+						card.CardName != CardName.CosmicWish
+					)
 					.ToList().ToILCPPEnumerable()
 					.PickRandom();
 
