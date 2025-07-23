@@ -12,7 +12,7 @@ namespace LuffyTest
 {
 	public class GearFive : AModArtifact
 	{
-		public override ArtifactName ArtifactNameOverride => (ArtifactName) 17000;
+
 		public override string DisplayName => "Gear Five";
 
 		public override string Description =>

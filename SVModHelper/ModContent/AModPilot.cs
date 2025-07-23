@@ -10,11 +10,7 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModPilot : AModContent
     {   
-        /// <summary>
-        /// If assigned, this pilot will be registered with this PilotName instead of the default one. Must be greater or equal to 1000.
-        /// This is useful when setting up custom pilot names.
-        /// </summary>
-        public virtual PilotName PilotNameOverride => ModContentManager.INVALIDPILOTID;
+
 
         /// <summary>
         /// The class that this pilot belongs to.

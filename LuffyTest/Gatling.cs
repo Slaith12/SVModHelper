@@ -11,7 +11,7 @@ namespace LuffyTest
 {
 	public class Gatling : AModCard
 	{
-		public override CardName CardNameOverride => (CardName)17002;
+
 
 		public override string DisplayName => "Gum-Gum Gatling";
 

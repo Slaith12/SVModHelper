@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,25 +11,11 @@ namespace SVModHelper.ModContent
     {
         public static bool Prefix(ArtifactName artifactName, ref ArtifactModel __result, ArtifactFactory __instance)
         {
-            if (artifactName >= ModContentManager.MINARTIFACTID)
+            if (artifactName >= (ArtifactName)15000 && artifactName < (ArtifactName)(ModContentManager.moddedArtifacts.Count + 15000))
             {
-	            MelonLogger.Msg($"Creating Artifact - {artifactName}");
-
-				ArtifactID artifactID = new ArtifactID(__instance._artifactCount);
+                ArtifactID artifactID = new ArtifactID(__instance._artifactCount);
                 __instance._artifactCount++;
-
-                var type = ModContentManager.moddedArtifactDict.FirstOrDefault(pair => pair.Value == artifactName).Key;
-
-                if (type == null)
-                {
-                    MelonLogger.Error($"ArtifactName {artifactName} not found in modded artifact dictionary.");
-                    __result = null;
-                    return false;
-                }
-
-				var modArtifact = Activator.CreateInstance(type, true) as IHasArtifactID;
-
-                ModArtifactModelDef artifactModelDef = new ModArtifactModelDef(modArtifact, artifactName);
+                ModArtifactModelDef artifactModelDef = new ModArtifactModelDef(ModContentManager.moddedArtifacts[(int)artifactName - 15000], artifactName);
                 ArtifactModel artifactModel = new ArtifactModel(artifactModelDef, artifactID);
 
                 artifactModelDef.SetOnCreateID(artifactModel.ID);
@@ -60,8 +45,8 @@ namespace SVModHelper.ModContent
         public static void Postfix(ref Il2CppCollections.List<ArtifactModel> __result)
         {
             ArtifactFactory artifactFactory = new ArtifactFactory();
-            foreach(ArtifactName artifactName in ModContentManager.moddedArtifactDict.Values)
-                __result.Add(artifactFactory.CreateArtifactModel(artifactName));
+            for (int i = 0; i < ModContentManager.moddedArtifacts.Count; i++)
+                __result.Add(artifactFactory.CreateArtifactModel((ArtifactName)(i + 15000)));
         }
     }
 }

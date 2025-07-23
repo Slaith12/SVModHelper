@@ -11,7 +11,7 @@ namespace LuffyTest
 {
     public class Meat : AModCard
     {
-	    public override CardName CardNameOverride => (CardName) 17000;
+
 
 	    public override string DisplayName => "MEAT!!!";
 

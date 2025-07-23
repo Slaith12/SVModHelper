@@ -18,11 +18,7 @@ namespace SVModHelper.ModContent
             return new CardViewData(CardName, sprite, null);
         }
 
-        /// <summary>
-        /// If assigned, this card will be registered with this CardName instead of the default one. Must be greater or equal to 15000.
-        /// This is useful when setting up AModPilot.
-        /// </summary>
-        public virtual CardName CardNameOverride => ModContentManager.INVALIDCARDID;
+
 
         public CardName CardName => ModContentManager.GetModCardName(GetType());
 

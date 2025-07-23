@@ -148,22 +148,8 @@ namespace SVModHelper
                 throw new InvalidOperationException("Can not register the same card multiple times.");
             }
 
-            CardName id;
-
-            if (modCardDef.CardNameOverride != ModContentManager.INVALIDCARDID)
-            {
-                id = modCardDef.CardNameOverride;
-            }
-            else
-            {
-                id = ModContentManager.moddedCardDict.Count + ModContentManager.MINCARDID;
-            }
-
-            // Check if the assigned ID already exists in the dictionary
-            if (ModContentManager.moddedCardDict.ContainsValue(id))
-            {
-                throw new InvalidOperationException($"Card ID {id} is already registered. Cannot register card {modCardDef.GetType().Name} with the same ID.");
-            }
+            CardName id = ModContentManager.moddedCardDict.Count + ModContentManager.MINCARDID;
+            ModContentManager.moddedCards.Add(modCardDef);
 
             ModContentManager.moddedCardDict.Add(cardType, id);
 
@@ -184,22 +170,7 @@ namespace SVModHelper
                 throw new InvalidOperationException("Can not register the same artifact multiple times.");
             }
 
-            ArtifactName id;
-
-            if (modArtifactDef.ArtifactNameOverride != ModContentManager.INVALIDARTIFACTID)
-            {
-                id = modArtifactDef.ArtifactNameOverride;
-            }
-            else
-            {
-                id = ModContentManager.moddedArtifacts.Count + ModContentManager.MINARTIFACTID;
-            }
-
-            // Check if the assigned ID already exists in the dictionary
-            if (ModContentManager.moddedArtifactDict.ContainsValue(id))
-            {
-                throw new InvalidOperationException($"Artifact ID {id} is already registered. Cannot register artifact {modArtifactDef.GetType().Name} with the same ID.");
-            }
+            ArtifactName id = ModContentManager.moddedArtifacts.Count + ModContentManager.MINARTIFACTID;
 
             ModContentManager.moddedArtifacts.Add(modArtifactDef);
             ModContentManager.moddedArtifactDict.Add(artifactType, id);
@@ -302,16 +273,7 @@ namespace SVModHelper
 				throw new InvalidOperationException("Can not register the same pilot multiple times.");
             }
 
-            PilotName id;
-
-            if (modPilot.PilotNameOverride != ModContentManager.INVALIDPILOTID)
-            {
-                id = modPilot.PilotNameOverride;
-            }
-            else
-            {
-                id = ModContentManager.moddedPilotDict.Count + ModContentManager.MINPILOTID;
-            }
+            PilotName id = ModContentManager.moddedPilotDict.Count + ModContentManager.MINPILOTID;
 
             // Check if the assigned ID already exists in the dictionary
             if (ModContentManager.moddedPilotDict.ContainsKey(id))

@@ -29,7 +29,8 @@ namespace SVModHelper
         internal static Dictionary<ItemPackName, PackModification> activePackMods;
         internal static Dictionary<ArtifactName, SpellModification> activeSpellMods;
 
-		internal static Dictionary<Type, CardName> moddedCardDict;
+        internal static List<AModCard> moddedCards;
+        internal static Dictionary<Type, CardName> moddedCardDict;
         internal static Dictionary<CardName, CardViewData> moddedCardVDs;
 
         internal static List<IHasArtifactID> moddedArtifacts;
@@ -83,6 +84,7 @@ namespace SVModHelper
             packModifications = new();
             spellModifications = new();
 
+            moddedCards = new();
             moddedCardDict = new();
             moddedCardVDs = new();
 
@@ -332,6 +334,13 @@ namespace SVModHelper
             }
             return INVALIDCARDID;
         }
+
+        public static AModCard GetModCardInstance(CardName cardName)
+        {
+            if (cardName < MINCARDID || cardName >= MINCARDID + moddedCards.Count)
+                return null;
+            return moddedCards[cardName - MINCARDID];
+        }
         #endregion
 
         #region Artifacts
@@ -369,9 +378,9 @@ namespace SVModHelper
 
         public static IHasArtifactID GetModArtifactInstance(ArtifactName artifactName)
         {
-            if (artifactName < MINARTIFACTID)
+            if (artifactName < MINARTIFACTID || artifactName >= MINARTIFACTID + moddedArtifacts.Count)
                 return null;
-            return moddedArtifacts.First(arti => arti.ArtifactName == (artifactName));
+            return moddedArtifacts[artifactName - MINARTIFACTID];
         }
         #endregion
 
@@ -508,6 +517,17 @@ namespace SVModHelper
         {
             SetLocalizedString(pilotName.ToString() + "_PilotTitle", pilot.DisplayName);
             SetLocalizedString("PilotDescription" + pilotName.ToString() + "_Misc", pilot.Description);
+        }
+
+        public static PilotName GetModPilotName<T>() where T : AModPilot
+        {
+            return GetModPilotName(typeof(T));
+        }
+
+        public static PilotName GetModPilotName(Type pilotType)
+        {
+            var pilotEntry = moddedPilotDict.FirstOrDefault(kvp => kvp.Value.GetType() == pilotType);
+            return pilotEntry.Key;
         }
         #endregion
 
