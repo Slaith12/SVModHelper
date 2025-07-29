@@ -1,14 +1,4 @@
-﻿using Il2CppStarVaders;
-using Il2CppStarVaders;
-using MelonLoader;
-using SVModHelper.ModContent;
-using SVModHelper.ModContent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SVModHelper.ModContent;
 using UnityEngine;
 
 namespace SVModHelper
@@ -52,7 +42,6 @@ namespace SVModHelper
         internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
 
         internal static Dictionary<PilotName, AModPilot> moddedPilotDict;
-
         internal static Dictionary<PilotName, Dictionary<string, Sprite>> moddedPilotSprites;
 
 		internal static Dictionary<Type, string> moddedTaskIDs;

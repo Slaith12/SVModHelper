@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SVModHelper.ModContent
 {
     public abstract class AModArtifact : AModContent, IHasArtifactID
     {
-
-
         public ArtifactName ArtifactName => ModContentManager.GetModArtifactName(GetType());
 
         public abstract string DisplayName { get; }

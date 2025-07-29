@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-
-namespace SVModHelper.ModContent
+﻿namespace SVModHelper.ModContent
 {
     public class ItemModification
     {

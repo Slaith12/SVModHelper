@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SVModHelper
+﻿namespace SVModHelper
 {
     [HarmonyPatch(typeof(ContentGetter), nameof(ContentGetter.GetEncounterDifficultyMods))]
     internal class EncounterModifierFixer

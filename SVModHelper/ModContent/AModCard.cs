@@ -1,10 +1,4 @@
-﻿using Il2CppInterop.Runtime.Injection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SVModHelper.ModContent
 {
@@ -17,8 +11,6 @@ namespace SVModHelper.ModContent
                 return null;
             return new CardViewData(CardName, sprite, null);
         }
-
-
 
         public CardName CardName => ModContentManager.GetModCardName(GetType());
 

@@ -1,6 +1,4 @@
-﻿using Il2CppStarVaders;
-
-namespace SVModHelper.ModContent
+﻿namespace SVModHelper.ModContent
 {
     public class CardModification
     {

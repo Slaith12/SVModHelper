@@ -1,15 +1,4 @@
-﻿using Il2CppMS.Internal.Xml.XPath;
-using MelonLoader;
-using SVModHelper.ModContent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-
-namespace SVModHelper
+﻿namespace SVModHelper
 {
 	[HarmonyPatch(typeof(ContentGetter), nameof(ContentGetter.GetAllPilots))]
 	internal static class ModdedGetAllPilots

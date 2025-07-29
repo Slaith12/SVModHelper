@@ -1,7 +1,6 @@
 ﻿using MelonLoader;
 using Il2CppInterop.Runtime.Injection;
 using SVModHelper.ModContent;
-using UnityEngine;
 using System.Reflection;
 
 [assembly: MelonInfo(typeof(SVModHelper.Core), "StarVaders Mod Helper", "0.1.0", "Slaith", null)]

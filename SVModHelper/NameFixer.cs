@@ -1,6 +1,4 @@
-﻿using UnityEngine.Localization.Settings;
-
-namespace SVModHelper
+﻿namespace SVModHelper
 {
     [HarmonyPatch(typeof(LocalizationUtils), nameof(LocalizationUtils.ResetLocalizedStringDict))]
     internal static class NameFixer

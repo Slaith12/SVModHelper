@@ -1,11 +1,4 @@
-﻿using MelonLoader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace SVModHelper.ModContent
@@ -22,10 +15,10 @@ namespace SVModHelper.ModContent
         //TODO: Update this function to cache textures for future calls
         protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true)
         {
-	        if (!TryGetContentData(imageName, out byte[] data, localName))
-	        {
+            if (!TryGetContentData(imageName, out byte[] data, localName))
+            {
                 MelonLoader.MelonLogger.Error($"Failed to load image - {imageName}. Make sure the file exists has been added as an Embedded Resource, and that the path is specified relative to the .csproj.");
-		            return null;
+                    return null;
           }
             Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
             texture.LoadImage(data);
