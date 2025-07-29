@@ -3,19 +3,29 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
-		<RootNamespace>SVModHelper</RootNamespace>
+		<RootNamespace>LuffyTest</RootNamespace>
 		<LangVersion>default</LangVersion>
 		<IsPackable>false</IsPackable>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<AssemblyName>SVModHelper</AssemblyName>
+		<AssemblyName>LuffyTest</AssemblyName>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="EntityUnknown.png" />
-	  <None Remove="shadow.png" />
+	  <None Remove="CannonFire.png" />
+	  <None Remove="Gatling.png" />
+	  <None Remove="GearFive.png" />
+	  <None Remove="LuffyCampaign.png" />
+	  <None Remove="LuffyCombat.png" />
+	  <None Remove="LuffyName.png" />
+	  <None Remove="LuffySelect.png" />
+	  <None Remove="LuffySelect2.png" />
+	  <None Remove="Meat.png" />
+	  <None Remove="Pistol.png" />
+	  <None Remove="Rocket.png" />
+	  <None Remove="T_IrisSelect.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -114,6 +124,9 @@
 		</Reference>
 		<Reference Include="Il2CppSystem.Xml.Linq">
 			<HintPath>C:\Program Files (x86)\Steam\steamapps\common\StarVaders\MelonLoader\Il2CppAssemblies\Il2CppSystem.Xml.Linq.dll</HintPath>
+		</Reference>
+		<Reference Include="SVModHelper">
+		  <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\StarVaders\Mods\SVModHelper.dll</HintPath>
 		</Reference>
 		<Reference Include="Unity.Addressables">
 			<HintPath>C:\Program Files (x86)\Steam\steamapps\common\StarVaders\MelonLoader\Il2CppAssemblies\Unity.Addressables.dll</HintPath>
@@ -397,61 +410,30 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="PilotFixer.cs" />
-		<Compile Include="ModContent\AModPilot.cs" />
-		<Compile Include="EntityViewDataInjector.cs" />
-		<Compile Include="EnumeratorLink.cs" />
-		<Compile Include="GameDebug.cs" />
-		<Compile Include="ImageFixer.cs" />
+		<Compile Include="Rocket.cs" />
+		<Compile Include="Gatling.cs" />
+		<Compile Include="Pistol.cs" />
+		<Compile Include="Meat.cs" />
+		<Compile Include="GearFive.cs" />
+		<Compile Include="Tasks\DropMeatTask.cs" />
+		<Compile Include="Tasks\RocketTask.cs" />
+		<Compile Include="Tasks\GatlingTask.cs" />
+		<Compile Include="Tasks\GearFiveTask.cs" />
+		<Compile Include="Tasks\MakeAllCardsInHandFreeThisTurnTask.cs" />
+		<Compile Include="LuffyPilot.cs" />
 		<Compile Include="Core.cs" />
-		<Compile Include="Il2CppUtils.cs" />
-		<Compile Include="ModContent\AModComponent.cs" />
-		<Compile Include="ModContent\AModContent.cs" />
-		<Compile Include="ModContent\AModEnemy.cs" />
-		<Compile Include="ModContent\AModItem.cs" />
-		<Compile Include="ModContent\AModPack.cs" />
-		<Compile Include="ModContent\AModSpell.cs" />
-		<Compile Include="ModContent\ArtifactModification.cs" />
-		<Compile Include="ModContent\CardModification.cs" />
-		<Compile Include="ModContent\ComponentModification.cs" />
-		<Compile Include="ModContent\IHasArtifactID.cs" />
-		<Compile Include="ModContent\ItemModification.cs" />
-		<Compile Include="ModContent\ModArtifactModelDef.cs" />
-		<Compile Include="ModContent\ModCardModelDef.cs" />
-		<Compile Include="ModContent\AModArtifact.cs" />
-		<Compile Include="ModContent\AModCard.cs" />
-		<Compile Include="ModContent\ModArtifactFactory.cs" />
-		<Compile Include="ModContent\ModCardFactory.cs" />
-		<Compile Include="ModContent\AModTask.cs" />
-		<Compile Include="ModContent\ModPilotSelectionController.cs" />
-		<Compile Include="ModContent\ModComponentFactory.cs" />
-		<Compile Include="ModContent\ModComponentModelDef.cs" />
-		<Compile Include="ModContent\ModEnemyModelDef.cs" />
-		<Compile Include="ModContent\ModItemFactory.cs" />
-		<Compile Include="ModContent\ModItemModelDef.cs" />
-		<Compile Include="ModContent\ModTaskExecute.cs" />
-		<Compile Include="ModContent\PackModification.cs" />
-		<Compile Include="ModContent\SpellModification.cs" />
-		<Compile Include="ModifierFixer.cs" />
-		<Compile Include="NameFixer.cs" />
-		<Compile Include="PropertyFixer.cs" />
-		<Compile Include="SpriteHelper.cs" />
-		<Compile Include="ModContentManager.cs" />
-		<Compile Include="ResourceHelper.cs" />
-		<Compile Include="SVMod.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="EntityUnknown.png" />
-	  <EmbeddedResource Include="shadow.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Using Include="HarmonyLib" />
-	  <Using Include="Il2CppStarVaders" />
-	  <Using Include="Il2CppSystem.Collections.Generic">
-	    <Alias>Il2CppCollections</Alias>
-	  </Using>
+	  <EmbeddedResource Include="Gatling.png" />
+	  <EmbeddedResource Include="GearFive.png" />
+	  <EmbeddedResource Include="LuffyCampaign.png" />
+	  <EmbeddedResource Include="LuffyCombat.png" />
+	  <EmbeddedResource Include="LuffyName.png" />
+	  <EmbeddedResource Include="LuffySelect2.png" />
+	  <EmbeddedResource Include="Meat.png" />
+	  <EmbeddedResource Include="Pistol.png" />
+	  <EmbeddedResource Include="Rocket.png" />
 	</ItemGroup>
 	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

@@ -22,8 +22,11 @@ namespace SVModHelper.ModContent
         //TODO: Update this function to cache textures for future calls
         protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true)
         {
-            if (!TryGetContentData(imageName, out byte[] data, localName))
-                return null;
+	        if (!TryGetContentData(imageName, out byte[] data, localName))
+	        {
+                MelonLoader.MelonLogger.Error($"Failed to load image - {imageName}. Make sure the file exists has been added as an Embedded Resource, and that the path is specified relative to the .csproj.");
+		            return null;
+          }
             Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
             texture.LoadImage(data);
             return texture;

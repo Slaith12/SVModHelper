@@ -26,7 +26,7 @@ namespace SVModHelper
                 {
                     RegisterCard(Activator.CreateInstance(modCardDef, true) as AModCard);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering card {modCardDef.Name}.\n" + ex);
                 }
@@ -97,6 +97,17 @@ namespace SVModHelper
                     LoggerInstance.Error($"The following error occured while registering task {modTaskDef.Name}.\n" + ex);
                 }
             }
+            foreach (Type modPilot in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModPilot))))
+            {
+                try
+                {
+                    RegisterPilot(Activator.CreateInstance(modPilot) as AModPilot);
+                }
+                catch (Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering pilot {modPilot.Name}.\n" + ex);
+                }
+            }
         }
 
         protected internal virtual void LateRegisterMod() { }
@@ -119,8 +130,9 @@ namespace SVModHelper
                 throw new InvalidOperationException("Can not register the same card multiple times.");
             }
 
-            CardName id = ModContentManager.moddedCards.Count + ModContentManager.MINCARDID;
+            CardName id = ModContentManager.moddedCardDict.Count + ModContentManager.MINCARDID;
             ModContentManager.moddedCards.Add(modCardDef);
+
             ModContentManager.moddedCardDict.Add(cardType, id);
 
             ModContentManager.SetCardTitle(id, modCardDef.DisplayName);
@@ -141,6 +153,7 @@ namespace SVModHelper
             }
 
             ArtifactName id = ModContentManager.moddedArtifacts.Count + ModContentManager.MINARTIFACTID;
+
             ModContentManager.moddedArtifacts.Add(modArtifactDef);
             ModContentManager.moddedArtifactDict.Add(artifactType, id);
 
@@ -228,6 +241,33 @@ namespace SVModHelper
             ModContentManager.SetArtifactTitle(id, modSpellDef.DisplayName);
             ModContentManager.SetArtifactDesc(id, modSpellDef.Description);
             ModContentManager.SetArtifactImage(id, modSpellDef.Sprite);
+
+            return id;
+        }
+
+        protected PilotName RegisterPilot(AModPilot modPilot)
+        {
+            ModContentManager.CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering pilot " + modPilot.GetType().Name);
+            Type pilotType = modPilot.GetType();
+            if (ModContentManager.moddedPilotDict.Values.Any(pilot => pilot.GetType() == pilotType))
+            {
+				throw new InvalidOperationException("Can not register the same pilot multiple times.");
+            }
+
+            PilotName id = ModContentManager.moddedPilotDict.Count + ModContentManager.MINPILOTID;
+
+            // Check if the assigned ID already exists in the dictionary
+            if (ModContentManager.moddedPilotDict.ContainsKey(id))
+            {
+                throw new InvalidOperationException($"Pilot ID {id} is already registered. Cannot register pilot {modPilot.GetType().Name} with the same ID.");
+            }
+
+            ModContentManager.moddedPilotDict.Add(id, modPilot);
+
+            // Set the localization strings for the pilot
+            ModContentManager.SetPilotDesc(id, modPilot.Description);
+            ModContentManager.SetPilotSprites(id, modPilot);
 
             return id;
         }
