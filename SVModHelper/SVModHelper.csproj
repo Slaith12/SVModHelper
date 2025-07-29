@@ -14,6 +14,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="EntityUnknown.png" />
 	  <None Remove="shadow.png" />
 	</ItemGroup>
 
@@ -396,6 +397,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Include="EntityViewDataInjector.cs" />
 		<Compile Include="EnumeratorLink.cs" />
 		<Compile Include="GameDebug.cs" />
 		<Compile Include="ImageFixer.cs" />
@@ -430,10 +432,12 @@
 		<Compile Include="NameFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
 		<Compile Include="ModContentManager.cs" />
+		<Compile Include="ResourceHelper.cs" />
 		<Compile Include="SVMod.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="EntityUnknown.png" />
 	  <EmbeddedResource Include="shadow.png" />
 	</ItemGroup>
 

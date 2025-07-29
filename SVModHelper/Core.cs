@@ -1,5 +1,8 @@
 ﻿using MelonLoader;
 using Il2CppInterop.Runtime.Injection;
+using SVModHelper.ModContent;
+using UnityEngine;
+using System.Reflection;
 
 [assembly: MelonInfo(typeof(SVModHelper.Core), "StarVaders Mod Helper", "0.1.0", "Slaith", null)]
 [assembly: MelonGame("Pengonauts", "StarVaders")]
@@ -12,7 +15,30 @@ namespace SVModHelper
         {
             base.OnEarlyInitializeMelon();
 
-            ModContentManager.Init();
+            Melon<Core>.Logger.Msg("Loading default sprites");
+            Assembly assembly = typeof(AModContent).Assembly;
+            //I was originally planning on automatically grabbing the shadow sprite from the game directly,
+            //but I'm not sure how to do that so I'm just adding the shadow sprite to the build instead.
+            byte[] arr = ResourceHelper.LoadResource(assembly, "SVModHelper.shadow.png");
+            if (arr == null)
+            {
+                Melon<Core>.Logger.Error("Unable to load default shadow image.");
+            }
+            else
+            {
+                ModContentManager.contentData.Add("SVModHelper.DefaultShadow.png", arr);
+            }
+
+            arr = ResourceHelper.LoadResource(assembly, "SVModHelper.EntityUnknown.png");
+            if (arr == null)
+            {
+                Melon<Core>.Logger.Error("Unable to load default entity image.");
+            }
+            else
+            {
+                ModContentManager.contentData.Add("SVModHelper.DefaultEntity.png", arr);
+            }
+            Melon<Core>.Logger.Msg("Sprites loaded.");
         }
 
         public override void OnInitializeMelon()

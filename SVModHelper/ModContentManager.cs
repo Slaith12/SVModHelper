@@ -41,7 +41,7 @@ namespace SVModHelper
 
         internal static List<AModItem> moddedItems;
         internal static Dictionary<Type, ItemName> moddedItemDict;
-        internal static Dictionary<ItemName, AEntityViewDataSO> moddedItemVDs;
+        internal static Dictionary<ItemName, ItemViewDataSO> moddedItemVDs;
 
         internal static List<AModPack> moddedPacks;
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
@@ -67,7 +67,7 @@ namespace SVModHelper
         public const ItemPackName INVALIDPACKID = (ItemPackName)(-1);
         public const string INVALIDTASKID = "";
 
-        internal static void Init()
+        static ModContentManager()
         {
             postInit = false;
 
@@ -101,31 +101,6 @@ namespace SVModHelper
             moddedTaskInstances = new();
 
             contentData = new();
-
-            //I was originally planning on automatically grabbing the shadow sprite from the game directly,
-            //but I'm not sure how to do that so I'm just adding the shadow sprite to the build instead.
-            Texture2D shadowTexture = new Texture2D(2, 2);
-            byte[] arr;
-            using (Stream stream = typeof(ModContentManager).Assembly.GetManifestResourceStream("shadow.png"))
-            {
-                if (stream == null)
-                    return;
-
-                if (stream is MemoryStream memStream)
-                {
-                    arr = memStream.ToArray();
-                }
-                else
-                {
-                    using (memStream = new MemoryStream())
-                    {
-                        stream.CopyTo(memStream);
-                        arr = memStream.ToArray();
-                    }
-                }
-            }
-            shadowTexture.LoadImage(arr);
-            AModContent.shadowSprite = Sprite.Create(shadowTexture, new Rect(0, 0, shadowTexture.width, shadowTexture.height), new Vector2(0.5f, 0.5f));
         }
 
         #region Modifications
@@ -429,10 +404,10 @@ namespace SVModHelper
             return SetLocalizedString(id, desc);
         }
 
-        internal static void SetItemImage(ItemName itemName, ItemViewDataSO sprite)
+        internal static void SetItemImage(ItemName itemName, ItemViewDataSO viewData)
         {
-            if (sprite != null)
-                moddedItemVDs[itemName] = sprite;
+            if (viewData != null)
+                moddedItemVDs[itemName] = viewData;
         }
 
         public static ItemName GetModItemName<T>() where T : AModItem

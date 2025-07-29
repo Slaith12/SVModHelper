@@ -103,26 +103,8 @@ namespace SVModHelper
 
         protected void RegisterResource(string resourceName)
         {
-            byte[] arr;
             Melon<Core>.Logger.Msg("  Loading resource " + resourceName);
-            using (Stream stream = MelonAssembly.Assembly.GetManifestResourceStream(resourceName))
-            {
-                if (stream == null)
-                    return;
-
-                if (stream is MemoryStream memStream)
-                {
-                    arr = memStream.ToArray();
-                }
-                else
-                {
-                    using (memStream = new MemoryStream())
-                    {
-                        stream.CopyTo(memStream);
-                        arr = memStream.ToArray();
-                    }
-                }
-            }
+            byte[] arr = ResourceHelper.LoadResource(MelonAssembly.Assembly, resourceName);
             ModContentManager.contentData.Add(resourceName, arr);
             Melon<Core>.Logger.Msg("  Resource Loaded");
         }
