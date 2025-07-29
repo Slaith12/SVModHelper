@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using SVModHelper.ModContent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,9 +70,16 @@ namespace SVModHelper
     {
         public static bool Prefix(ItemName entry, ref AsyncOperationHandle<AEntityViewDataSO> __result, ItemViewDataListSO __instance)
         {
-            if (!ModContentManager.moddedItemVDs.TryGetValue(entry, out var viewData))
+            //The sprites in the cached VDs get deleted sometime after initialization, so we need to recreate the VDs every time.
+            //This also means VDs added by ItemModifications are ignored. Even if we checked the mods again here, the VD would probably be deleted already.
+            //if (!ModContentManager.moddedItemVDs.TryGetValue(entry, out var viewData))
+            //    return true;
+            AModItem item = ModContentManager.GetModItemInstance(entry);
+            if (item == null)
                 return true;
-            __result = __instance.GetData(ItemName.HealPackage);
+            var viewData = item.ItemViewData;
+            AsyncOperationBase<AEntityViewDataSO> op = new EntityViewDataInjector(viewData);
+            __result = new AsyncOperationHandle<AEntityViewDataSO>(op);
             return false;
         }
     }

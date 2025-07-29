@@ -14,6 +14,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="EntityUnknown.png" />
 	  <None Remove="shadow.png" />
 	</ItemGroup>
 
@@ -398,6 +399,7 @@
 	<ItemGroup>
 		<Compile Include="PilotFixer.cs" />
 		<Compile Include="ModContent\AModPilot.cs" />
+		<Compile Include="EntityViewDataInjector.cs" />
 		<Compile Include="EnumeratorLink.cs" />
 		<Compile Include="GameDebug.cs" />
 		<Compile Include="ImageFixer.cs" />
@@ -413,6 +415,7 @@
 		<Compile Include="ModContent\CardModification.cs" />
 		<Compile Include="ModContent\ComponentModification.cs" />
 		<Compile Include="ModContent\IHasArtifactID.cs" />
+		<Compile Include="ModContent\ItemModification.cs" />
 		<Compile Include="ModContent\ModArtifactModelDef.cs" />
 		<Compile Include="ModContent\ModCardModelDef.cs" />
 		<Compile Include="ModContent\AModArtifact.cs" />
@@ -434,10 +437,12 @@
 		<Compile Include="PropertyFixer.cs" />
 		<Compile Include="SpriteHelper.cs" />
 		<Compile Include="ModContentManager.cs" />
+		<Compile Include="ResourceHelper.cs" />
 		<Compile Include="SVMod.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="EntityUnknown.png" />
 	  <EmbeddedResource Include="shadow.png" />
 	</ItemGroup>
 

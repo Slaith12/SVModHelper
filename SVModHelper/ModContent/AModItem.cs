@@ -14,7 +14,11 @@ namespace SVModHelper.ModContent
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
 
-        public virtual ItemViewDataSO ItemViewData => new ItemViewDataSO() { Sprite = GetStandardSprite(GetType().Name + ".png"), Shadow = GetDefaultShadowSprite() };
+        public virtual ItemViewDataSO ItemViewData => new ItemViewDataSO() 
+        { 
+            Sprite = GetStandardSprite(GetType().Name + ".png") ?? GetDefaultEntitySprite(),
+            Shadow = GetDefaultShadowSprite()
+        };
 
         /// <summary>
         /// The definition panels that show up in the more info screen of this item.

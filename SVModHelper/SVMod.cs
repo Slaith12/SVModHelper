@@ -114,26 +114,8 @@ namespace SVModHelper
 
         protected void RegisterResource(string resourceName)
         {
-            byte[] arr;
             Melon<Core>.Logger.Msg("  Loading resource " + resourceName);
-            using (Stream stream = MelonAssembly.Assembly.GetManifestResourceStream(resourceName))
-            {
-                if (stream == null)
-                    return;
-
-                if (stream is MemoryStream memStream)
-                {
-                    arr = memStream.ToArray();
-                }
-                else
-                {
-                    using (memStream = new MemoryStream())
-                    {
-                        stream.CopyTo(memStream);
-                        arr = memStream.ToArray();
-                    }
-                }
-            }
+            byte[] arr = ResourceHelper.LoadResource(MelonAssembly.Assembly, resourceName);
             ModContentManager.contentData.Add(resourceName, arr);
             Melon<Core>.Logger.Msg("  Resource Loaded");
         }
@@ -329,6 +311,14 @@ namespace SVModHelper
             ModContentManager.componentModifications.Insert(index, componentMod);
         }
 
+        protected void RegisterContentMod(ItemModification itemMod)
+        {
+            itemMod.m_Source = this;
+            int index;
+            for (index = 0; index < ModContentManager.itemModifications.Count && ModContentManager.itemModifications[index].priority < itemMod.priority; index++) ;
+            ModContentManager.itemModifications.Insert(index, itemMod);
+        }
+
         protected void RegisterContentMod(PackModification packMod)
         {
             packMod.m_Source = this;
@@ -337,16 +327,17 @@ namespace SVModHelper
             ModContentManager.packModifications.Insert(index, packMod);
         }
 
+        //TODO: Consolidate content functions here and in AModContent in a separate helper class
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected bool TryGetContentData(string fileName, out byte[] data)
+        protected bool TryGetContentData(string fileName, out byte[] data, bool localName = true)
         {
-            return ModContentManager.contentData.TryGetValue(GetContentKeyString(fileName), out data);
+            return ModContentManager.contentData.TryGetValue(GetContentKeyString(fileName, localName), out data);
         }
 
         //TODO: Update this function to cache textures for future calls
-        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear)
+        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true)
         {
-            if (!TryGetContentData(imageName, out byte[] data))
+            if (!TryGetContentData(imageName, out byte[] data, localName))
                 return null;
             Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
             texture.LoadImage(data);
@@ -354,9 +345,9 @@ namespace SVModHelper
         }
 
         //TODO: Update this function to cache sprites for future calls
-        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear)
+        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true)
         {
-            Texture2D texture = GetTexture(imageName, filter);
+            Texture2D texture = GetTexture(imageName, filter, localName);
             if (texture == null)
                 return null;
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
@@ -370,8 +361,18 @@ namespace SVModHelper
             return new CardViewData(cardName, sprite, null);
         }
 
+        protected Sprite GetDefaultEntitySprite()
+        {
+            return GetStandardSprite("SVModHelper.DefaultEntity.png", localName: false);
+        }
+
+        protected Sprite GetDefaultShadowSprite()
+        {
+            return GetStandardSprite("SVModHelper.DefaultShadow.png", localName: false);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private string GetContentKeyString(string fileName)
+        private string GetContentKeyString(string fileName, bool localName = true)
         {
             return GetType().Assembly.GetName().Name + "." + fileName;
         }
