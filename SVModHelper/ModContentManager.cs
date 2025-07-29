@@ -18,12 +18,14 @@ namespace SVModHelper
         internal static List<CardModification> cardModifications;
         internal static List<ArtifactModification> artifactModifications;
         internal static List<ComponentModification> componentModifications;
+        internal static List<ItemModification> itemModifications;
         internal static List<PackModification> packModifications;
         internal static List<SpellModification> spellModifications;
 
         internal static Dictionary<CardName, CardModification> activeCardMods;
         internal static Dictionary<ArtifactName, ArtifactModification> activeArtifactMods;
         internal static Dictionary<ComponentName, ComponentModification> activeComponentMods;
+        internal static Dictionary<ItemName, ItemModification> activeItemMods;
         internal static Dictionary<ItemPackName, PackModification> activePackMods;
         internal static Dictionary<ArtifactName, SpellModification> activeSpellMods;
 
@@ -74,6 +76,7 @@ namespace SVModHelper
             cardModifications = new();
             artifactModifications = new();
             componentModifications = new();
+            itemModifications = new();
             packModifications = new();
             spellModifications = new();
 
@@ -109,6 +112,7 @@ namespace SVModHelper
             ApplyCardMods();
             ApplyArtifactMods();
             ApplyComponentMods();
+            ApplyItemMods();
             ApplyPackMods();
         }
 
@@ -222,6 +226,31 @@ namespace SVModHelper
                     SetComponentDesc(activeMod.targetComponent, activeMod.description);
                 if (activeMod.sprite != null)
                     SetComponentImage(activeMod.targetComponent, activeMod.sprite);
+            }
+        }
+
+        private static void ApplyItemMods()
+        {
+            activeItemMods = new();
+            foreach(ItemModification itemMod in itemModifications)
+            {
+                if(!activeItemMods.TryGetValue(itemMod.targetItem, out ItemModification activeMod))
+                {
+                    activeMod = new ItemModification(itemMod.targetItem);
+                    activeItemMods.Add(itemMod.targetItem, activeMod);
+                }
+                itemMod.CopyTo(activeMod);
+            }
+
+            foreach(ItemModification activeMod in activeItemMods.Values)
+            {
+                if (activeMod.displayName != null)
+                    SetItemTitle(activeMod.targetItem, activeMod.displayName);
+                if (activeMod.description != null)
+                    SetItemDesc(activeMod.targetItem, activeMod.description);
+                //this part currently doesn't work
+                if (activeMod.newViewData != null)
+                    SetItemImage(activeMod.targetItem, activeMod.newViewData);
             }
         }
 

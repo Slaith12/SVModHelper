@@ -14,6 +14,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="AegisBomb.png" />
 	  <None Remove="CannonFire.png" />
 	  <None Remove="NewAntiMag.png" />
 	  <None Remove="RapidFire.png" />
@@ -415,6 +416,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="AegisBomb.png" />
 	  <EmbeddedResource Include="CannonFire.png" />
 	  <EmbeddedResource Include="NewAntiMag.png" />
 	  <EmbeddedResource Include="RapidFire.png" />

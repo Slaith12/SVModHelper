@@ -129,6 +129,20 @@ namespace DemoMod
                 isCurseModifier = true
             });
 
+            RegisterContentMod(new ItemModification(ItemName.AegisBomb)
+            {
+                displayName = "BIG Bomb!",
+                description = "Due to technical limitations, this is currently only a normal sized bomb. :(",
+                newViewData = new ItemViewDataSO()
+                {
+                    Sprite = GetStandardSprite("AegisBomb.png", 40),
+                    Shadow = GetDefaultShadowSprite(),
+                    SpawnType = SpawnType.Heavy,
+                    Floatiness = 0
+                },
+                hasRegeneratingShield = true
+            });
+
             LoggerInstance.Msg("Done!");
         }
     }

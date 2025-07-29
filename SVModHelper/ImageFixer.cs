@@ -71,6 +71,7 @@ namespace SVModHelper
         public static bool Prefix(ItemName entry, ref AsyncOperationHandle<AEntityViewDataSO> __result, ItemViewDataListSO __instance)
         {
             //The sprites in the cached VDs get deleted sometime after initialization, so we need to recreate the VDs every time.
+            //This also means VDs added by ItemModifications are ignored. Even if we checked the mods again here, the VD would probably be deleted already.
             //if (!ModContentManager.moddedItemVDs.TryGetValue(entry, out var viewData))
             //    return true;
             AModItem item = ModContentManager.GetModItemInstance(entry);

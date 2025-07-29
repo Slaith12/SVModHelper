@@ -413,6 +413,7 @@
 		<Compile Include="ModContent\CardModification.cs" />
 		<Compile Include="ModContent\ComponentModification.cs" />
 		<Compile Include="ModContent\IHasArtifactID.cs" />
+		<Compile Include="ModContent\ItemModification.cs" />
 		<Compile Include="ModContent\ModArtifactModelDef.cs" />
 		<Compile Include="ModContent\ModCardModelDef.cs" />
 		<Compile Include="ModContent\AModArtifact.cs" />

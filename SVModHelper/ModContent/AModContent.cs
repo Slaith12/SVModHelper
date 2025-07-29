@@ -12,6 +12,7 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModContent
     {
+        //TODO: Consolidate content functions here and in SVMod in a separate helper class
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool TryGetContentData(string fileName, out byte[] data, bool localName = true)
         {

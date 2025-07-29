@@ -35,4 +35,16 @@
             }
         }
     }
+
+    [HarmonyPatch(typeof(EntityFactory), nameof(EntityFactory.CreateItemModel))]
+    internal class ItemPropertyFixer
+    {
+        public static void Postfix(ItemEntityModel __result)
+        {
+            if(ModContentManager.activeItemMods.TryGetValue(__result.ItemName, out var mod))
+            {
+                mod.ApplyTo(__result);
+            }
+        }
+    }
 }
