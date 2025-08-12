@@ -130,7 +130,7 @@ namespace SVModHelper
                 throw new InvalidOperationException("Can not register the same card multiple times.");
             }
 
-            CardName id = ModContentManager.moddedCardDict.Count + ModContentManager.MINCARDID;
+            CardName id = ModContentManager.moddedCards.Count + ModContentManager.MINCARDID;
             ModContentManager.moddedCards.Add(modCardDef);
 
             ModContentManager.moddedCardDict.Add(cardType, id);
@@ -250,24 +250,17 @@ namespace SVModHelper
             ModContentManager.CheckInitStatus();
             Melon<Core>.Logger.Msg("Registering pilot " + modPilot.GetType().Name);
             Type pilotType = modPilot.GetType();
-            if (ModContentManager.moddedPilotDict.Values.Any(pilot => pilot.GetType() == pilotType))
+            if (ModContentManager.moddedPilotDict.ContainsKey(pilotType))
             {
 				throw new InvalidOperationException("Can not register the same pilot multiple times.");
             }
 
             PilotName id = ModContentManager.moddedPilotDict.Count + ModContentManager.MINPILOTID;
+            ModContentManager.moddedPilots.Add(modPilot);
+            ModContentManager.moddedPilotDict.Add(pilotType, id);
 
-            // Check if the assigned ID already exists in the dictionary
-            if (ModContentManager.moddedPilotDict.ContainsKey(id))
-            {
-                throw new InvalidOperationException($"Pilot ID {id} is already registered. Cannot register pilot {modPilot.GetType().Name} with the same ID.");
-            }
-
-            ModContentManager.moddedPilotDict.Add(id, modPilot);
-
-            // Set the localization strings for the pilot
             ModContentManager.SetPilotDesc(id, modPilot.Description);
-            ModContentManager.SetPilotSprites(id, modPilot);
+            ModContentManager.SetPilotData(id, modPilot.GetPilotData());
 
             return id;
         }
@@ -329,15 +322,20 @@ namespace SVModHelper
 
         //TODO: Consolidate content functions here and in AModContent in a separate helper class
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected bool TryGetContentData(string fileName, out byte[] data, bool localName = true)
+        protected bool TryGetContentData(string fileName, out byte[] data, bool localName = true, bool warnOnFail = true)
         {
-            return ModContentManager.contentData.TryGetValue(GetContentKeyString(fileName, localName), out data);
+            bool success = ModContentManager.contentData.TryGetValue(GetContentKeyString(fileName, localName), out data);
+            if(!success && warnOnFail)
+            {
+                Melon<Core>.Logger.Error($"Failed to load file - {fileName}. Make sure the file exists, it has been added as an Embedded Resource, and that the path is specified relative to the .csproj file.");
+            }
+            return success;
         }
 
         //TODO: Update this function to cache textures for future calls
-        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true)
+        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
         {
-            if (!TryGetContentData(imageName, out byte[] data, localName))
+            if (!TryGetContentData(imageName, out byte[] data, localName, warnOnFail))
                 return null;
             Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
             texture.LoadImage(data);
@@ -345,17 +343,17 @@ namespace SVModHelper
         }
 
         //TODO: Update this function to cache sprites for future calls
-        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true)
+        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
         {
-            Texture2D texture = GetTexture(imageName, filter, localName);
+            Texture2D texture = GetTexture(imageName, filter, localName, warnOnFail);
             if (texture == null)
                 return null;
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
         }
 
-        protected CardViewData GetStandardCardViewData(CardName cardName, string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear)
+        protected CardViewData GetStandardCardViewData(CardName cardName, string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
         {
-            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter);
+            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, localName, warnOnFail);
             if (sprite == null)
                 return null;
             return new CardViewData(cardName, sprite, null);
@@ -374,7 +372,10 @@ namespace SVModHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private string GetContentKeyString(string fileName, bool localName = true)
         {
-            return GetType().Assembly.GetName().Name + "." + fileName;
+            if (localName)
+                return GetType().Assembly.GetName().Name + "." + fileName;
+            else
+                return fileName;
         }
     }
 }

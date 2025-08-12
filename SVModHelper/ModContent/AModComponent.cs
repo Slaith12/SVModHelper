@@ -8,7 +8,7 @@ namespace SVModHelper.ModContent
 
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
-        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png");
+        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: false);
 
         /// <summary>
         /// The mech class this component is available to. Set to Neutral to allow any class to obtain it.

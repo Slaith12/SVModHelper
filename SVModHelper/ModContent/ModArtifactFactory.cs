@@ -5,18 +5,19 @@
     {
         public static bool Prefix(ArtifactName artifactName, ref ArtifactModel __result, ArtifactFactory __instance)
         {
-            if (artifactName >= (ArtifactName)15000 && artifactName < (ArtifactName)(ModContentManager.moddedArtifacts.Count + 15000))
-            {
-                ArtifactID artifactID = new ArtifactID(__instance._artifactCount);
-                __instance._artifactCount++;
-                ModArtifactModelDef artifactModelDef = new ModArtifactModelDef(ModContentManager.moddedArtifacts[(int)artifactName - 15000], artifactName);
-                ArtifactModel artifactModel = new ArtifactModel(artifactModelDef, artifactID);
+            IHasArtifactID modArtifact = ModContentManager.GetModArtifactInstance(artifactName);
 
-                artifactModelDef.SetOnCreateID(artifactModel.ID);
-                __result = artifactModel;
-                return false;
-            }
-            return true;
+            if (modArtifact == null)
+                return true;
+
+            ArtifactID artifactID = new ArtifactID(__instance._artifactCount);
+            __instance._artifactCount++;
+            ModArtifactModelDef artifactModelDef = new ModArtifactModelDef(modArtifact, artifactName);
+            ArtifactModel artifactModel = new ArtifactModel(artifactModelDef, artifactID);
+
+            artifactModelDef.SetOnCreateID(artifactModel.ID);
+            __result = artifactModel;
+            return false;
         }
     }
 
@@ -40,7 +41,7 @@
         {
             ArtifactFactory artifactFactory = new ArtifactFactory();
             for (int i = 0; i < ModContentManager.moddedArtifacts.Count; i++)
-                __result.Add(artifactFactory.CreateArtifactModel((ArtifactName)(i + 15000)));
+                __result.Add(artifactFactory.CreateArtifactModel(i + ModContentManager.MINARTIFACTID));
         }
     }
 }

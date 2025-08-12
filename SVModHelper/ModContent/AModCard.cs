@@ -4,9 +4,9 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModCard : AModContent
     {
-        protected CardViewData GetStandardCardViewData(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear)
+        protected CardViewData GetStandardCardViewData(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
         {
-            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter);
+            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, localName, warnOnFail);
             if (sprite == null)
                 return null;
             return new CardViewData(CardName, sprite, null);
@@ -16,7 +16,7 @@ namespace SVModHelper.ModContent
 
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
-        public virtual CardViewData CardViewData => GetStandardCardViewData(GetType().Name + ".png");
+        public virtual CardViewData CardViewData => GetStandardCardViewData(GetType().Name + ".png", warnOnFail: false);
 
         /// <summary>
         /// The main traits that the card has.

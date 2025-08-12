@@ -9,7 +9,7 @@
 
         public virtual ItemViewDataSO ItemViewData => new ItemViewDataSO() 
         { 
-            Sprite = GetStandardSprite(GetType().Name + ".png") ?? GetDefaultEntitySprite(),
+            Sprite = GetStandardSprite(GetType().Name + ".png", warnOnFail: false) ?? GetDefaultEntitySprite(),
             Shadow = GetDefaultShadowSprite()
         };
 

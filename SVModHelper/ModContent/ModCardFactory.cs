@@ -5,19 +5,19 @@
     {
         public static bool Prefix(CardName cardName, ref CardModel __result, CardFactory __instance)
         {
-            if(cardName >= (CardName)15000 && cardName < (CardName)(ModContentManager.moddedCards.Count+15000))
-            {
-                CardID cardID = new CardID(cardName, __instance._cardCount);
-                __instance._cardCount++;
-                ModCardModelDef cardModelDef = new ModCardModelDef(ModContentManager.moddedCards[(int)cardName-15000], cardName);
-                CardModel cardModel = new CardModel(cardModelDef, cardID);
+            AModCard modCard = ModContentManager.GetModCardInstance(cardName);
+            if (modCard == null)
+                return true;
 
-                cardModel.SetComponent(ComponentFactory.CreateComponent(ComponentName.None, cardModel));
-                cardModelDef.SetOnCreateID(cardModel.ID);
-                __result = cardModel;
-                return false;
-            }
-            return true;
+            CardID cardID = new CardID(cardName, __instance._cardCount);
+            __instance._cardCount++;
+            ModCardModelDef cardModelDef = new ModCardModelDef(modCard, cardName);
+            CardModel cardModel = new CardModel(cardModelDef, cardID);
+
+            cardModel.SetComponent(ComponentFactory.CreateComponent(ComponentName.None, cardModel));
+            cardModelDef.SetOnCreateID(cardModel.ID);
+            __result = cardModel;
+            return false;
         }
     }
 
@@ -28,7 +28,7 @@
         {
             CardFactory cardFactory = new CardFactory();
             for(int i = 0; i < ModContentManager.moddedCards.Count; i++)
-                __result.Add(cardFactory.CreateCardModel((CardName)(i+15000)));
+                __result.Add(cardFactory.CreateCardModel(i+ModContentManager.MINCARDID));
         }
     }
 }

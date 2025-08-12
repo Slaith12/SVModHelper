@@ -8,7 +8,7 @@ namespace SVModHelper.ModContent
 
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
-        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png");
+        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: false);
 
         /// <summary>
         /// The pilot this spell belongs to. Set to None to allow any Keeper pilot to get it.

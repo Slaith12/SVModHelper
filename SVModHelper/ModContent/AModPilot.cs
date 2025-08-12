@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using MelonLoader;
+using UnityEngine;
 
 namespace SVModHelper.ModContent
 {
     public abstract class AModPilot : AModContent
     {
+        public PilotName PilotName => ModContentManager.GetModPilotName(GetType());
+
         /// <summary>
         /// The class that this pilot belongs to.
         /// </summary>
@@ -14,20 +17,62 @@ namespace SVModHelper.ModContent
 
         public abstract int Complexity { get; }
 
-        public virtual string FrontPortrait => null;
-        public virtual string FrontPortraitParallax => null;
-        public virtual string PilotTitleSprite => null;
-        public virtual string CombatPortraitNeutral => null;
-        public virtual string CombatPortraitPositive => null;
-        public virtual string CombatPortraitNegative => null;
-        public virtual string CombatPortraitBurning => null;
-        public virtual string CampaignPortrait => null;
-        public virtual string VictoryPhoto => null;
+        /// <summary>
+        /// The base path the mod helper uses to search for pilot images.
+        /// This is ignored if directly overriding the sprite properties.
+        /// </summary>
+        public virtual string BaseImagePath => GetType().Name;
+        /// <summary>
+        /// The sprite used for the pilot's portrait on the Pilot Selection screen.
+        /// Defaults to <code>[BaseImagePath]Portrait.png</code>
+        /// </summary>
+        public virtual Sprite FrontPortrait => GetStandardSprite(BaseImagePath + "Portrait.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        /// <summary>
+        /// The sprite displayed in front of the pilot's portrait on the Pilot Selection screen.
+        /// Defaults to <code>[BaseImagePath]PortraitParallax.png</code>
+        /// </summary>
+        public virtual Sprite FrontPortraitParallax => GetStandardSprite(BaseImagePath + "PortraitParallax.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        /// <summary>
+        /// The sprite used to display the pilot's name on the Pilot Selection screen (standard text is not used for this).
+        /// Defaults to <code>[BaseImagePath]Name.png</code>
+        /// </summary>
+        public virtual Sprite PilotTitleSprite => GetStandardSprite(BaseImagePath + "Name.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        /// <summary>
+        /// The sprite used in the pilot display during an encounter.
+        /// Defaults to <code>[BaseImagePath]CombatNeutral.png</code> or <code>[BaseImagePath]Combat.png</code>
+        /// </summary>
+        public virtual Sprite CombatPortraitNeutral => GetStandardSprite(BaseImagePath + "CombatNeutral.png", warnOnFail: false)
+            ?? GetStandardSprite(BaseImagePath + "Combat.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        /// <summary>
+        /// The sprite used in the pilot display during an encounter when something good happens.
+        /// Defaults to <code>[BaseImagePath]CombatPositive.png</code> or to the neutral combat portrait.
+        /// </summary>
+        public virtual Sprite CombatPortraitPositive => GetStandardSprite(BaseImagePath + "CombatPositive.png", warnOnFail: false) ?? CombatPortraitNeutral;
+        /// <summary>
+        /// The sprite used in the pilot display during an encounter when something bad happens.
+        /// Defaults to <code>[BaseImagePath]CombatNegative.png</code> or to the neutral combat portrait.
+        /// </summary>
+        public virtual Sprite CombatPortraitNegative => GetStandardSprite(BaseImagePath + "CombatNegative.png", warnOnFail: false) ?? CombatPortraitNeutral;
+        /// <summary>
+        /// The sprite used in the pilot display during an encounter when the mech overheats (gunner mech only).
+        /// Defaults to <code>[BaseImagePath]CombatBurning.png</code> or to the negative combat portrait.
+        /// </summary>
+        public virtual Sprite CombatPortraitBurning => GetStandardSprite(BaseImagePath + "CombatBurning.png", warnOnFail: false) ?? CombatPortraitNegative;
+        /// <summary>
+        /// The sprite used in the pilot display during a campaign outside an encounter.
+        /// Defaults to <code>[BaseImagePath]Campaign.png</code>
+        /// </summary>
+        public virtual Sprite CampaignPortrait => GetStandardSprite(BaseImagePath + "Campaign.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        /// <summary>
+        /// The sprite used for the photo on the victory screen.
+        /// Defaults to <code>[BaseImagePath]Victory.png</code>
+        /// </summary>
+        public virtual Sprite VictoryPhoto => GetStandardSprite(BaseImagePath + "Victory.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
 
         /// <summary>
         /// This pilot's starting cards.
         /// </summary>
-        public abstract Il2CppCollections.List<CardName> StartingCards { get; }
+        public abstract Il2CppCollections.List<PlayerCardData> StartingCards { get; }
 
         /// <summary>
         /// This pilot's starting artifact.
@@ -41,28 +86,21 @@ namespace SVModHelper.ModContent
             result.StarterData = GetStarterPlayerData();
 
             result.ClassName = ClassName;
-            result.PilotName = ModContentManager.moddedPilotDict
-                .First(kvp => kvp.Value.GetType() == this.GetType())
-                .Key;
+            result.PilotName = PilotName;
 
             result.Complexity = Complexity;
 
             // Use centralized sprite management with filenames as keys
-            result.FrontPortrait = ModContentManager.GetPilotSprite(result.PilotName, FrontPortrait);
-            result.FrontPortraitParallax = ModContentManager.GetPilotSprite(result.PilotName, FrontPortraitParallax);
-            result.PilotTitleSprite = ModContentManager.GetPilotSprite(result.PilotName, PilotTitleSprite);
-            result.CombatPortraitNeutral = ModContentManager.GetPilotSprite(result.PilotName, CombatPortraitNeutral);
-
-            // Default to CombatPortraitNeutral if other CombatPortraits are not provided.
-            result.CombatPortraitPositive = ModContentManager.GetPilotSprite(result.PilotName, 
-                string.IsNullOrEmpty(CombatPortraitPositive) ? CombatPortraitNeutral : CombatPortraitPositive);
-            result.CombatPortraitNegative = ModContentManager.GetPilotSprite(result.PilotName, 
-                string.IsNullOrEmpty(CombatPortraitNegative) ? CombatPortraitNeutral : CombatPortraitNegative);
-            result.CombatPortraitBurning = ModContentManager.GetPilotSprite(result.PilotName, 
-                string.IsNullOrEmpty(CombatPortraitBurning) ? CombatPortraitNeutral : CombatPortraitBurning);
-
-            result.CampaignPortrait = ModContentManager.GetPilotSprite(result.PilotName, CampaignPortrait);
-            result.VictoryPhoto = ModContentManager.GetPilotSprite(result.PilotName, VictoryPhoto);
+            // In the near future, the sprite properties will be updated to use a centralized cache system, similar to above
+            result.FrontPortrait = FrontPortrait;
+            result.FrontPortraitParallax = FrontPortraitParallax;
+            result.PilotTitleSprite = PilotTitleSprite;
+            result.CombatPortraitNeutral = CombatPortraitNeutral;
+            result.CombatPortraitPositive = CombatPortraitPositive;
+            result.CombatPortraitNegative = CombatPortraitNegative;
+            result.CombatPortraitBurning = CombatPortraitBurning;
+            result.CampaignPortrait = CampaignPortrait;
+            result.VictoryPhoto = VictoryPhoto;
 
             return result;
         }
@@ -74,11 +112,9 @@ namespace SVModHelper.ModContent
             playerDataSO.starbucksAmount = 75;
 
             playerDataSO.ClassName = ClassName;
-            // Need to check ModContentManager to get the automatically assigned ID if not using an override.
-            playerDataSO.PilotName = ModContentManager.moddedPilotDict.First(kvp => kvp.Value.GetType() == this.GetType()).Key;
+            playerDataSO.PilotName = PilotName;
 
             playerDataSO.startingMaxHeat = 0;
-
 
             if (playerDataSO.ClassName == ClassName.Gunner)
             {
@@ -96,27 +132,15 @@ namespace SVModHelper.ModContent
                 playerDataSO.ClassBaseEnergy = EncounterValue.Mana;
                 playerDataSO.startingMaxMana = 5;
             }
-
-            foreach (var card in StartingCards)
+            else
             {
-                PlayerCardData cardData = new PlayerCardData(card);
-                playerDataSO.AddCardToDeck(cardData);
+                Melon<Core>.Logger.Error($"Pilot {GetType().Name} uses invalid class {ClassName}. Various issues may occur.");
             }
 
-            foreach (var arti in StartingArtifacts)
-            {
-                playerDataSO.AddArtifact(arti);
-            }
+            playerDataSO.deckCardDataList = StartingCards;
+            playerDataSO.artifactList = StartingArtifacts;
 
             return playerDataSO;
         }
-        
-        public Sprite CreateSprite(string imageName)
-        {
-            if (string.IsNullOrEmpty(imageName))
-                return SpriteHelper.GetTransparentSprite();
-            return GetStandardSprite(imageName);
-        }
-
     }
 }

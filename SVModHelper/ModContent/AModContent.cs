@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using MelonLoader;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace SVModHelper.ModContent
@@ -7,28 +8,30 @@ namespace SVModHelper.ModContent
     {
         //TODO: Consolidate content functions here and in SVMod in a separate helper class
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected bool TryGetContentData(string fileName, out byte[] data, bool localName = true)
+        protected bool TryGetContentData(string fileName, out byte[] data, bool localName = true, bool warnOnFail = true)
         {
-            return ModContentManager.contentData.TryGetValue(GetContentKeyString(fileName, localName), out data);
+            bool success = ModContentManager.contentData.TryGetValue(GetContentKeyString(fileName, localName), out data);
+            if (!success && warnOnFail)
+            {
+                Melon<Core>.Logger.Error($"Failed to load file - {fileName}. Make sure the file exists, it has been added as an Embedded Resource, and that the path is specified relative to the .csproj file.");
+            }
+            return success;
         }
 
         //TODO: Update this function to cache textures for future calls
-        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true)
+        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
         {
-            if (!TryGetContentData(imageName, out byte[] data, localName))
-            {
-                MelonLoader.MelonLogger.Error($"Failed to load image - {imageName}. Make sure the file exists has been added as an Embedded Resource, and that the path is specified relative to the .csproj.");
-                    return null;
-          }
+            if (!TryGetContentData(imageName, out byte[] data, localName, warnOnFail))
+                return null;
             Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
             texture.LoadImage(data);
             return texture;
         }
 
         //TODO: Update this function to cache sprites for future calls
-        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true)
+        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
         {
-            Texture2D texture = GetTexture(imageName, filter, localName);
+            Texture2D texture = GetTexture(imageName, filter, localName, warnOnFail);
             if (texture == null)
                 return null;
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);

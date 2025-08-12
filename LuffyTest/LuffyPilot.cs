@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace LuffyTest
 {
@@ -19,25 +20,21 @@ namespace LuffyTest
 
 		public override ClassName ClassName => ClassName.Melee;
 
-		public override string FrontPortrait => "LuffySelect2.png";
+        public override string BaseImagePath => "Luffy";
+        public override Sprite FrontPortrait => GetStandardSprite("LuffySelect2.png");
 
-		public override string CampaignPortrait => "LuffyCampaign.png";
-		public override string CombatPortraitNeutral => "LuffyCombat.png";
-
-		public override string PilotTitleSprite => "LuffyName.png";
-
-		public override Il2CppCollections.List<CardName> StartingCards => 
-			new List<CardName>{
-				CardName.Dash,
-				CardName.Dash,
-				CardName.Dash,
-				CardName.Dash,
-				ModContentManager.GetModCardName<Pistol>(),
-				ModContentManager.GetModCardName<Pistol>(),
-				ModContentManager.GetModCardName<Pistol>(),
-				ModContentManager.GetModCardName<Pistol>(),
-				ModContentManager.GetModCardName<Gatling>(),
-				ModContentManager.GetModCardName<Rocket>(),
+		public override Il2CppCollections.List<PlayerCardData> StartingCards => 
+			new List<PlayerCardData>{
+				new(CardName.Dash),
+				new(CardName.Dash),
+				new(CardName.Dash),
+                new(CardName.Dash),
+				new(ModContentManager.GetModCardName<Pistol>()),
+				new(ModContentManager.GetModCardName<Pistol>()),
+				new(ModContentManager.GetModCardName<Pistol>()),
+				new(ModContentManager.GetModCardName<Pistol>()),
+				new(ModContentManager.GetModCardName<Gatling>()),
+                new(ModContentManager.GetModCardName<Rocket>()),
 			}.ToILCPP();
 
 		public override Il2CppCollections.List<ArtifactName> StartingArtifacts => 

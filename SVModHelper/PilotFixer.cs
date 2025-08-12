@@ -1,13 +1,15 @@
-﻿namespace SVModHelper
+﻿using SVModHelper.ModContent;
+
+namespace SVModHelper
 {
 	[HarmonyPatch(typeof(ContentGetter), nameof(ContentGetter.GetAllPilots))]
 	internal static class ModdedGetAllPilots
 	{
 		public static void Postfix(ref Il2CppCollections.List<PilotName> __result)
 		{
-			foreach (var pilotName in ModContentManager.moddedPilotDict.Keys)
+			for (int i = 0; i < ModContentManager.moddedPilots.Count; i++)
 			{
-				__result.Add(pilotName);
+				__result.Add(i + ModContentManager.MINPILOTID);
 			}
 		}
 	}
@@ -17,24 +19,37 @@
 	{
 		public static bool Prefix(PilotName entry, PilotDataDictSO __instance, ref PilotDataSO __result)
 		{
-			if (ModContentManager.moddedPilotDict.ContainsKey(entry))
-			{
-				__result = ModContentManager.moddedPilotDict[entry].GetPilotData();
-	
-				return false;
-			}
-			return true;
-		}
-	}
+			PilotDataSO modPilotData = ModContentManager.GetModPilotData(entry);
+			if (modPilotData == null)
+				return true;
 
-	[HarmonyPatch(typeof(PilotView), nameof(PilotView.UpdatePilotPanel))]
+			__result = modPilotData;
+			return false;
+		}
+    }
+
+    [HarmonyPatch(typeof(PilotSelectionController), nameof(PilotSelectionController.Initialize))]
+    internal static class PilotSelectionFixer
+    {
+        public static void Postfix(PilotSelectionController __instance)
+        {
+            ClassName mechClass = __instance.PlayerDataSOs._items.First().ClassName;
+            foreach (var pilot in ModContentManager.moddedPilots.Where(pilot => pilot.ClassName == mechClass))
+            {
+                __instance.PlayerDataSOs.Add(pilot.GetStarterPlayerData());
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(PilotView), nameof(PilotView.UpdatePilotPanel))]
 	internal static class PilotViewFixer
 	{
 		public static void Postfix(PilotSelectionController pilotSelectionController, PilotView __instance)
 		{
-			if (ModContentManager.moddedPilotDict.ContainsKey(pilotSelectionController.CurrentPlayerData.PilotName))
+			AModPilot modPilot = ModContentManager.GetModPilotInstance(pilotSelectionController.CurrentPlayerData.PilotName);
+			if(modPilot != null)
 			{
-				__instance.PilotName.SetText(ModContentManager.moddedPilotDict[pilotSelectionController.CurrentPlayerData.PilotName].DisplayName);
+				__instance.PilotName.SetText(modPilot.DisplayName);
 			}
 		}
 	}
@@ -46,13 +61,12 @@
 		// In the future, we can allow for custom challenges to be added for modded pilots.
 		public static bool Prefix(PilotName pilotName, ref Il2CppCollections.List<ChallengeSO> __result)
 		{
-			if (ModContentManager.moddedPilotDict.ContainsKey(pilotName))
-			{
-				__result = new();
-				return false;
-			}
+			AModPilot modPilot = ModContentManager.GetModPilotInstance(pilotName);
+			if (modPilot == null)
+				return true;
 
-			return true;
+			__result = new();
+			return false;
 		}
-	}
+    }
 }

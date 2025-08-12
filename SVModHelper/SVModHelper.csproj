@@ -423,7 +423,6 @@
 		<Compile Include="ModContent\ModArtifactFactory.cs" />
 		<Compile Include="ModContent\ModCardFactory.cs" />
 		<Compile Include="ModContent\AModTask.cs" />
-		<Compile Include="ModContent\ModPilotSelectionController.cs" />
 		<Compile Include="ModContent\ModComponentFactory.cs" />
 		<Compile Include="ModContent\ModComponentModelDef.cs" />
 		<Compile Include="ModContent\ModEnemyModelDef.cs" />
