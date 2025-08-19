@@ -1,7 +1,6 @@
 ﻿using Il2CppStarVaders;
 using SVModHelper.ModContent;
 using UnityEngine;
-using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 
 namespace SVModHelper
 {
@@ -46,6 +45,7 @@ namespace SVModHelper
         internal static List<AModPilot> moddedPilots;
         internal static Dictionary<Type, PilotName> moddedPilotDict;
         internal static Dictionary<PilotName, PilotDataSO> moddedPilotVDs;
+        internal static Dictionary<PilotName, string> moddedPilotNames;
 
 		internal static Dictionary<Type, string> moddedTaskIDs;
         internal static Dictionary<string, AModTask> moddedTaskInstances;
@@ -104,6 +104,7 @@ namespace SVModHelper
             moddedPilots = new();
             moddedPilotDict = new();
             moddedPilotVDs = new();
+            moddedPilotNames = new();
 
             moddedTaskIDs = new();
             moddedTaskInstances = new();
@@ -514,7 +515,10 @@ namespace SVModHelper
 
         #region Pilots
 
-        //SetPilotTitle() is not necessary due to pilot names not being localized.
+        internal static void SetPilotName(PilotName pilotName, string name)
+        {
+            moddedPilotNames[pilotName] = name;
+        }
 
         internal static void SetPilotDesc(PilotName pilotName, string desc)
         {

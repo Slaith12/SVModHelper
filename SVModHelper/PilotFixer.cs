@@ -1,4 +1,5 @@
 ﻿using SVModHelper.ModContent;
+using Il2CppPixelCrushers.DialogueSystem;
 
 namespace SVModHelper
 {
@@ -46,11 +47,10 @@ namespace SVModHelper
 	{
 		public static void Postfix(PilotSelectionController pilotSelectionController, PilotView __instance)
 		{
-			AModPilot modPilot = ModContentManager.GetModPilotInstance(pilotSelectionController.CurrentPlayerData.PilotName);
-			if(modPilot != null)
-			{
-				__instance.PilotName.SetText(modPilot.DisplayName);
-			}
+			if(ModContentManager.moddedPilotNames.TryGetValue(pilotSelectionController.CurrentPlayerData.PilotName, out string name))
+            {
+                __instance.PilotName.SetText(name);
+            }
 		}
 	}
 
@@ -69,4 +69,45 @@ namespace SVModHelper
 			return false;
 		}
     }
+
+	[HarmonyPatch(typeof(DialogueDatabase), nameof(DialogueDatabase.SetupCaches))]
+	internal static class DialogueDatabaseFixer
+	{
+		public static void Postfix(DialogueDatabase __instance)
+		{
+			if (ModContentManager.moddedPilots.Count == 0 || __instance.actorNameCache.ContainsKey(ModContentManager.MINPILOTID.ToString()))
+				return;
+			for(int i = 0; i < ModContentManager.moddedPilots.Count; i++)
+			{
+				Actor newActor = new Actor()
+				{
+					fields = new(),
+					Name = (i + ModContentManager.MINPILOTID).ToString(),
+					id = i + (int)ModContentManager.MINPILOTID,
+					IsPlayer = true
+				};
+                __instance.actorNameCache[newActor.Name] = newActor;
+				if (__instance.GetActor(newActor.id) == null)
+					__instance.actors.Add(newActor);
+			}
+		}
+	}
+
+	[HarmonyPatch(typeof(ConversationModel), nameof(ConversationModel.SetParticipants))]
+	internal static class DialogueCharacterInfoFixer
+	{
+		public static void Postfix(ConversationModel __instance)
+		{
+			foreach(var pilotNamePair in ModContentManager.moddedPilotNames)
+			{
+				int id = (int)pilotNamePair.Key;
+				string name = pilotNamePair.Value;
+				if(!__instance.m_characterInfoCache.ContainsKey(id))
+				{
+					__instance.m_characterInfoCache[id] = new CharacterInfo(id, pilotNamePair.Key.ToString(), null, CharacterType.PC, null);
+				}
+				__instance.m_characterInfoCache[id].Name = name;
+			}
+		}
+	}
 }

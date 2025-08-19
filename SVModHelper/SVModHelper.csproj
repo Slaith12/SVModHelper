@@ -397,6 +397,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Include="DialogueTest.cs" />
 		<Compile Include="PilotFixer.cs" />
 		<Compile Include="ModContent\AModPilot.cs" />
 		<Compile Include="EntityViewDataInjector.cs" />
