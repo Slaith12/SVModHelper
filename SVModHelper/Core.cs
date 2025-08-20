@@ -80,17 +80,6 @@ namespace SVModHelper
         {
             ModContentManager.ApplyMods();
             ModContentManager.postInit = true;
-
-            LoggerInstance.Msg("Current possible encounter mods:");
-            foreach(ArtifactName name in ContentGetter.GetEncounterDifficultyMods().ToMono())
-            {
-                LoggerInstance.Msg(name);
-            }
-            LoggerInstance.Msg("Current possible curse mods:");
-            foreach (ArtifactName name in ContentGetter.GetPossibleCurseMods().ToMono())
-            {
-                LoggerInstance.Msg(name);
-            }
         }
     }
 }

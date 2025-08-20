@@ -595,8 +595,8 @@ namespace SVModHelper
         public static string SetLocalizedString(string stringID, string localizedString)
         {
             CheckInitStatus();
-            string oldString = NameFixer.extraLocalizedStrings.GetValueOrDefault(stringID);
-            NameFixer.extraLocalizedStrings[stringID] = localizedString;
+            string oldString = LocalizationFixer.extraLocalizedStrings.GetValueOrDefault(stringID);
+            LocalizationFixer.extraLocalizedStrings[stringID] = localizedString;
             return oldString;
         }
 

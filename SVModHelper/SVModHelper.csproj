@@ -397,7 +397,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="DialogueTest.cs" />
 		<Compile Include="PilotFixer.cs" />
 		<Compile Include="ModContent\AModPilot.cs" />
 		<Compile Include="EntityViewDataInjector.cs" />
@@ -433,7 +432,7 @@
 		<Compile Include="ModContent\PackModification.cs" />
 		<Compile Include="ModContent\SpellModification.cs" />
 		<Compile Include="ModifierFixer.cs" />
-		<Compile Include="NameFixer.cs" />
+		<Compile Include="LocalizationFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
 		<Compile Include="SpriteHelper.cs" />
 		<Compile Include="ModContentManager.cs" />
