@@ -261,7 +261,7 @@ namespace SVModHelper
 
             ModContentManager.SetPilotName(id, modPilot.DisplayName);
             ModContentManager.SetPilotDesc(id, modPilot.Description);
-            ModContentManager.SetPilotData(id, modPilot.GetPilotData());
+            ModContentManager.SetPilotViewData(id, modPilot.GetFullPilotData());
 
             return id;
         }

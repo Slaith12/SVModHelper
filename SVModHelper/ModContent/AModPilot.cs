@@ -68,6 +68,17 @@ namespace SVModHelper.ModContent
         /// Defaults to <code>[BaseImagePath]Victory.png</code>
         /// </summary>
         public virtual Sprite VictoryPhoto => GetStandardSprite(BaseImagePath + "Victory.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        /// <summary>
+        /// The sprite used on the second panel of the true ending cutscene (the handhake with the alien).
+        /// Defaults to <code>[BaseImagePath]Handshake.png</code>
+        /// </summary>
+        public virtual Sprite TrueEndHandshake => GetStandardSprite(BaseImagePath + "Handhake.png", warnOnFail: false) ?? null;
+
+        /// <summary>
+        /// The sprite used on the final panel of the true ending cutscene (the lineup with all pilots).
+        /// Defaults to <code>[BaseImagePath]Lineup.png</code>
+        /// </summary>
+        public virtual Sprite TrueEndLineup => GetStandardSprite(BaseImagePath + "Lineup.png", warnOnFail: false) ?? null;
 
         /// <summary>
         /// This pilot's starting cards.
@@ -79,7 +90,16 @@ namespace SVModHelper.ModContent
         /// </summary>
         public abstract Il2CppCollections.List<ArtifactName> StartingArtifacts { get; }
 
-        public PilotDataSO GetPilotData()
+        public ModPilotViewData GetFullPilotData()
+        {
+            ModPilotViewData result = new();
+            result.dataSO = GetPilotDataSO();
+            result.handshakeSprite = TrueEndHandshake;
+            result.lineupSprite = TrueEndLineup;
+            return result;
+        }
+
+        public PilotDataSO GetPilotDataSO()
         {
             var result = ScriptableObject.CreateInstance<PilotDataSO>();
 

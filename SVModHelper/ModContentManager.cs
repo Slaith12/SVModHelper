@@ -44,7 +44,7 @@ namespace SVModHelper
 
         internal static List<AModPilot> moddedPilots;
         internal static Dictionary<Type, PilotName> moddedPilotDict;
-        internal static Dictionary<PilotName, PilotDataSO> moddedPilotVDs;
+        internal static Dictionary<PilotName, ModPilotViewData> moddedPilotVDs;
         internal static Dictionary<PilotName, string> moddedPilotNames;
 
 		internal static Dictionary<Type, string> moddedTaskIDs;
@@ -526,7 +526,7 @@ namespace SVModHelper
         }
 
         //This essentially replaces SetPilotImage()
-        internal static void SetPilotData(PilotName pilotName, PilotDataSO data)
+        internal static void SetPilotViewData(PilotName pilotName, ModPilotViewData data)
         {
             if (data != null)
                 moddedPilotVDs[pilotName] = data;
@@ -553,16 +553,17 @@ namespace SVModHelper
             return moddedPilots[pilotName - MINPILOTID];
         }
 
-        public static PilotDataSO GetModPilotData(PilotName pilotName)
+        public static ModPilotViewData GetModPilotData(PilotName pilotName)
         {
-            if (moddedPilotVDs.TryGetValue(pilotName, out PilotDataSO data) && data != null)
+            //The handshake sprite is allowed to be null; it defaults to roxy's handshake in that case.
+            if (moddedPilotVDs.TryGetValue(pilotName, out ModPilotViewData data) && data != null && data.dataSO != null && data.lineupSprite != null)
                 return data;
             else
             {
                 AModPilot moddedPilot = GetModPilotInstance(pilotName);
-                if (moddedPilot == null)
-                    return null;
-                data = moddedPilot.GetPilotData();
+                if (moddedPilot == null) //Vanilla pilots are allowed to have incomplete ModPilotViewData instances
+                    return data;
+                data = moddedPilot.GetFullPilotData();
                 moddedPilotVDs[pilotName] = data;
                 return data;
             }

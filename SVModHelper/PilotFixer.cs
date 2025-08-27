@@ -20,11 +20,11 @@ namespace SVModHelper
 	{
 		public static bool Prefix(PilotName entry, PilotDataDictSO __instance, ref PilotDataSO __result)
 		{
-			PilotDataSO modPilotData = ModContentManager.GetModPilotData(entry);
+			ModPilotViewData modPilotData = ModContentManager.GetModPilotData(entry);
 			if (modPilotData == null)
 				return true;
 
-			__result = modPilotData;
+			__result = modPilotData.dataSO;
 			return false;
 		}
     }
@@ -107,6 +107,56 @@ namespace SVModHelper
 					__instance.m_characterInfoCache[id] = new CharacterInfo(id, pilotNamePair.Key.ToString(), null, CharacterType.PC, null);
 				}
 				__instance.m_characterInfoCache[id].Name = name;
+			}
+		}
+	}
+
+	[HarmonyPatch(typeof(EndingSceneController), nameof(EndingSceneController.SetupPilots))]
+	internal static class TrueEndingSceneFixer
+	{
+		public static void Prefix(EndingSceneController __instance)
+		{
+			foreach (var pilotDataPair in ModContentManager.moddedPilotVDs)
+			{
+				PilotName pilot = pilotDataPair.Key;
+				ModPilotViewData viewData = pilotDataPair.Value;
+				if (viewData.lineupSprite == null && pilot >= ModContentManager.MINPILOTID)
+				{
+					//ModContentManager.GetModPilotData can modify moddedPilotVDs, so it can't be used here.
+					//Realistically this failsafe shouldn't ever be used, since the view data should be accessed earlier in gameplay.
+					//The view data should always be valid by the time this function is called.
+					var newData = ModContentManager.GetModPilotInstance(pilot).GetFullPilotData();
+					viewData = newData;
+				}
+
+				int index = __instance._pilotEndingData.FindIndex(new Func<PilotEndingImages, bool>(p => p.PilotName == pilot));
+				if (index < 0)
+				{
+					index = __instance._pilotEndingData.Count;
+					__instance._pilotEndingData.Add(new PilotEndingImages());
+					__instance._pilotEndingData[index].PilotName = pilot;
+					//Modded pilots' ending sprites default to Roxy's sprites if not defined.
+					var refData = __instance._pilotEndingData[0];
+					__instance._pilotEndingData[index].HandshakeSprite = refData.HandshakeSprite;
+					//All lineup objects have the same positions, the sprites themselves are offset.
+					//This could be problematic if more than one modded pilot appears on the lineup screen, but currently that's not possible so I'm not going to worry about it.
+					//The lineup image's sprites should always be overwritten to something, defaulting to a transparent image.
+					__instance._pilotEndingData[index].LineupImage = UnityEngine.Object.Instantiate(refData.LineupImage, refData.LineupImage.transform.parent);
+				}
+				if (viewData.handshakeSprite != null)
+					__instance._pilotEndingData[index].HandshakeSprite = viewData.handshakeSprite;
+				if (viewData.lineupSprite != null)
+					__instance._pilotEndingData[index].LineupImage.sprite = viewData.lineupSprite;
+			}
+		}
+
+		public static void Postfix(EndingSceneController __instance)
+        {
+            //Since the game uses the "pilot win" achievements to determine who shows up in the lineup, by default modded characters never show.
+			//This will make it so the current pilot being played is shown. Modded pilots that you've previously won with still won't be shown.
+            if (DataManager.PlayerData.PilotName >= ModContentManager.MINPILOTID)
+			{
+				__instance._pilotEndingData.Find(new Func<PilotEndingImages, bool>(p => p.PilotName == DataManager.PlayerData.PilotName)).LineupImage.gameObject.SetActive(true);
 			}
 		}
 	}
