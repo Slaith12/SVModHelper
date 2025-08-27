@@ -159,5 +159,41 @@ namespace SVModHelper
 				__instance._pilotEndingData.Find(new Func<PilotEndingImages, bool>(p => p.PilotName == DataManager.PlayerData.PilotName)).LineupImage.gameObject.SetActive(true);
 			}
 		}
+    }
+
+	[HarmonyPatch(typeof(PhotoSpawnMover), nameof(PhotoSpawnMover.SetupPilots))]
+	internal static class CreditsSceneFixer
+	{
+		public static void Prefix(PhotoSpawnMover __instance)
+		{
+			foreach (var pilotDataPair in ModContentManager.moddedPilotVDs)
+			{
+				PilotName pilot = pilotDataPair.Key;
+				ModPilotViewData viewData = pilotDataPair.Value;
+				if (viewData.lineupSprite == null && pilot >= ModContentManager.MINPILOTID)
+				{
+					//ModContentManager.GetModPilotData can modify moddedPilotVDs, so it can't be used here.
+					//Realistically this failsafe shouldn't ever be used, since the view data should be accessed earlier in gameplay.
+					//The view data should always be valid by the time this function is called.
+					var newData = ModContentManager.GetModPilotInstance(pilot).GetFullPilotData();
+					viewData = newData;
+				}
+
+				int index = __instance._pilotEndingData.FindIndex(new Func<PilotEndingImages, bool>(p => p.PilotName == pilot));
+				if (index < 0)
+				{
+					index = __instance._pilotEndingData.Count;
+					__instance._pilotEndingData.Add(new PilotEndingImages());
+					__instance._pilotEndingData[index].PilotName = pilot;
+					var refData = __instance._pilotEndingData[0];
+					//All lineup objects have the same positions, the sprites themselves are offset.
+					//This could be problematic if more than one modded pilot appears on the lineup screen, which is actually possible here, but I'm still not going to worry about it.
+					//The lineup image's sprites should always be overwritten to something, defaulting to a transparent image.
+					__instance._pilotEndingData[index].LineupImage = UnityEngine.Object.Instantiate(refData.LineupImage, refData.LineupImage.transform.parent);
+				}
+				if (viewData.lineupSprite != null)
+					__instance._pilotEndingData[index].LineupImage.sprite = viewData.lineupSprite;
+			}
+		}
 	}
-}
+    }
