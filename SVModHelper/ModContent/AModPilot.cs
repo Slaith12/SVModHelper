@@ -26,7 +26,7 @@ namespace SVModHelper.ModContent
         /// The sprite used for the pilot's portrait on the Pilot Selection screen.
         /// Defaults to <code>[BaseImagePath]Portrait.png</code>
         /// </summary>
-        public virtual Sprite FrontPortrait => GetStandardSprite(BaseImagePath + "Portrait.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite FrontPortrait => GetStandardSprite(BaseImagePath + "Portrait.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite displayed in front of the pilot's portrait on the Pilot Selection screen.
         /// Defaults to <code>[BaseImagePath]PortraitParallax.png</code>
@@ -36,13 +36,13 @@ namespace SVModHelper.ModContent
         /// The sprite used to display the pilot's name on the Pilot Selection screen (standard text is not used for this).
         /// Defaults to <code>[BaseImagePath]Name.png</code>
         /// </summary>
-        public virtual Sprite PilotTitleSprite => GetStandardSprite(BaseImagePath + "Name.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite PilotTitleSprite => GetStandardSprite(BaseImagePath + "Name.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used in the pilot display during an encounter.
         /// Defaults to <code>[BaseImagePath]CombatNeutral.png</code> or <code>[BaseImagePath]Combat.png</code>
         /// </summary>
         public virtual Sprite CombatPortraitNeutral => GetStandardSprite(BaseImagePath + "CombatNeutral.png", warnOnFail: false)
-            ?? GetStandardSprite(BaseImagePath + "Combat.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+            ?? GetStandardSprite(BaseImagePath + "Combat.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used in the pilot display during an encounter when something good happens.
         /// Defaults to <code>[BaseImagePath]CombatPositive.png</code> or to the neutral combat portrait.
@@ -62,12 +62,12 @@ namespace SVModHelper.ModContent
         /// The sprite used in the pilot display during a campaign outside an encounter.
         /// Defaults to <code>[BaseImagePath]Campaign.png</code>
         /// </summary>
-        public virtual Sprite CampaignPortrait => GetStandardSprite(BaseImagePath + "Campaign.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite CampaignPortrait => GetStandardSprite(BaseImagePath + "Campaign.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used for the photo on the victory screen.
         /// Defaults to <code>[BaseImagePath]Victory.png</code>
         /// </summary>
-        public virtual Sprite VictoryPhoto => GetStandardSprite(BaseImagePath + "Victory.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite VictoryPhoto => GetStandardSprite(BaseImagePath + "Victory.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used on the second panel of the true ending cutscene (the handhake with the alien).
         /// Defaults to <code>[BaseImagePath]Handshake.png</code>
@@ -92,7 +92,7 @@ namespace SVModHelper.ModContent
         /// </summary>
         public abstract Il2CppCollections.List<ArtifactName> StartingArtifacts { get; }
 
-        public ModPilotViewData GetFullPilotData(PilotSkinName skinName)
+        public ModPilotViewData GetFullPilotData(PilotSkinName skinName = PilotSkinName.Standard)
         {
             if (skinName != PilotSkinName.Standard)
                 return null;

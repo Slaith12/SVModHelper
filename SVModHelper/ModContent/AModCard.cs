@@ -16,7 +16,7 @@ namespace SVModHelper.ModContent
 
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
-        public virtual CardViewData CardViewData => GetStandardCardViewData(GetType().Name + ".png", warnOnFail: false);
+        public virtual CardViewData CardViewData => GetStandardCardViewData(GetType().Name + ".png", warnOnFail: true);
 
         /// <summary>
         /// The main traits that the card has.

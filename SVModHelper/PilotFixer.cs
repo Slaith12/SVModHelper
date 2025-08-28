@@ -118,7 +118,7 @@ namespace SVModHelper
 		{
 			foreach (var pilotDataPair in ModContentManager.moddedPilotVDs)
 			{
-				PilotName pilot = pilotDataPair.Key;
+				PilotName pilot = pilotDataPair.Key.Item1;
 				ModPilotViewData viewData = pilotDataPair.Value;
 				if (viewData.lineupSprite == null && pilot >= ModContentManager.MINPILOTID)
 				{
@@ -168,7 +168,7 @@ namespace SVModHelper
 		{
 			foreach (var pilotDataPair in ModContentManager.moddedPilotVDs)
 			{
-				PilotName pilot = pilotDataPair.Key;
+				PilotName pilot = pilotDataPair.Key.Item1;
 				ModPilotViewData viewData = pilotDataPair.Value;
 				if (viewData.lineupSprite == null && pilot >= ModContentManager.MINPILOTID)
 				{

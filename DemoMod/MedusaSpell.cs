@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace DemoMod
 {
@@ -15,6 +16,10 @@ namespace DemoMod
         public override string Description => "Transform a non-Boss entity into a Boulder.";
 
         public override int Cooldown => 3;
+
+        //No sprite included for this spell
+        //Overriding sprite property to suppress warning
+        public override Sprite Sprite => null;
 
         public override Il2CppCollections.HashSet<ItemName> MoreInfoItems => new HashSet<ItemName> { ItemName.Boulder }.ToILCPP();
 

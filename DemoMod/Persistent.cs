@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace DemoMod
 {
@@ -15,6 +16,10 @@ namespace DemoMod
         public override string Description => "If unplayed, create a copy of this card at the top of your draw pile. Purge this card when played.";
 
         public override ClassName Class => ClassName.Neutral;
+
+        //No sprite included for this component
+        //Overriding sprite property to suppress warning
+        public override Sprite Sprite => null;
 
         public override Il2CppCollections.HashSet<ComponentTrait> ComponentTraits => new HashSet<ComponentTrait>() 
         { ComponentTrait.Basic, ComponentTrait.NonPurge }.ToILCPP();

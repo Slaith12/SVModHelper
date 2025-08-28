@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace DemoMod
 {
@@ -18,6 +19,10 @@ namespace DemoMod
         public override Il2CppCollections.HashSet<CardTrait> HiddenTraits => new HashSet<CardTrait>() { CardTrait.Summon }.ToILCPP();
 
         public override ClassName Class => ClassName.Gunner;
+
+        //No sprite included for this card
+        //Overriding sprite property to suppress warning
+        public override CardViewData CardViewData => null;
 
         public override Rarity Rarity => Rarity.Common;
 

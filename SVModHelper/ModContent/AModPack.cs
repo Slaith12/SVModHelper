@@ -8,7 +8,7 @@ namespace SVModHelper.ModContent
 
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
-        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: false);
+        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: true);
 
         public abstract Il2CppCollections.HashSet<CardName> cards { get; }
         public abstract Il2CppCollections.HashSet<ArtifactName> artifacts { get; }

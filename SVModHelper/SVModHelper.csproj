@@ -398,6 +398,7 @@
 
 	<ItemGroup>
 		<Compile Include="ModContent\ModPilotViewData.cs" />
+		<Compile Include="ModContent\PilotModification.cs" />
 		<Compile Include="PilotFixer.cs" />
 		<Compile Include="ModContent\AModPilot.cs" />
 		<Compile Include="EntityViewDataInjector.cs" />

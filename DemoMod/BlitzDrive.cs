@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SVModHelper;
 using SVModHelper.ModContent;
+using UnityEngine;
 
 namespace DemoMod
 {
@@ -18,6 +19,10 @@ namespace DemoMod
         public override ClassName Class => ClassName.UniquePack;
 
         public override Rarity Rarity => Rarity.Legendary;
+
+        //No sprite included for this artifact
+        //Overriding sprite property to suppress warning
+        public override Sprite Sprite => null;
 
         public override ContextPreviewType ContextPreviewType => ContextPreviewType.Upgraded;
         public override Il2CppCollections.HashSet<MoreInfoWordName> MoreInfoWords => new HashSet<MoreInfoWordName>()

@@ -8,7 +8,7 @@ namespace SVModHelper.ModContent
 
         public abstract string DisplayName { get; }
         public abstract string Description { get; }
-        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: false);
+        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: true);
 
         /// <summary>
         /// The mech class that's able to get this card. Set to Neutral to allow any class to get it. Set to UniquePack to restrict it to a pack.
