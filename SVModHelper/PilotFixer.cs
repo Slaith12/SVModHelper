@@ -20,7 +20,7 @@ namespace SVModHelper
 	{
 		public static bool Prefix(PilotName entry, PilotDataDictSO __instance, ref PilotDataSO __result)
 		{
-			ModPilotViewData modPilotData = ModContentManager.GetModPilotData(entry);
+			ModPilotViewData modPilotData = ModContentManager.GetModPilotData(entry, DataManager.SettingsData.PilotSkin[entry], __instance);
 			if (modPilotData == null)
 				return true;
 

@@ -14,6 +14,7 @@ namespace SVModHelper
         internal static List<ItemModification> itemModifications;
         internal static List<PackModification> packModifications;
         internal static List<SpellModification> spellModifications;
+        internal static List<PilotModification> pilotModifications;
 
         internal static Dictionary<CardName, CardModification> activeCardMods;
         internal static Dictionary<ArtifactName, ArtifactModification> activeArtifactMods;
@@ -21,6 +22,7 @@ namespace SVModHelper
         internal static Dictionary<ItemName, ItemModification> activeItemMods;
         internal static Dictionary<ItemPackName, PackModification> activePackMods;
         internal static Dictionary<ArtifactName, SpellModification> activeSpellMods;
+        internal static Dictionary<PilotName, PilotModification> activePilotMods;
 
         internal static List<AModCard> moddedCards;
         internal static Dictionary<Type, CardName> moddedCardDict;
@@ -44,7 +46,7 @@ namespace SVModHelper
 
         internal static List<AModPilot> moddedPilots;
         internal static Dictionary<Type, PilotName> moddedPilotDict;
-        internal static Dictionary<PilotName, ModPilotViewData> moddedPilotVDs;
+        internal static Dictionary<(PilotName, PilotSkinName), ModPilotViewData> moddedPilotVDs;
         internal static Dictionary<PilotName, string> moddedPilotNames;
 
 		internal static Dictionary<Type, string> moddedTaskIDs;
@@ -80,6 +82,7 @@ namespace SVModHelper
             itemModifications = new();
             packModifications = new();
             spellModifications = new();
+            pilotModifications = new();
 
             moddedCards = new();
             moddedCardDict = new();
@@ -120,6 +123,7 @@ namespace SVModHelper
             ApplyComponentMods();
             ApplyItemMods();
             ApplyPackMods();
+            ApplyPilotMods();
         }
 
         private static void ApplyCardMods()
@@ -300,6 +304,29 @@ namespace SVModHelper
             //doing this so that A: all changes applied to AllPackData also apply to ClassicPackData
             //and B: so that I don't have to worry about vanilla packs being duplicated instead of shared between the two lists.
             ItemPackData._TrueClassicPackData_k__BackingField = ItemPackData.AllPackData.ToMono().Where(pack => !pack.IsHidden).ToList().ToILCPP();
+        }
+
+        private static void ApplyPilotMods()
+        {
+            activePilotMods = new();
+            foreach (PilotModification pilotMod in pilotModifications)
+            {
+                if (!activePilotMods.TryGetValue(pilotMod.targetPilot, out PilotModification activeMod))
+                {
+                    activeMod = new PilotModification(pilotMod.targetPilot);
+                    activePilotMods.Add(pilotMod.targetPilot, activeMod);
+                }
+                pilotMod.CopyTo(activeMod);
+            }
+
+            foreach (PilotModification activeMod in activePilotMods.Values)
+            {
+                if (activeMod.displayName != null)
+                    SetPilotName(activeMod.targetPilot, activeMod.displayName);
+                if (activeMod.description != null)
+                    SetPilotDesc(activeMod.targetPilot, activeMod.description);
+                SetPilotTrueEndDialogue(activeMod.targetPilot, activeMod.trueEndDialogue1, activeMod.trueEndDialogue2);
+            }
         }
         #endregion
 
@@ -526,10 +553,31 @@ namespace SVModHelper
         }
 
         //This essentially replaces SetPilotImage()
-        internal static void SetPilotViewData(PilotName pilotName, ModPilotViewData data)
+        internal static void SetPilotViewData(PilotName pilotName, PilotSkinName skinName, ModPilotViewData data)
         {
             if (data != null)
-                moddedPilotVDs[pilotName] = data;
+                moddedPilotVDs[(pilotName, skinName)] = data;
+        }
+
+        internal static void SetPilotTrueEndDialogue(PilotName pilotName, string dialogue1, string dialogue2, bool ignoreNull = true)
+        {
+            if(dialogue1 != null)
+            {
+                SetLocalizedString("Conversation_SecretQuestWinChaos_18_" + pilotName, dialogue1);
+            }
+            else if(!ignoreNull)
+            {
+                ClearLocalizedString("Conversation_SecretQuestWinChaos_18_" + pilotName);
+            }
+            if (dialogue2 != null)
+            {
+                SetLocalizedString("Conversation_SecretQuestWinChaos_19_" + pilotName, dialogue2);
+            }
+            else if (!ignoreNull)
+            {
+                ClearLocalizedString("Conversation_SecretQuestWinChaos_19_" + pilotName);
+            }
+
         }
 
         public static PilotName GetModPilotName<T>() where T : AModPilot
@@ -553,19 +601,43 @@ namespace SVModHelper
             return moddedPilots[pilotName - MINPILOTID];
         }
 
-        public static ModPilotViewData GetModPilotData(PilotName pilotName)
+        public static ModPilotViewData GetModPilotData(PilotName pilotName, PilotSkinName skinName, PilotDataDictSO vanillaDataDict = null)
         {
             //The handshake sprite is allowed to be null; it defaults to roxy's handshake in that case.
-            if (moddedPilotVDs.TryGetValue(pilotName, out ModPilotViewData data) && data != null && data.dataSO != null && data.lineupSprite != null)
+            if (moddedPilotVDs.TryGetValue((pilotName, skinName), out ModPilotViewData data) && data != null && data.dataSO != null && data.lineupSprite != null)
                 return data;
+
+            //There was no cached VD for this pilot/skin combination, so check if there should be one
+            AModPilot moddedPilot = GetModPilotInstance(pilotName);
+            if (moddedPilot == null) //If it's a vanilla pilot, try checking the PilotDataDictSO first.
+            {
+                PilotDataSO vanillaData = vanillaDataDict?.pilotDataList.Find(new Func<PilotDataSO, bool>(p => p.PilotName == pilotName && p.SkinName == skinName));
+                if (vanillaData != null)
+                {
+                    data = new();
+                    data.dataSO = vanillaData;
+                }
+            }
+            else //If it's a modded pilot, try checking the AModPilot data first.
+            {
+                data = moddedPilot.GetFullPilotData(skinName);
+            }
+
+            if (data != null)
+            {
+                //An appropriate VD was found, apply mods and cache it for later.
+                if (activePilotMods.TryGetValue(pilotName, out var pilotMod))
+                    pilotMod.ApplyTo(data);
+                moddedPilotVDs[(pilotName, skinName)] = data;
+                return data;
+            }
             else
             {
-                AModPilot moddedPilot = GetModPilotInstance(pilotName);
-                if (moddedPilot == null) //Vanilla pilots are allowed to have incomplete ModPilotViewData instances
-                    return data;
-                data = moddedPilot.GetFullPilotData();
-                moddedPilotVDs[pilotName] = data;
-                return data;
+                //If no VD was found, use the default skin (do not cache it under the current skin)
+                if (skinName == PilotSkinName.Standard)
+                    return null;
+                else
+                    return GetModPilotData(pilotName, PilotSkinName.Standard, vanillaDataDict);
             }
         }
         #endregion
@@ -598,6 +670,14 @@ namespace SVModHelper
             CheckInitStatus();
             string oldString = LocalizationFixer.extraLocalizedStrings.GetValueOrDefault(stringID);
             LocalizationFixer.extraLocalizedStrings[stringID] = localizedString;
+            return oldString;
+        }
+
+        public static string ClearLocalizedString(string stringID)
+        {
+            CheckInitStatus();
+            string oldString = LocalizationFixer.extraLocalizedStrings.GetValueOrDefault(stringID);
+            LocalizationFixer.extraLocalizedStrings.Remove(stringID);
             return oldString;
         }
 

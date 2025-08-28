@@ -120,6 +120,7 @@ namespace SVModHelper
             Melon<Core>.Logger.Msg("  Resource Loaded");
         }
 
+        #region AModContent
         protected CardName RegisterCard(AModCard modCardDef)
         {
             ModContentManager.CheckInitStatus();
@@ -261,7 +262,8 @@ namespace SVModHelper
 
             ModContentManager.SetPilotName(id, modPilot.DisplayName);
             ModContentManager.SetPilotDesc(id, modPilot.Description);
-            ModContentManager.SetPilotViewData(id, modPilot.GetFullPilotData());
+            ModContentManager.SetPilotViewData(id, PilotSkinName.Standard, modPilot.GetFullPilotData(PilotSkinName.Standard));
+            ModContentManager.SetPilotTrueEndDialogue(id, modPilot.TrueEndDialogue1, modPilot.TrueEndDialogue2);
 
             return id;
         }
@@ -280,7 +282,9 @@ namespace SVModHelper
             ModContentManager.moddedTaskInstances.Add(id, task);
             return id;
         }
+        #endregion
 
+        #region Content Modifications
         protected void RegisterContentMod(CardModification cardMod)
         {
             cardMod.m_Source = this;
@@ -320,6 +324,15 @@ namespace SVModHelper
             for (index = 0; index < ModContentManager.packModifications.Count && ModContentManager.packModifications[index].priority < packMod.priority; index++) ;
             ModContentManager.packModifications.Insert(index, packMod);
         }
+
+        protected void RegisterContentMod(PilotModification pilotMod)
+        {
+            pilotMod.m_Source = this;
+            int index;
+            for (index = 0; index < ModContentManager.pilotModifications.Count && ModContentManager.pilotModifications[index].priority < pilotMod.priority; index++) ;
+            ModContentManager.pilotModifications.Insert(index, pilotMod);
+        }
+        #endregion
 
         //TODO: Consolidate content functions here and in AModContent in a separate helper class
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

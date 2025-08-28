@@ -73,12 +73,14 @@ namespace SVModHelper.ModContent
         /// Defaults to <code>[BaseImagePath]Handshake.png</code>
         /// </summary>
         public virtual Sprite TrueEndHandshake => GetStandardSprite(BaseImagePath + "Handhake.png", warnOnFail: false) ?? null;
-
         /// <summary>
         /// The sprite used on the final panel of the true ending cutscene (the lineup with all pilots).
         /// Defaults to <code>[BaseImagePath]Lineup.png</code>
         /// </summary>
         public virtual Sprite TrueEndLineup => GetStandardSprite(BaseImagePath + "Lineup.png", warnOnFail: false) ?? null;
+
+        public virtual string TrueEndDialogue1 => null;
+        public virtual string TrueEndDialogue2 => null;
 
         /// <summary>
         /// This pilot's starting cards.
@@ -90,8 +92,10 @@ namespace SVModHelper.ModContent
         /// </summary>
         public abstract Il2CppCollections.List<ArtifactName> StartingArtifacts { get; }
 
-        public ModPilotViewData GetFullPilotData()
+        public ModPilotViewData GetFullPilotData(PilotSkinName skinName)
         {
+            if (skinName != PilotSkinName.Standard)
+                return null;
             ModPilotViewData result = new();
             result.dataSO = GetPilotDataSO();
             result.handshakeSprite = TrueEndHandshake;
@@ -107,6 +111,7 @@ namespace SVModHelper.ModContent
 
             result.ClassName = ClassName;
             result.PilotName = PilotName;
+            result.SkinName = PilotSkinName.Standard;
 
             result.Complexity = Complexity;
 
