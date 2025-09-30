@@ -143,6 +143,25 @@ namespace DemoMod
                 hasRegeneratingShield = true
             });
 
+            CardName followThroughName = ModContentManager.GetModCardName<FollowThrough>();
+
+            RegisterContentMod(new PilotModification(PilotName.Shun)
+            {
+                startingCards = new List<PlayerCardData>()
+                {
+                    new PlayerCardData(CardName.Dash),
+                    new PlayerCardData(CardName.Dash),
+                    new PlayerCardData(CardName.Dash),
+                    new PlayerCardData(followThroughName),
+                    new PlayerCardData(followThroughName),
+                    new PlayerCardData(CardName.Jab),
+                    new PlayerCardData(CardName.Jab),
+                    new PlayerCardData(CardName.Jab),
+                    new PlayerCardData(CardName.Jab),
+                    new PlayerCardData(CardName.HeaveHo), //Zap
+                }.ToILCPP()
+            });
+
             LoggerInstance.Msg("Done!");
         }
     }
