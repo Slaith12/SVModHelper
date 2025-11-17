@@ -49,7 +49,7 @@ namespace SVModHelper
 		{
 			if(ModContentManager.moddedPilotNames.TryGetValue(pilotSelectionController.CurrentPlayerData.PilotName, out string name))
             {
-                __instance.PilotName.SetText(name);
+                __instance.PilotNameText.SetText(name);
             }
 		}
 	}
