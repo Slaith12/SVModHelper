@@ -53,6 +53,15 @@ namespace SVModHelper.ModContent
         public virtual Il2CppCollections.HashSet<EnemyName> MoreInfoEnemies => new Il2CppCollections.HashSet<EnemyName>();
 
         /// <summary>
+        /// <para>The actions that occur when this spell is initially obtained.</para>
+        /// <para>This does not use the task engine, and as such it's acceptable for actions to take effect immediately when this function is called.</para>
+        /// </summary>
+        public virtual void OnObtain(PlayerDataSO playerData)
+        {
+
+        }
+
+        /// <summary>
         /// Returns the tasks to perform when this spell is initialized at the beginning of the encounter OR spawned mid-way through an encounter.
         /// </summary>
         public virtual Il2CppCollections.List<ATask> GetSpawnTaskList(OnCreateIDValue artifactID)
@@ -87,7 +96,7 @@ namespace SVModHelper.ModContent
 
         /// <summary>
         /// <para>Returns the full task list associated with this spell.</para>
-        /// <para>DO NOT OVERRIDE THIS FUNCTION unless you know what you're doing. The function you should normally override to change the task list is GetTaskList().</para>
+        /// <para>DO NOT OVERRIDE THIS FUNCTION UNLESS YOU KNOW WHAT YOU'RE DOING. The function you should normally override to change the task list is GetTaskList().</para>
         /// </summary>
         public virtual Il2CppCollections.List<ATask> GetFullTaskList(OnCreateIDValue artifactID)
         {
@@ -125,7 +134,6 @@ namespace SVModHelper.ModContent
         bool IHasArtifactID.IsSpell => true;
 
         Il2CppCollections.List<ATask> IHasArtifactID.GetTaskList(OnCreateIDValue artifactID) => GetFullTaskList(artifactID);
-        void IHasArtifactID.OnObtain(PlayerDataSO playerData) { }
 
         public static implicit operator AArtifactModelDefinition(AModSpell modSpell)
         {
