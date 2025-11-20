@@ -52,6 +52,9 @@ namespace SVModHelper
 		internal static Dictionary<Type, string> moddedTaskIDs;
         internal static Dictionary<string, AModTask> moddedTaskInstances;
 
+        internal static List<string> moddedMoreInfoPanels;
+        internal static Dictionary<string, MoreInfoWordName> moddedMoreInfoPanelDict;
+
         internal static Dictionary<string, byte[]> contentData;
 
         internal const CardName MINCARDID = (CardName)15000;
@@ -61,7 +64,7 @@ namespace SVModHelper
         internal const EnemyName MINENEMYID = (EnemyName)15000;
         internal const ItemPackName MINPACKID = (ItemPackName)15000;
         internal const PilotName MINPILOTID = (PilotName)1000;
-
+        internal const MoreInfoWordName MINMOREINFOID = (MoreInfoWordName)200;
 
         public const CardName INVALIDCARDID = (CardName)(-1);
         public const ArtifactName INVALIDARTIFACTID = (ArtifactName)(-1);
@@ -71,6 +74,7 @@ namespace SVModHelper
         public const ItemPackName INVALIDPACKID = (ItemPackName)(-1);
         public const PilotName INVALIDPILOTID = (PilotName)(-1);
         public const string INVALIDTASKID = "";
+        public const MoreInfoWordName INVALIDMOREINFOID = (MoreInfoWordName)(-1);
 
         static ModContentManager()
         {
@@ -111,6 +115,9 @@ namespace SVModHelper
 
             moddedTaskIDs = new();
             moddedTaskInstances = new();
+
+            moddedMoreInfoPanels = new();
+            moddedMoreInfoPanelDict = new();
 
             contentData = new();
         }
@@ -679,6 +686,28 @@ namespace SVModHelper
         public static AModTask GetModTaskInstance(string id)
         {
             return moddedTaskInstances.GetValueOrDefault(id, null);
+        }
+        #endregion
+
+        #region More Info Panels
+        internal static string SetMoreInfoDescription(MoreInfoWordName moreInfoName, string description, string locale = LocalizationFixer.GLOBALDEFAULT)
+        {
+            string id = moreInfoName.ToString() + "_InfoLine";
+            return SetLocalizedString(id, description, locale);
+        }
+
+        public static MoreInfoWordName GetModMoreInfoName(string id)
+        {
+            if (moddedMoreInfoPanelDict.TryGetValue(id, out var name))
+                return name;
+            return INVALIDMOREINFOID;
+        }
+
+        public static string GetModMoreInfoID(MoreInfoWordName moreInfoName)
+        {
+            if (moreInfoName < MINMOREINFOID || moreInfoName >= MINMOREINFOID + moddedMoreInfoPanels.Count)
+                return null;
+            return moddedMoreInfoPanels[moreInfoName - MINMOREINFOID];
         }
         #endregion
 

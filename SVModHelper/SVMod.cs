@@ -305,7 +305,7 @@ namespace SVModHelper
 				throw new InvalidOperationException("Can not register the same pilot multiple times.");
             }
 
-            PilotName id = ModContentManager.moddedPilotDict.Count + ModContentManager.MINPILOTID;
+            PilotName id = ModContentManager.moddedPilots.Count + ModContentManager.MINPILOTID;
             ModContentManager.moddedPilots.Add(modPilot);
             ModContentManager.moddedPilotDict.Add(pilotType, id);
 
@@ -337,6 +337,33 @@ namespace SVModHelper
             ModContentManager.moddedTaskIDs.Add(taskType, id);
             ModContentManager.moddedTaskInstances.Add(id, task);
             return id;
+        }
+
+        protected MoreInfoWordName RegisterMoreInfoPanel(string id, string defaultDescription, Dictionary<string, string> localizedDescriptions = null, bool overrideIfPresent = true)
+        {
+            ModContentManager.CheckInitStatus();
+            MoreInfoWordName name;
+            if(ModContentManager.moddedMoreInfoPanelDict.TryGetValue(id, out name))
+            {
+                if (!overrideIfPresent)
+                    return name;
+            }
+            else
+            {
+                name = ModContentManager.moddedMoreInfoPanels.Count + ModContentManager.MINMOREINFOID;
+                ModContentManager.moddedMoreInfoPanels.Add(id);
+                ModContentManager.moddedMoreInfoPanelDict.Add(id, name);
+            }
+
+            ModContentManager.SetMoreInfoDescription(name, defaultDescription);
+            if(localizedDescriptions != null)
+            {
+                foreach((string locale, string desc) in localizedDescriptions)
+                {
+                    ModContentManager.SetMoreInfoDescription(name, desc, locale);
+                }
+            }
+            return name;
         }
         #endregion
 
