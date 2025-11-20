@@ -74,7 +74,7 @@ namespace SVModHelper.ModContent
         public virtual Il2CppCollections.HashSet<EnemyName> MoreInfoEnemies => new Il2CppCollections.HashSet<EnemyName>();
 
         /// <summary>
-        /// <para>The actions when this artifact is initially obtained.</para>
+        /// <para>The actions that occur when this artifact is initially obtained.</para>
         /// <para>This does not use the task engine, and as such it's acceptable for actions to take effect immediately when this function is called.</para>
         /// </summary>
         public virtual void OnObtain(PlayerDataSO playerData)
@@ -109,5 +109,15 @@ namespace SVModHelper.ModContent
 
         int IHasArtifactID.Cooldown => 1;
         bool IHasArtifactID.IsSpell => false;
+
+        public static implicit operator AArtifactModelDefinition(AModArtifact modArtifact)
+        {
+            ArtifactName name = modArtifact.ArtifactName;
+            if (name == ModContentManager.INVALIDARTIFACTID)
+            {
+                throw new InvalidOperationException($"Attempted to use un-registered artifact {modArtifact.GetType()}.");
+            }
+            return new ModArtifactModelDef(modArtifact, name);
+        }
     }
 }

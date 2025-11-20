@@ -153,5 +153,15 @@ namespace SVModHelper.ModContent
         /// The component's rarity. Any rarity other than "Common" will cause the component to be unable to be applied by any effect that applies a random component (including rewards).
         /// </summary>
         public virtual Rarity Rarity => Rarity.Common;
+
+        public static implicit operator AComponentDefinition(AModComponent modComponent)
+        {
+            ComponentName name = modComponent.ComponentName;
+            if (name == ModContentManager.INVALIDCOMPID)
+            {
+                throw new InvalidOperationException($"Attempted to use un-registered component {modComponent.GetType()}.");
+            }
+            return new ModComponentModelDef(modComponent, name);
+        }
     }
 }

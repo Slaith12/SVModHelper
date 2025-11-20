@@ -30,7 +30,15 @@ namespace SVModHelper.ModContent
 
         internal ItemPack Convert()
         {
+            ItemPackName name = PackName;
+            if (name == ModContentManager.INVALIDPACKID)
+                throw new InvalidOperationException($"Attempted to use un-registered pack {GetType()}.");
             return new ItemPack(PackName, cards, artifacts, isHidden);
+        }
+
+        public static implicit operator ItemPack(AModPack modPack)
+        {
+            return modPack.Convert();
         }
     }
 }

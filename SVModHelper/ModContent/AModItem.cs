@@ -152,5 +152,15 @@
         {
             return new();
         }
+
+        public static implicit operator AItemEntityDefinition(AModItem modItem)
+        {
+            ItemName name = modItem.ItemName;
+            if (name == ModContentManager.INVALIDITEMID)
+            {
+                throw new InvalidOperationException($"Attempted to use un-registered item {modItem.GetType()}.");
+            }
+            return new ModItemModelDef(modItem, name);
+        }
     }
 }

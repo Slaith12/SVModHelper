@@ -38,6 +38,11 @@ namespace SVModHelper.ModContent
             return new CustomTask(customTaskID, args.ToILCPP());
         }
 
+        public static implicit operator ATask(AModTask modTask)
+        {
+            return modTask.Convert();
+        }
+
         protected void SetArg(ArgKey key, Il2CppSystem.Object value)
         {
             args[key] = value;

@@ -126,5 +126,15 @@ namespace SVModHelper.ModContent
 
         Il2CppCollections.List<ATask> IHasArtifactID.GetTaskList(OnCreateIDValue artifactID) => GetFullTaskList(artifactID);
         void IHasArtifactID.OnObtain(PlayerDataSO playerData) { }
+
+        public static implicit operator AArtifactModelDefinition(AModSpell modSpell)
+        {
+            ArtifactName name = modSpell.ArtifactName;
+            if (name == ModContentManager.INVALIDARTIFACTID)
+            {
+                throw new InvalidOperationException($"Attempted to use un-registered spell {modSpell.GetType()}.");
+            }
+            return new ModArtifactModelDef(modSpell, name);
+        }
     }
 }

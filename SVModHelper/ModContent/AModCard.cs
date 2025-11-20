@@ -202,5 +202,15 @@ namespace SVModHelper.ModContent
                 new EqualsCondition(RequiresPlayerEntity, false)
             )
         );
+
+        public static implicit operator ACardModelDefinition(AModCard modCard)
+        {
+            CardName name = modCard.CardName;
+            if(name == ModContentManager.INVALIDCARDID)
+            {
+                throw new InvalidOperationException($"Attempted to use un-registered card {modCard.GetType()}.");
+            }
+            return new ModCardModelDef(modCard, name);
+        }
     }
 }
