@@ -2,10 +2,11 @@
 using Il2CppInterop.Runtime.Injection;
 using SVModHelper.ModContent;
 using System.Reflection;
+using UnityEngine;
 
 [assembly: MelonInfo(typeof(SVModHelper.Core), "StarVaders Mod Helper", "0.2.1", "Slaith", "https://github.com/Slaith12/SVModHelper/releases")]
 [assembly: MelonGame("Pengonauts", "StarVaders")]
-
+[assembly: VerifyLoaderVersion(0, 7, 2, true)]
 namespace SVModHelper
 {
     internal class Core : MelonMod
@@ -44,35 +45,65 @@ namespace SVModHelper
         {
             RegisterTypeOptions enumLinkOptions = new RegisterTypeOptions() { Interfaces = new Il2CppInterfaceCollection([typeof(Il2CppSystem.Collections.IEnumerator)]) };
             ClassInjector.RegisterTypeInIl2Cpp<EnumeratorLink>(enumLinkOptions);
-            foreach (MelonMod mod in RegisteredMelons)
+
+            List<SVMod> mods = RegisteredMelons.Where(mod => mod is SVMod).Cast<SVMod>().ToList();
+            bool error = false;
+
+            foreach (SVMod mod in mods)
             {
-                if (mod is SVMod svMod)
+                try
                 {
-                    Melon<Core>.Logger.Msg("Registering mod " + svMod.Info.Name);
-                    try
-                    {
-                        svMod.RegisterMod();
-                    }
-                    catch(Exception ex)
-                    {
-                        Melon<Core>.Logger.Error($"The following error occured when registering {svMod.Info.Name}:\n{ex}");
-                    }
+                    mod.EarlyRegisterMod();
+                }
+                catch (Exception ex)
+                {
+                    Melon<Core>.Logger.Error($"The following error occured when early registering {mod.Info.Name}:\n{ex}");
+                    error = true;
                 }
             }
-
-            foreach (MelonMod mod in RegisteredMelons)
+            if (error)
             {
-                if (mod is SVMod svMod)
+                Melon<Core>.Logger.Warning("Closing game due to mods failing to load.");
+                Melon<Core>.Logger.Warning("Please update or remove erroneous mods before restarting.");
+                Application.Quit();
+            }
+
+            foreach (SVMod mod in mods)
+            {
+                try
                 {
-                    try
-                    {
-                        svMod.LateRegisterMod();
-                    }
-                    catch (Exception ex)
-                    {
-                        Melon<Core>.Logger.Error($"The following error occured when late registering {svMod.Info.Name}:\n{ex}");
-                    }
+                    mod.RegisterMod();
                 }
+                catch (Exception ex)
+                {
+                    Melon<Core>.Logger.Error($"The following error occured when registering {mod.Info.Name}:\n{ex}");
+                    error = true;
+                }
+            }
+            if (error)
+            {
+                Melon<Core>.Logger.Warning("Closing game due to mods failing to load.");
+                Melon<Core>.Logger.Warning("Please update or remove erroneous mods before restarting.");
+                Application.Quit();
+            }
+
+            foreach (SVMod mod in mods)
+            {
+                try
+                {
+                    mod.LateRegisterMod();
+                }
+                catch (Exception ex)
+                {
+                    Melon<Core>.Logger.Error($"The following error occured when late registering {mod.Info.Name}:\n{ex}");
+                    error = true;
+                }
+            }
+            if (error)
+            {
+                Melon<Core>.Logger.Warning("Closing game due to mods failing to load.");
+                Melon<Core>.Logger.Warning("Please update or remove erroneous mods before restarting.");
+                Application.Quit();
             }
         }
 

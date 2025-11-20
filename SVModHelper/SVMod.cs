@@ -110,6 +110,7 @@ namespace SVModHelper
             }
         }
 
+        protected internal virtual void EarlyRegisterMod() { }
         protected internal virtual void LateRegisterMod() { }
 
         protected void RegisterResource(string resourceName)
