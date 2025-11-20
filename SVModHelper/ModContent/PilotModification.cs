@@ -17,6 +17,8 @@ namespace SVModHelper.ModContent
 
         public string displayName;
         public string description;
+        //Pilot names aren't localized
+        public Dictionary<string, string> localizedDescriptions = new();
         public int? complexity;
         //public ClassName? className;
 
@@ -31,8 +33,7 @@ namespace SVModHelper.ModContent
         public Sprite victoryPhoto;
         public Sprite trueEndHandshake;
         public Sprite trueEndLineup;
-        public string trueEndDialogue1;
-        public string trueEndDialogue2;
+        public Dictionary<string, (string dialogue1, string dialogue2)> localizedTrueEndDialogues = new();
 
         public Il2CppCollections.List<PlayerCardData> startingCards;
 
@@ -53,6 +54,10 @@ namespace SVModHelper.ModContent
             if (description != null)
             {
                 other.description = description;
+            }
+            foreach (var locDesc in localizedDescriptions)
+            {
+                other.localizedDescriptions[locDesc.Key] = locDesc.Value;
             }
             if (complexity != null)
             {
@@ -106,13 +111,9 @@ namespace SVModHelper.ModContent
             {
                 other.trueEndLineup = trueEndLineup;
             }
-            if (trueEndDialogue1 != null)
+            foreach (var locDialogue in localizedTrueEndDialogues)
             {
-                other.trueEndDialogue1 = trueEndDialogue1;
-            }
-            if (trueEndDialogue2 != null)
-            {
-                other.trueEndDialogue2 = trueEndDialogue2;
+                other.localizedTrueEndDialogues[locDialogue.Key] = locDialogue.Value;
             }
             if (startingCards != null)
             {

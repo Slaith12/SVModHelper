@@ -6,8 +6,22 @@ namespace SVModHelper.ModContent
     {
         public ArtifactName ArtifactName => ModContentManager.GetModArtifactName(GetType());
 
+        /// <summary>
+        /// The name that's shown for this artifact. Only used when no localization is provided for the current locale.
+        /// </summary>
         public abstract string DisplayName { get; }
+        /// <summary>
+        /// The description that's shown for this artifact. Only used when no localization is provided for the current locale.
+        /// </summary>
         public abstract string Description { get; }
+        /// <summary>
+        /// The name that's shown for this artifact on different locales. Falls back to DisplayName for any locales that are missing localizations.
+        /// </summary>
+        public virtual Dictionary<string, string> LocalizedNames => new();
+        /// <summary>
+        /// The description that's shown for this artifact on different locales. Falls back to Description for any locales that are missing localizations.
+        /// </summary>
+        public virtual Dictionary<string, string> LocalizedDescriptions => new();
         public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: true);
 
         /// <summary>

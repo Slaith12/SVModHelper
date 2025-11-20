@@ -12,8 +12,19 @@ namespace SVModHelper.ModContent
         /// </summary>
         public abstract ClassName ClassName { get; }
 
+        /// <summary>
+        /// The pilot's name when displayed in text.
+        /// Note that some panels use an image for the pilot's name instead, which is defined in PilotTitleSprite.
+        /// </summary>
         public abstract string DisplayName { get; }
+        /// <summary>
+        /// The description that's shown for this pilot (shown on the pilot select screen). Only used when no localization is provided for the current locale.
+        /// </summary>
         public abstract string Description { get; }
+        /// <summary>
+        /// The description that's shown for this pilot on different locales. Falls back to Description for any locales that are missing localizations.
+        /// </summary>
+        public virtual Dictionary<string, string> LocalizedDescriptions => new();
 
         public abstract int Complexity { get; }
 
@@ -79,8 +90,10 @@ namespace SVModHelper.ModContent
         /// </summary>
         public virtual Sprite TrueEndLineup => GetStandardSprite(BaseImagePath + "Lineup.png", warnOnFail: false) ?? null;
 
-        public virtual string TrueEndDialogue1 => null;
-        public virtual string TrueEndDialogue2 => null;
+        /// <summary>
+        /// The pilot's dialogue when talking to the Overseer in the true ending. Defaults to a generic sequence for each locale.
+        /// </summary>
+        public virtual Dictionary<string, (string dialogue1, string dialogue2)> LocalizedTrueEndDialogues => new();
 
         /// <summary>
         /// This pilot's starting cards.

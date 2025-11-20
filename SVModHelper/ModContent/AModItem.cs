@@ -4,8 +4,22 @@
     {
         public ItemName ItemName => ModContentManager.GetModItemName(GetType());
 
+        /// <summary>
+        /// The name that's shown for this item. Only used when no localization is provided for the current locale.
+        /// </summary>
         public abstract string DisplayName { get; }
+        /// <summary>
+        /// The description that's shown for this item. Only used when no localization is provided for the current locale.
+        /// </summary>
         public abstract string Description { get; }
+        /// <summary>
+        /// The name that's shown for this item on different locales. Falls back to DisplayName for any locales that are missing localizations.
+        /// </summary>
+        public virtual Dictionary<string, string> LocalizedNames => new();
+        /// <summary>
+        /// The description that's shown for this item on different locales. Falls back to Description for any locales that are missing localizations.
+        /// </summary>
+        public virtual Dictionary<string, string> LocalizedDescriptions => new();
 
         public virtual ItemViewDataSO ItemViewData => new ItemViewDataSO() 
         { 

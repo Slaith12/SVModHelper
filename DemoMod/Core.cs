@@ -162,6 +162,17 @@ namespace DemoMod
                 }.ToILCPP()
             });
 
+            RegisterContentMod(new CardModification(ModContentManager.GetModCardName<CannonFire>())
+            {
+                displayName = "Cannon Fire! (Global Default)",
+                localizedNames = new Dictionary<string, string>()
+                {
+                    ["en"] = "Cannon Fire! (en)",
+                    ["es"] = "Cannon Fire! (es)",
+                    ["fr"] = "Cannon Fire! (fr)"
+                }
+            });
+
             LoggerInstance.Msg("Done!");
         }
     }

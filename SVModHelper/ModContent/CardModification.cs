@@ -13,6 +13,8 @@
 
         public string displayName;
         public string description;
+        public Dictionary<string, string> localizedNames = new();
+        public Dictionary<string, string> localizedDescriptions = new();
         public CardViewData cardView;
 
         public ClassName? newClass;
@@ -41,6 +43,14 @@
                 other.displayName = displayName;
             if (description != null)
                 other.description = description;
+            foreach(var locName in localizedNames)
+            {
+                other.localizedNames[locName.Key] = locName.Value;
+            }
+            foreach (var locDesc in localizedDescriptions)
+            {
+                other.localizedDescriptions[locDesc.Key] = locDesc.Value;
+            }
             if (cardView != null)
                 other.cardView = cardView;
             if (newClass != null)

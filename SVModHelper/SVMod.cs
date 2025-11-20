@@ -139,6 +139,14 @@ namespace SVModHelper
             ModContentManager.SetCardTitle(id, modCardDef.DisplayName);
             ModContentManager.SetCardDesc(id, modCardDef.Description);
             ModContentManager.SetCardImage(id, modCardDef.CardViewData);
+            foreach(var locName in modCardDef.LocalizedNames)
+            {
+                ModContentManager.SetCardTitle(id, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modCardDef.LocalizedDescriptions)
+            {
+                ModContentManager.SetCardDesc(id, locDesc.Value, locDesc.Key);
+            }
 
             return id;
         }
@@ -161,6 +169,14 @@ namespace SVModHelper
             ModContentManager.SetArtifactTitle(id, modArtifactDef.DisplayName);
             ModContentManager.SetArtifactDesc(id, modArtifactDef.Description);
             ModContentManager.SetArtifactImage(id, modArtifactDef.Sprite);
+            foreach (var locName in modArtifactDef.LocalizedNames)
+            {
+                ModContentManager.SetArtifactTitle(id, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modArtifactDef.LocalizedDescriptions)
+            {
+                ModContentManager.SetArtifactDesc(id, locDesc.Value, locDesc.Key);
+            }
 
             return id;
         }
@@ -181,6 +197,14 @@ namespace SVModHelper
             ModContentManager.SetComponentTitle(id, modComponentDef.DisplayName);
             ModContentManager.SetComponentDesc(id, modComponentDef.Description);
             ModContentManager.SetComponentImage(id, modComponentDef.Sprite);
+            foreach (var locName in modComponentDef.LocalizedNames)
+            {
+                ModContentManager.SetComponentTitle(id, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modComponentDef.LocalizedDescriptions)
+            {
+                ModContentManager.SetComponentDesc(id, locDesc.Value, locDesc.Key);
+            }
 
             return id;
         }
@@ -201,6 +225,14 @@ namespace SVModHelper
             ModContentManager.SetItemTitle(id, modItemDef.DisplayName);
             ModContentManager.SetItemDesc(id, modItemDef.Description);
             ModContentManager.SetItemImage(id, modItemDef.ItemViewData);
+            foreach (var locName in modItemDef.LocalizedNames)
+            {
+                ModContentManager.SetItemTitle(id, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modItemDef.LocalizedDescriptions)
+            {
+                ModContentManager.SetItemDesc(id, locDesc.Value, locDesc.Key);
+            }
 
             return id;
         }
@@ -221,6 +253,14 @@ namespace SVModHelper
             ModContentManager.SetPackTitle(id, modPackDef.DisplayName);
             ModContentManager.SetPackDesc(id, modPackDef.Description);
             ModContentManager.SetPackImage(id, modPackDef.Sprite);
+            foreach (var locName in modPackDef.LocalizedNames)
+            {
+                ModContentManager.SetPackTitle(id, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modPackDef.LocalizedDescriptions)
+            {
+                ModContentManager.SetPackDesc(id, locDesc.Value, locDesc.Key);
+            }
 
             return id;
         }
@@ -242,6 +282,14 @@ namespace SVModHelper
             ModContentManager.SetArtifactTitle(id, modSpellDef.DisplayName);
             ModContentManager.SetArtifactDesc(id, modSpellDef.Description);
             ModContentManager.SetArtifactImage(id, modSpellDef.Sprite);
+            foreach (var locName in modSpellDef.LocalizedNames)
+            {
+                ModContentManager.SetArtifactTitle(id, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modSpellDef.LocalizedDescriptions)
+            {
+                ModContentManager.SetArtifactDesc(id, locDesc.Value, locDesc.Key);
+            }
 
             return id;
         }
@@ -263,7 +311,14 @@ namespace SVModHelper
             ModContentManager.SetPilotName(id, modPilot.DisplayName);
             ModContentManager.SetPilotDesc(id, modPilot.Description);
             ModContentManager.SetPilotViewData(id, PilotSkinName.Standard, modPilot.GetFullPilotData(PilotSkinName.Standard));
-            ModContentManager.SetPilotTrueEndDialogue(id, modPilot.TrueEndDialogue1, modPilot.TrueEndDialogue2);
+            foreach (var locDesc in modPilot.LocalizedDescriptions)
+            {
+                ModContentManager.SetPilotDesc(id, locDesc.Value, locDesc.Key);
+            }
+            foreach (var locDialogue in modPilot.LocalizedTrueEndDialogues)
+            {
+                ModContentManager.SetPilotTrueEndDialogue(id, locDialogue.Value.dialogue1, locDialogue.Value.dialogue2, locale: locDialogue.Key);
+            }
 
             return id;
         }

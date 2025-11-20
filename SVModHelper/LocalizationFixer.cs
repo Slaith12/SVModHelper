@@ -1,18 +1,78 @@
 ﻿using MelonLoader;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 namespace SVModHelper
 {
-    [HarmonyPatch(typeof(LocalizationUtils), nameof(LocalizationUtils.ResetLocalizedStringDict))]
     internal static class LocalizationFixer
     {
-        public static Dictionary<string, string> extraLocalizedStrings = new();
+        public static Dictionary<string, Dictionary<string, string>> extraLocalizedStrings = new();
+        public const string GLOBALDEFAULT = "_global";
 
-        public static void Postfix()
+        public static string GetLocalizedString(string key, string locale)
         {
-            foreach(var loc in extraLocalizedStrings)
+            if (extraLocalizedStrings.TryGetValue(locale, out var localeDict) && localeDict.TryGetValue(key, out string value))
+                return value;
+            else
+                return null;
+        }
+
+        public static void SetLocalizedString(string key, string value, string locale)
+        {
+            if (!extraLocalizedStrings.TryGetValue(locale, out var localeDict))
             {
-                LocalizationUtils.LocalizedStringsDict.Add(loc.Key, loc.Value);
+                localeDict = new();
+                extraLocalizedStrings.Add(locale, localeDict);
             }
+            extraLocalizedStrings[locale][key] = value;
+        }
+
+        public static bool RemoveLocalizedString(string key, string locale)
+        {
+            if (!extraLocalizedStrings.TryGetValue(locale, out var localeDict))
+                return false;
+            bool removed = localeDict.Remove(key);
+            return removed;
+        }
+
+        internal static void PatchExtraLocalization()
+        {
+            //load defaults first
+            if (extraLocalizedStrings.ContainsKey(GLOBALDEFAULT))
+            {
+                foreach (var loc in extraLocalizedStrings[GLOBALDEFAULT])
+                {
+                    LocalizationUtils.LocalizedStringsDict[loc.Key] = loc.Value;
+                }
+            }
+
+            //add locale-specific strings next (override default strings if necessary)
+            string currentLocale = LocalizationSettings.SelectedLocale.Identifier.Code;
+            if (extraLocalizedStrings.ContainsKey(currentLocale))
+            {
+                foreach (var loc in extraLocalizedStrings[currentLocale])
+                {
+                    LocalizationUtils.LocalizedStringsDict[loc.Key] = loc.Value;
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(BootupController), nameof(BootupController.SetLocalizer))]
+    internal static class BootupLocalizationFixer
+    {
+        private static void Postfix()
+        {
+            LocalizationFixer.PatchExtraLocalization();
+        }
+    }
+
+    [HarmonyPatch(typeof(LanguageSelector), nameof(LanguageSelector.LocaleSelected))]
+    internal static class LocalizationUpdateFixer
+    {
+        private static void Postfix()
+        {
+            LocalizationFixer.PatchExtraLocalization();
         }
     }
 

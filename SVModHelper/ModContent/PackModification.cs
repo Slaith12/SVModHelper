@@ -11,6 +11,8 @@ namespace SVModHelper.ModContent
 
         public string displayName;
         public string description;
+        public Dictionary<string, string> localizedNames = new();
+        public Dictionary<string, string> localizedDescriptions = new();
         public Sprite sprite;
 
         public bool? isHidden;
@@ -32,6 +34,14 @@ namespace SVModHelper.ModContent
                 other.displayName = displayName;
             if (description != null)
                 other.description = description;
+            foreach (var locName in localizedNames)
+            {
+                other.localizedNames[locName.Key] = locName.Value;
+            }
+            foreach (var locDesc in localizedDescriptions)
+            {
+                other.localizedDescriptions[locDesc.Key] = locDesc.Value;
+            }
             if (sprite != null)
                 other.sprite = sprite;
             if (isHidden != null)

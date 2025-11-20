@@ -14,8 +14,22 @@ namespace SVModHelper.ModContent
 
         public CardName CardName => ModContentManager.GetModCardName(GetType());
 
+        /// <summary>
+        /// The name that's shown for this card. Only used when no localization is provided for the current locale.
+        /// </summary>
         public abstract string DisplayName { get; }
+        /// <summary>
+        /// The description that's shown for this card. Only used when no localization is provided for the current locale.
+        /// </summary>
         public abstract string Description { get; }
+        /// <summary>
+        /// The name that's shown for this card on different locales. Falls back to DisplayName for any locales that are missing localizations.
+        /// </summary>
+        public virtual Dictionary<string, string> LocalizedNames => new();
+        /// <summary>
+        /// The description that's shown for this card on different locales. Falls back to Description for any locales that are missing localizations.
+        /// </summary>
+        public virtual Dictionary<string, string> LocalizedDescriptions => new();
         public virtual CardViewData CardViewData => GetStandardCardViewData(GetType().Name + ".png", warnOnFail: true);
 
         /// <summary>

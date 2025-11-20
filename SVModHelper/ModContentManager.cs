@@ -145,6 +145,10 @@ namespace SVModHelper
                     SetCardTitle(activeMod.targetCard, activeMod.displayName);
                 if (activeMod.description != null)
                     SetCardDesc(activeMod.targetCard, activeMod.description);
+                foreach (var locName in activeMod.localizedNames)
+                    SetCardTitle(activeMod.targetCard, locName.Value, locName.Key);
+                foreach (var locDesc in activeMod.localizedDescriptions)
+                    SetCardDesc(activeMod.targetCard, locDesc.Value, locDesc.Key);
                 if (activeMod.cardView != null)
                     SetCardImage(activeMod.targetCard, activeMod.cardView);
             }
@@ -188,6 +192,10 @@ namespace SVModHelper
                     SetArtifactTitle(activeMod.targetArtifact, activeMod.displayName);
                 if (activeMod.description != null)
                     SetArtifactDesc(activeMod.targetArtifact, activeMod.description);
+                foreach (var locName in activeMod.localizedNames)
+                    SetArtifactTitle(activeMod.targetArtifact, locName.Value, locName.Key);
+                foreach (var locDesc in activeMod.localizedDescriptions)
+                    SetArtifactDesc(activeMod.targetArtifact, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
                     SetArtifactImage(activeMod.targetArtifact, activeMod.sprite);
 
@@ -234,6 +242,10 @@ namespace SVModHelper
                     SetComponentTitle(activeMod.targetComponent, activeMod.displayName);
                 if (activeMod.description != null)
                     SetComponentDesc(activeMod.targetComponent, activeMod.description);
+                foreach (var locName in activeMod.localizedNames)
+                    SetComponentTitle(activeMod.targetComponent, locName.Value, locName.Key);
+                foreach (var locDesc in activeMod.localizedDescriptions)
+                    SetComponentDesc(activeMod.targetComponent, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
                     SetComponentImage(activeMod.targetComponent, activeMod.sprite);
             }
@@ -258,6 +270,10 @@ namespace SVModHelper
                     SetItemTitle(activeMod.targetItem, activeMod.displayName);
                 if (activeMod.description != null)
                     SetItemDesc(activeMod.targetItem, activeMod.description);
+                foreach (var locName in activeMod.localizedNames)
+                    SetItemTitle(activeMod.targetItem, locName.Value, locName.Key);
+                foreach (var locDesc in activeMod.localizedDescriptions)
+                    SetItemDesc(activeMod.targetItem, locDesc.Value, locDesc.Key);
                 //this part currently doesn't work
                 if (activeMod.newViewData != null)
                     SetItemImage(activeMod.targetItem, activeMod.newViewData);
@@ -289,6 +305,10 @@ namespace SVModHelper
                     SetPackTitle(activeMod.targetPack, activeMod.displayName);
                 if (activeMod.description != null)
                     SetPackDesc(activeMod.targetPack, activeMod.description);
+                foreach (var locName in activeMod.localizedNames)
+                    SetPackTitle(activeMod.targetPack, locName.Value, locName.Key);
+                foreach (var locDesc in activeMod.localizedDescriptions)
+                    SetPackDesc(activeMod.targetPack, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
                     SetPackImage(activeMod.targetPack, activeMod.sprite);
             }
@@ -325,22 +345,25 @@ namespace SVModHelper
                     SetPilotName(activeMod.targetPilot, activeMod.displayName);
                 if (activeMod.description != null)
                     SetPilotDesc(activeMod.targetPilot, activeMod.description);
-                SetPilotTrueEndDialogue(activeMod.targetPilot, activeMod.trueEndDialogue1, activeMod.trueEndDialogue2);
+                foreach (var locDesc in activeMod.localizedDescriptions)
+                    SetPilotDesc(activeMod.targetPilot, locDesc.Value, locDesc.Key);
+                foreach (var locDialogue in activeMod.localizedTrueEndDialogues)
+                    SetPilotTrueEndDialogue(activeMod.targetPilot, locDialogue.Value.dialogue1, locDialogue.Value.dialogue2, locale: locDialogue.Key);
             }
         }
         #endregion
 
         #region Cards
-        internal static string SetCardTitle(CardName cardName, string title)
+        internal static string SetCardTitle(CardName cardName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = cardName.ToString() + "_CardTitle";
-            return SetLocalizedString(id, title);
+            return SetLocalizedString(id, title, locale);
         }
 
-        internal static string SetCardDesc(CardName cardName, string desc)
+        internal static string SetCardDesc(CardName cardName, string desc, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = cardName.ToString() + "_CardDesc";
-            return SetLocalizedString(id, desc);
+            return SetLocalizedString(id, desc, locale);
         }
 
         internal static void SetCardImage(CardName cardName, CardViewData cardViewData)
@@ -372,16 +395,16 @@ namespace SVModHelper
         #endregion
 
         #region Artifacts
-        internal static string SetArtifactTitle(ArtifactName artifactName, string title)
+        internal static string SetArtifactTitle(ArtifactName artifactName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = artifactName.ToString() + "_ArtiTitle";
-            return SetLocalizedString(id, title);
+            return SetLocalizedString(id, title, locale);
         }
 
-        internal static string SetArtifactDesc(ArtifactName artifactName, string desc)
+        internal static string SetArtifactDesc(ArtifactName artifactName, string desc, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = artifactName.ToString() + "_ArtiDesc";
-            return SetLocalizedString(id, desc);
+            return SetLocalizedString(id, desc, locale);
         }
 
         internal static void SetArtifactImage(ArtifactName artifactName, Sprite sprite)
@@ -413,16 +436,16 @@ namespace SVModHelper
         #endregion
 
         #region Components
-        internal static string SetComponentTitle(ComponentName componentName, string title)
+        internal static string SetComponentTitle(ComponentName componentName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = componentName.ToString() + "_CompTitle";
-            return SetLocalizedString(id, title);
+            return SetLocalizedString(id, title, locale);
         }
 
-        internal static string SetComponentDesc(ComponentName componentName, string desc)
+        internal static string SetComponentDesc(ComponentName componentName, string desc, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = componentName.ToString() + "_CompDesc";
-            return SetLocalizedString(id, desc);
+            return SetLocalizedString(id, desc, locale);
         }
 
         internal static void SetComponentImage(ComponentName componentName, Sprite sprite)
@@ -454,16 +477,16 @@ namespace SVModHelper
         #endregion
 
         #region Items
-        internal static string SetItemTitle(ItemName itemName, string title)
+        internal static string SetItemTitle(ItemName itemName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = itemName.ToString() + "_EntityTitle";
-            return SetLocalizedString(id, title);
+            return SetLocalizedString(id, title, locale);
         }
 
-        internal static string SetItemDesc(ItemName itemName, string desc)
+        internal static string SetItemDesc(ItemName itemName, string desc, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = itemName.ToString() + "_EntityDesc";
-            return SetLocalizedString(id, desc);
+            return SetLocalizedString(id, desc, locale);
         }
 
         internal static void SetItemImage(ItemName itemName, ItemViewDataSO viewData)
@@ -495,16 +518,16 @@ namespace SVModHelper
         #endregion
 
         #region Packs
-        internal static string SetPackTitle(ItemPackName packName, string title)
+        internal static string SetPackTitle(ItemPackName packName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = packName.ToString() + "_Misc";
-            return SetLocalizedString(id, title);
+            return SetLocalizedString(id, title, locale);
         }
 
-        internal static string SetPackDesc(ItemPackName packName, string desc)
+        internal static string SetPackDesc(ItemPackName packName, string desc, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = packName.ToString() + "_Desc_Misc";
-            return SetLocalizedString(id, desc);
+            return SetLocalizedString(id, desc, locale);
         }
 
         internal static void SetPackImage(ItemPackName packName, Sprite sprite)
@@ -547,9 +570,9 @@ namespace SVModHelper
             moddedPilotNames[pilotName] = name;
         }
 
-        internal static void SetPilotDesc(PilotName pilotName, string desc)
+        internal static void SetPilotDesc(PilotName pilotName, string desc, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
-            SetLocalizedString("PilotDescription" + pilotName.ToString() + "_Misc", desc);
+            SetLocalizedString("PilotDescription" + pilotName.ToString() + "_Misc", desc, locale);
         }
 
         //This essentially replaces SetPilotImage()
@@ -559,23 +582,23 @@ namespace SVModHelper
                 moddedPilotVDs[(pilotName, skinName)] = data;
         }
 
-        internal static void SetPilotTrueEndDialogue(PilotName pilotName, string dialogue1, string dialogue2, bool ignoreNull = true)
+        internal static void SetPilotTrueEndDialogue(PilotName pilotName, string dialogue1, string dialogue2, bool ignoreNull = true, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             if(dialogue1 != null)
             {
-                SetLocalizedString("Conversation_SecretQuestWinChaos_18_" + pilotName, dialogue1);
+                SetLocalizedString("Conversation_SecretQuestWinChaos_18_" + pilotName, dialogue1, locale);
             }
             else if(!ignoreNull)
             {
-                ClearLocalizedString("Conversation_SecretQuestWinChaos_18_" + pilotName);
+                ClearLocalizedString("Conversation_SecretQuestWinChaos_18_" + pilotName, locale);
             }
             if (dialogue2 != null)
             {
-                SetLocalizedString("Conversation_SecretQuestWinChaos_19_" + pilotName, dialogue2);
+                SetLocalizedString("Conversation_SecretQuestWinChaos_19_" + pilotName, dialogue2, locale);
             }
             else if (!ignoreNull)
             {
-                ClearLocalizedString("Conversation_SecretQuestWinChaos_19_" + pilotName);
+                ClearLocalizedString("Conversation_SecretQuestWinChaos_19_" + pilotName, locale);
             }
 
         }
@@ -665,19 +688,19 @@ namespace SVModHelper
                 throw new InvalidOperationException("Can not register/modify content after initialization.");
         }
 
-        public static string SetLocalizedString(string stringID, string localizedString)
+        public static string SetLocalizedString(string stringID, string localizedString, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             CheckInitStatus();
-            string oldString = LocalizationFixer.extraLocalizedStrings.GetValueOrDefault(stringID);
-            LocalizationFixer.extraLocalizedStrings[stringID] = localizedString;
+            string oldString = LocalizationFixer.GetLocalizedString(stringID, locale);
+            LocalizationFixer.SetLocalizedString(stringID, localizedString, locale);
             return oldString;
         }
 
-        public static string ClearLocalizedString(string stringID)
+        public static string ClearLocalizedString(string stringID, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             CheckInitStatus();
-            string oldString = LocalizationFixer.extraLocalizedStrings.GetValueOrDefault(stringID);
-            LocalizationFixer.extraLocalizedStrings.Remove(stringID);
+            string oldString = LocalizationFixer.GetLocalizedString(stringID, locale);
+            LocalizationFixer.RemoveLocalizedString(stringID, locale);
             return oldString;
         }
 
