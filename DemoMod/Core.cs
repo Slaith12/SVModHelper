@@ -12,6 +12,15 @@ namespace DemoMod
 {
     internal class Core : SVMod
     {
+        protected override void EarlyRegisterMod()
+        {
+            RegisterMoreInfoPanel("CascadingPush",
+                "<b><color=#FFBF00>Cascading Push</color></b>: When a pushed entity collides with another entity while cascading, both entities continue " +
+                "getting pushed until the original entity has finished moving or any of the pushed entities collide with a wall.\n\n" +
+                "The extra pushed entities also cascade. Colliding entities are <b>struck</b> once in total, regardless of how many times they cascade.");
+            base.EarlyRegisterMod();
+        }
+
         protected override void LateRegisterMod()
         {
             LoggerInstance.Msg("Registering modifications");
@@ -174,6 +183,8 @@ namespace DemoMod
             });
 
             LoggerInstance.Msg("Done!");
+
+            base.LateRegisterMod();
         }
     }
 }

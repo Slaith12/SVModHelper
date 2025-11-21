@@ -8,7 +8,12 @@ namespace SVModHelper
 {
     public class SVMod : MelonMod
     {
-        protected internal virtual void RegisterMod()
+        /// <summary>
+        /// <para>Called by the mod helper when your mod is registered, before any mod's RegisterMod() function is called. Should register all resources/data that your content would depend on.</para>
+        /// <para>By default, this registers all resources and tasks in your mod's assembly.</para>
+        /// <para>If you add custom more info panels, they should be added in this function.</para>
+        /// </summary>
+        protected internal virtual void EarlyRegisterMod()
         {
             Assembly modAsm = MelonAssembly.Assembly;
 
@@ -18,6 +23,27 @@ namespace SVModHelper
                 RegisterResource(fileName);
             }
             LoggerInstance.Msg("All Resources Loaded.");
+
+            foreach (Type modTaskDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModTask))))
+            {
+                try
+                {
+                    RegisterTask(Activator.CreateInstance(modTaskDef, true) as AModTask);
+                }
+                catch (Exception ex)
+                {
+                    LoggerInstance.Error($"The following error occured while registering task {modTaskDef.Name}.\n" + ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// <para>Called by the mod helper when your mod is registered. Should register all content present in your mod.</para>
+        /// <para>By default, this registers all AModContent classes in your mod's assembly.</para>
+        /// </summary>
+        protected internal virtual void RegisterMod()
+        {
+            Assembly modAsm = MelonAssembly.Assembly;
 
             LoggerInstance.Msg("Registering Content");
             foreach (Type modCardDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModCard))))
@@ -86,17 +112,6 @@ namespace SVModHelper
                     LoggerInstance.Error($"The following error occured while registering spell {modSpellDef.Name}.\n" + ex);
                 }
             }
-            foreach (Type modTaskDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModTask))))
-            {
-                try
-                {
-                    RegisterTask(Activator.CreateInstance(modTaskDef, true) as AModTask);
-                }
-                catch (Exception ex)
-                {
-                    LoggerInstance.Error($"The following error occured while registering task {modTaskDef.Name}.\n" + ex);
-                }
-            }
             foreach (Type modPilot in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModPilot))))
             {
                 try
@@ -110,7 +125,11 @@ namespace SVModHelper
             }
         }
 
-        protected internal virtual void EarlyRegisterMod() { }
+        /// <summary>
+        /// <para>Called by the mod helper when your mod is registered, after every mod's RegisterMod() function is called. Should perform any actions that require content to be registered beforehand.</para>
+        /// <para>Any ContentModifications should be registered here.</para>
+        /// <para>By default, does nothing.</para>
+        /// </summary>
         protected internal virtual void LateRegisterMod() { }
 
         protected void RegisterResource(string resourceName)

@@ -13,7 +13,7 @@ namespace DemoMod
     {
         public override string DisplayName => "Heavy";
 
-        public override string Description => "Increases heat cost by 1. Bullet pushes struck entity and any colliding entities until they hit a wall.";
+        public override string Description => "Increases heat cost by 1. Pushed entity cascades until it hits a wall.";
 
         public override ClassName Class => ClassName.Gunner;
 
@@ -22,6 +22,11 @@ namespace DemoMod
         public override Sprite Sprite => null;
 
         public override int BaseCostModifier => 1;
+        public override Il2CppCollections.HashSet<MoreInfoWordName> MoreInfoWords => new HashSet<MoreInfoWordName>()
+        {
+            ModContentManager.GetModMoreInfoName("CascadingPush")
+        }.ToILCPP();
+
         public override void ModifyCardModel(CardModel cardModel)
         {
             cardModel.SelectionTaskGroups = new CloneableList<SelectionTaskGroup>(new List<SelectionTaskGroup>()
