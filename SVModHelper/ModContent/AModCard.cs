@@ -4,9 +4,11 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModCard : AModContent
     {
-        protected CardViewData GetStandardCardViewData(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
+        protected CardViewData GetStandardCardViewData(string imageName, float pixelsPerUnit = 100,
+            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
+            bool localName = true, bool warnOnFail = true)
         {
-            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, localName, warnOnFail);
+            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, wrapMode, localName, warnOnFail);
             if (sprite == null)
                 return null;
             return new CardViewData(CardName, sprite, null);

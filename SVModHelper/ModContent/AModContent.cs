@@ -19,19 +19,23 @@ namespace SVModHelper.ModContent
         }
 
         //TODO: Update this function to cache textures for future calls
-        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
+        protected Texture2D GetTexture(string imageName,
+            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
+            bool localName = true, bool warnOnFail = true)
         {
             if (!TryGetContentData(imageName, out byte[] data, localName, warnOnFail))
                 return null;
-            Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
+            Texture2D texture = new Texture2D(2, 2) { filterMode = filter, wrapMode = wrapMode};
             texture.LoadImage(data);
             return texture;
         }
 
         //TODO: Update this function to cache sprites for future calls
-        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
+        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100,
+            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
+            bool localName = true, bool warnOnFail = true)
         {
-            Texture2D texture = GetTexture(imageName, filter, localName, warnOnFail);
+            Texture2D texture = GetTexture(imageName, filter, wrapMode, localName, warnOnFail);
             if (texture == null)
                 return null;
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
