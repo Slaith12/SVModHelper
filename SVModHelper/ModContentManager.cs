@@ -26,26 +26,32 @@ namespace SVModHelper
 
         internal static List<AModCard> moddedCards;
         internal static Dictionary<Type, CardName> moddedCardDict;
+        internal static Dictionary<string, CardName> moddedCardIDDict;
         internal static Dictionary<CardName, CardViewData> moddedCardVDs;
 
         internal static List<IHasArtifactID> moddedArtifacts;
         internal static Dictionary<Type, ArtifactName> moddedArtifactDict;
+        internal static Dictionary<string, ArtifactName> moddedArtifactIDDict;
         internal static Dictionary<ArtifactName, Sprite> moddedArtifactVDs;
 
         internal static List<AModComponent> moddedComponents;
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
+        internal static Dictionary<string, ComponentName> moddedComponentIDDict;
         internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
 
         internal static List<AModItem> moddedItems;
         internal static Dictionary<Type, ItemName> moddedItemDict;
+        internal static Dictionary<string, ItemName> moddedItemIDDict;
         internal static Dictionary<ItemName, ItemViewDataSO> moddedItemVDs;
 
         internal static List<AModPack> moddedPacks;
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
+        internal static Dictionary<string, ItemPackName> moddedPackIDDict;
         internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
 
         internal static List<AModPilot> moddedPilots;
         internal static Dictionary<Type, PilotName> moddedPilotDict;
+        internal static Dictionary<string, PilotName> moddedPilotIDDict;
         internal static Dictionary<(PilotName, PilotSkinName), ModPilotViewData> moddedPilotVDs;
         internal static Dictionary<PilotName, string> moddedPilotNames;
 
@@ -90,26 +96,32 @@ namespace SVModHelper
 
             moddedCards = new();
             moddedCardDict = new();
+            moddedCardIDDict = new();
             moddedCardVDs = new();
 
             moddedArtifacts = new();
             moddedArtifactDict = new();
+            moddedArtifactIDDict = new();
             moddedArtifactVDs = new();
 
             moddedComponents = new();
             moddedComponentDict = new();
+            moddedComponentIDDict = new();
             moddedComponentVDs = new();
 
             moddedItems = new();
             moddedItemDict = new();
+            moddedItemIDDict = new();
             moddedItemVDs = new();
 
             moddedPacks = new();
             moddedPackDict = new();
+            moddedPackIDDict = new();
             moddedPackVDs = new();
 
             moddedPilots = new();
             moddedPilotDict = new();
+            moddedPilotIDDict = new();
             moddedPilotVDs = new();
             moddedPilotNames = new();
 
@@ -393,6 +405,15 @@ namespace SVModHelper
             return INVALIDCARDID;
         }
 
+        public static CardName GetModCardName(string id)
+        {
+            if(moddedCardIDDict.TryGetValue(id, out CardName cardName))
+            {
+                return cardName;
+            }
+            return INVALIDCARDID;
+        }
+
         public static AModCard GetModCardInstance(CardName cardName)
         {
             if (cardName < MINCARDID || cardName >= MINCARDID + moddedCards.Count)
@@ -430,6 +451,15 @@ namespace SVModHelper
             if (moddedArtifactDict.TryGetValue(artifactType, out ArtifactName id))
             {
                 return id;
+            }
+            return INVALIDARTIFACTID;
+        }
+
+        public static ArtifactName GetModArtifactName(string id)
+        {
+            if (moddedArtifactIDDict.TryGetValue(id, out ArtifactName artifactName))
+            {
+                return artifactName;
             }
             return INVALIDARTIFACTID;
         }
@@ -475,6 +505,15 @@ namespace SVModHelper
             return INVALIDCOMPID;
         }
 
+        public static ComponentName GetModComponentName(string id)
+        {
+            if (moddedComponentIDDict.TryGetValue(id, out ComponentName componentName))
+            {
+                return componentName;
+            }
+            return INVALIDCOMPID;
+        }
+
         public static AModComponent GetModComponentInstance(ComponentName componentName)
         {
             if (componentName < MINCOMPID || componentName >= MINCOMPID + moddedComponents.Count)
@@ -516,6 +555,15 @@ namespace SVModHelper
             return INVALIDITEMID;
         }
 
+        public static ItemName GetModItemName(string id)
+        {
+            if (moddedItemIDDict.TryGetValue(id, out ItemName itemName))
+            {
+                return itemName;
+            }
+            return INVALIDITEMID;
+        }
+
         public static AModItem GetModItemInstance(ItemName itemName)
         {
             if (itemName < MINITEMID || itemName >= MINITEMID + moddedItems.Count)
@@ -553,6 +601,15 @@ namespace SVModHelper
             if (moddedPackDict.TryGetValue(packType, out ItemPackName id))
             {
                 return id;
+            }
+            return INVALIDPACKID;
+        }
+
+        public static ItemPackName GetModPackName(string id)
+        {
+            if(moddedPackIDDict.TryGetValue(id, out ItemPackName packName))
+            {
+                return packName;
             }
             return INVALIDPACKID;
         }
@@ -620,6 +677,15 @@ namespace SVModHelper
             if (moddedPilotDict.TryGetValue(pilotType, out PilotName id))
             {
                 return id;
+            }
+            return INVALIDPILOTID;
+        }
+
+        public static PilotName GetModPilotName(string id)
+        {
+            if (moddedPilotIDDict.TryGetValue(id, out PilotName pilotName))
+            {
+                return pilotName;
             }
             return INVALIDPILOTID;
         }
