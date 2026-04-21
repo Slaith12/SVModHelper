@@ -4,7 +4,7 @@ using SVModHelper.ModContent;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(SVModHelper.Core), "StarVaders Mod Helper", "0.2.2", "Slaith", "https://github.com/Slaith12/SVModHelper/releases")]
+[assembly: MelonInfo(typeof(SVModHelper.Core), "StarVaders Mod Helper", "0.2.3", "Slaith", "https://github.com/Slaith12/SVModHelper/releases")]
 [assembly: MelonGame("Pengonauts", "StarVaders")]
 //for some reason this fails on the nightly 0.7.2 version
 //[assembly: VerifyLoaderVersion(0, 7, 2, true)]
