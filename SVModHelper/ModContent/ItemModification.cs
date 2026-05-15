@@ -28,6 +28,11 @@
         public bool? hasRegeneratingShield;
         public int? doomLevel;
 
+        public HashSet<MoreInfoWordName> extraMoreInfoWords = new();
+        public HashSet<CardName> extraMoreInfoCards = new();
+        public HashSet<ItemName> extraMoreInfoItems = new();
+        public HashSet<EnemyName> extraMoreInfoEnemies = new();
+
         public ItemModification(ItemName target, int priority = 0)
         {
             this.targetItem = target;
@@ -78,6 +83,15 @@
                 other.hasRegeneratingShield = hasRegeneratingShield;
             if (doomLevel != null)
                 other.doomLevel = doomLevel;
+
+            if (extraMoreInfoWords != null)
+                other.extraMoreInfoWords.UnionWith(extraMoreInfoWords);
+            if (extraMoreInfoCards != null)
+                other.extraMoreInfoCards.UnionWith(extraMoreInfoCards);
+            if (extraMoreInfoItems != null)
+                other.extraMoreInfoItems.UnionWith(extraMoreInfoItems);
+            if (extraMoreInfoEnemies != null)
+                other.extraMoreInfoEnemies.UnionWith(extraMoreInfoEnemies);
         }
 
         internal void ApplyTo(ItemEntityModel item)
@@ -107,6 +121,11 @@
                 item.HasRegeneratingShield = hasRegeneratingShield.Value;
             if (doomLevel != null)
                 item.DoomLevel = doomLevel.Value;
+
+            item.MoreInfoWordNames.UnionWith(extraMoreInfoWords.ToILCPPEnumerable());
+            item.MoreInfoCardNames.UnionWith(extraMoreInfoCards.ToILCPPEnumerable());
+            item.MoreInfoItemNames.UnionWith(extraMoreInfoItems.ToILCPPEnumerable());
+            item.MoreInfoEnemyNames.UnionWith(extraMoreInfoEnemies.ToILCPPEnumerable());
         }
     }
 }

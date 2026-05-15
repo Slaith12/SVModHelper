@@ -21,6 +21,13 @@ namespace SVModHelper.ModContent
 
         public ClassName? newClass;
         public Rarity? newRarity;
+        public bool? skipNormalDescription;
+
+        public ContextPreviewType? newPreviewType;
+        public HashSet<MoreInfoWordName> extraMoreInfoWords = new();
+        public HashSet<CardName> extraMoreInfoCards = new();
+        public HashSet<ItemName> extraMoreInfoItems = new();
+        public HashSet<EnemyName> extraMoreInfoEnemies = new();
 
         public HashSet<ComponentTrait> extraComponentTraits = new();
         public HashSet<CardTrait> extraAddedTraits = new();
@@ -52,6 +59,18 @@ namespace SVModHelper.ModContent
                 other.newClass = newClass;
             if (newRarity != null)
                 other.newRarity = newRarity;
+            if (skipNormalDescription != null)
+                other.skipNormalDescription = skipNormalDescription;
+            if (newPreviewType != null)
+                other.newPreviewType = newPreviewType;
+            if (extraMoreInfoWords != null)
+                other.extraMoreInfoWords.UnionWith(extraMoreInfoWords);
+            if (extraMoreInfoCards != null)
+                other.extraMoreInfoCards.UnionWith(extraMoreInfoCards);
+            if (extraMoreInfoItems != null)
+                other.extraMoreInfoItems.UnionWith(extraMoreInfoItems);
+            if (extraMoreInfoEnemies != null)
+                other.extraMoreInfoEnemies.UnionWith(extraMoreInfoEnemies);
             if (extraComponentTraits != null)
                 other.extraComponentTraits.UnionWith(extraComponentTraits);
             if (extraAddedTraits != null)
@@ -66,7 +85,15 @@ namespace SVModHelper.ModContent
                 component.Class = newClass.Value;
             if (newRarity != null)
                 component.Rarity = newRarity.Value;
+            if (skipNormalDescription != null)
+                component.SkipNormalDescription = skipNormalDescription.Value;
+            if (newPreviewType != null)
+                component.ContextPreviewType = newPreviewType.Value;
 
+            component.MoreInfoWordNames.UnionWith(extraMoreInfoWords.ToILCPPEnumerable());
+            component.MoreInfoCardNames.UnionWith(extraMoreInfoCards.ToILCPPEnumerable());
+            component.MoreInfoItemNames.UnionWith(extraMoreInfoItems.ToILCPPEnumerable());
+            component.MoreInfoEnemyNames.UnionWith(extraMoreInfoEnemies.ToILCPPEnumerable());
             component.ComponentTraits.UnionWith(extraComponentTraits.ToILCPPEnumerable());
             component.AddedTraits.UnionWith(extraAddedTraits.ToILCPPEnumerable());
             component.AddedHiddenTraits.UnionWith(extraAddedHiddenTraits.ToILCPPEnumerable());

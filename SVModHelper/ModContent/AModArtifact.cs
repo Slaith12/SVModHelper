@@ -52,24 +52,24 @@ namespace SVModHelper.ModContent
         public virtual bool IsCurseModifier => false;
 
         /// <summary>
-        /// The type of preview shown when the card is highlighted in the shop/reward screens.
+        /// The type of preview shown when the artifact is highlighted in the shop/reward screens.
         /// </summary>
         public virtual ContextPreviewType ContextPreviewType => ContextPreviewType.None;
 
         /// <summary>
-        /// The definition panels that show up in the more info screen of this card.
+        /// The definition panels that show up in the more info screen of this artifact.
         /// </summary>
         public virtual Il2CppCollections.HashSet<MoreInfoWordName> MoreInfoWords => new Il2CppCollections.HashSet<MoreInfoWordName>();
         /// <summary>
-        /// The cards that show up in the more info screen of this card.
+        /// The cards that show up in the more info screen of this artifact.
         /// </summary>
         public virtual Il2CppCollections.HashSet<CardName> MoreInfoCards => new Il2CppCollections.HashSet<CardName>();
         /// <summary>
-        /// The items that show up in the more info screen of this card.
+        /// The items that show up in the more info screen of this artifact.
         /// </summary>
         public virtual Il2CppCollections.HashSet<ItemName> MoreInfoItems => new Il2CppCollections.HashSet<ItemName>();
         /// <summary>
-        /// The enemies that show up in the more info screen of this card.
+        /// The enemies that show up in the more info screen of this artifact.
         /// </summary>
         public virtual Il2CppCollections.HashSet<EnemyName> MoreInfoEnemies => new Il2CppCollections.HashSet<EnemyName>();
 

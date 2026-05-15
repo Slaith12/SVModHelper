@@ -34,6 +34,7 @@ namespace DemoMod
                 "Purge this card.",
                 newClass = ClassName.UniquePack,
                 newRarity = Rarity.Legendary,
+                newCost = 5,
                 isShowable = true,
                 extraCompWL = [ComponentName.Replicating, ComponentName.SwiftPlus],
                 extraCompBL = [ComponentName.Swift, ComponentName.Tactical]

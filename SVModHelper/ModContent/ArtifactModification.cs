@@ -25,6 +25,13 @@ namespace SVModHelper.ModContent
         public bool? canBeDuplicated;
         public bool? isEncounterModifier;
         public bool? isCurseModifier;
+        public int? newCooldown;
+
+        public ContextPreviewType? newPreviewType;
+        public HashSet<MoreInfoWordName> extraMoreInfoWords = new();
+        public HashSet<CardName> extraMoreInfoCards = new();
+        public HashSet<ItemName> extraMoreInfoItems = new();
+        public HashSet<EnemyName> extraMoreInfoEnemies = new();
 
         public ArtifactModification(ArtifactName target, int priority = 0)
         {
@@ -60,6 +67,19 @@ namespace SVModHelper.ModContent
                 other.isEncounterModifier = isEncounterModifier;
             if (isCurseModifier != null)
                 other.isCurseModifier = isCurseModifier;
+            if (newCooldown != null)
+                other.newCooldown = newCooldown;
+            if (newPreviewType != null)
+                other.newPreviewType = newPreviewType;
+
+            if (extraMoreInfoWords != null)
+                other.extraMoreInfoWords.UnionWith(extraMoreInfoWords);
+            if (extraMoreInfoCards != null)
+                other.extraMoreInfoCards.UnionWith(extraMoreInfoCards);
+            if (extraMoreInfoItems != null)
+                other.extraMoreInfoItems.UnionWith(extraMoreInfoItems);
+            if (extraMoreInfoEnemies != null)
+                other.extraMoreInfoEnemies.UnionWith(extraMoreInfoEnemies);
         }
 
         internal void ApplyTo(ArtifactModel artifact)
@@ -72,6 +92,15 @@ namespace SVModHelper.ModContent
                 artifact.Rarity = newRarity.Value;
             if (canBeDuplicated != null)
                 artifact.CanBeDuplicated = canBeDuplicated.Value;
+            if (newCooldown != null)
+                artifact.BaseCooldown = newCooldown.Value;
+            if (newPreviewType != null)
+                artifact.ContextPreviewType = newPreviewType.Value;
+
+            artifact.MoreInfoWordNames.UnionWith(extraMoreInfoWords.ToILCPPEnumerable());
+            artifact.MoreInfoCardNames.UnionWith(extraMoreInfoCards.ToILCPPEnumerable());
+            artifact.MoreInfoItemNames.UnionWith(extraMoreInfoItems.ToILCPPEnumerable());
+            artifact.MoreInfoEnemyNames.UnionWith(extraMoreInfoEnemies.ToILCPPEnumerable());
         }
     }
 }
