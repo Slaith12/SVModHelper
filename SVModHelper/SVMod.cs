@@ -143,32 +143,7 @@ namespace SVModHelper
         #region AModContent
         protected CardName RegisterCard(AModCard modCardDef)
         {
-            ModContentManager.CheckInitStatus();
-            Melon<Core>.Logger.Msg("Registering card " + modCardDef.GetType().Name);
-            Type cardType = modCardDef.GetType();
-            if (ModContentManager.moddedCardDict.ContainsKey(cardType))
-            {
-                throw new InvalidOperationException("Can not register the same card multiple times.");
-            }
-
-            CardName id = ModContentManager.moddedCards.Count + ModContentManager.MINCARDID;
-            ModContentManager.moddedCards.Add(modCardDef);
-
-            ModContentManager.moddedCardDict.Add(cardType, id);
-
-            ModContentManager.SetCardTitle(id, modCardDef.DisplayName);
-            ModContentManager.SetCardDesc(id, modCardDef.Description);
-            ModContentManager.SetCardImage(id, modCardDef.CardViewData);
-            foreach(var locName in modCardDef.LocalizedNames)
-            {
-                ModContentManager.SetCardTitle(id, locName.Value, locName.Key);
-            }
-            foreach (var locDesc in modCardDef.LocalizedDescriptions)
-            {
-                ModContentManager.SetCardDesc(id, locDesc.Value, locDesc.Key);
-            }
-
-            return id;
+            return ModContentManager.RegisterCard(modCardDef, this);
         }
 
         protected ArtifactName RegisterArtifact(AModArtifact modArtifactDef)

@@ -29,7 +29,8 @@
             CardFactory cardFactory = new CardFactory();
             for(int i = 0; i < ModContentManager.moddedCards.Count; i++)
             {
-                __result.Add(cardFactory.CreateCardModel(i + ModContentManager.MINCARDID));
+                if (ModContentManager.moddedCards[i] != null)
+                    __result.Add(cardFactory.CreateCardModel(i + ModContentManager.MINCARDID));
             }
         }
     }

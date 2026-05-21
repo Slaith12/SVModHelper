@@ -1,4 +1,6 @@
-﻿using Il2CppStarVaders;
+﻿using Il2CppLanguage.Lua;
+using Il2CppStarVaders;
+using MelonLoader;
 using SVModHelper.ModContent;
 using UnityEngine;
 
@@ -373,6 +375,73 @@ namespace SVModHelper
         #endregion
 
         #region Cards
+        internal static CardName RegisterCard(AModCard modCardDef, SVMod sourceMod)
+        {
+            CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering card " + modCardDef.GetType().Name);
+            Type cardType = modCardDef.GetType();
+            if (moddedCardDict.ContainsKey(cardType))
+            {
+                throw new InvalidOperationException("Can not register the same card multiple times.");
+            }
+
+            CardName cardName = GetModCardName(modCardDef.ID);
+            if (cardName == INVALIDCARDID) //new card not in dictionary
+            {
+                cardName = moddedCards.Count + MINCARDID;
+                moddedCardIDDict.Add(modCardDef.ID, cardName);
+                moddedCards.Add(modCardDef);
+            }
+            else //card used in previous session, is in dictionary
+            {
+                int cardIndex = cardName - MINCARDID;
+                if (moddedCards[cardIndex] != null)
+                {
+                    throw new InvalidOperationException($"Multiple cards have the same ID ({modCardDef.ID}).");
+                }
+                moddedCards[cardName - MINCARDID] = modCardDef;
+            }
+
+            moddedCardDict.Add(cardType, cardName);
+
+            SetCardTitle(cardName, modCardDef.DisplayName);
+            SetCardDesc(cardName, modCardDef.Description);
+            SetCardImage(cardName, modCardDef.CardViewData);
+            foreach ((string title, string locale) in modCardDef.LocalizedNames)
+            {
+                SetCardTitle(cardName, title, locale);
+            }
+            foreach ((string desc, string locale) in modCardDef.LocalizedDescriptions)
+            {
+                SetCardDesc(cardName, desc, locale);
+            }
+
+            return cardName;
+        }
+
+        internal static void FillMissingCards()
+        {
+            foreach((string id, CardName name) in moddedCardIDDict)
+            {
+                if (moddedCards[name - MINCARDID] == null)
+                {
+                    MissingCard card = new MissingCard(name, id);
+                    moddedCards[name - MINCARDID] = card;
+                    SetCardTitle(name, card.DisplayName);
+                    SetCardDesc(name, card.Description);
+                    SetCardImage(name, card.CardViewData);
+                    foreach ((string title, string locale) in card.LocalizedNames)
+                    {
+                        SetCardTitle(name, title, locale);
+                    }
+                    foreach ((string desc, string locale) in card.LocalizedDescriptions)
+                    {
+                        SetCardDesc(name, desc, locale);
+                    }
+                }
+            }
+        }
+
         internal static string SetCardTitle(CardName cardName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = cardName.ToString() + "_CardTitle";
@@ -776,6 +845,11 @@ namespace SVModHelper
             return moddedMoreInfoPanels[moreInfoName - MINMOREINFOID];
         }
         #endregion
+
+        internal static void FillMissingContent()
+        {
+            FillMissingCards();
+        }
 
         internal static void CheckInitStatus()
         {

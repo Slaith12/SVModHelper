@@ -40,6 +40,10 @@ namespace SVModHelper
                 ModContentManager.contentData.Add("SVModHelper.DefaultEntity.png", arr);
             }
             Melon<Core>.Logger.Msg("Sprites loaded.");
+
+            Melon<Core>.Logger.Msg("Loading initial mod data.");
+            ModSaveManager.LoadInitialModData();
+            Melon<Core>.Logger.Msg("Mod data loaded.");
         }
 
         public override void OnInitializeMelon()
@@ -111,6 +115,7 @@ namespace SVModHelper
         public override void OnLateInitializeMelon()
         {
             ModContentManager.ApplyMods();
+            ModContentManager.FillMissingContent();
             ModContentManager.postInit = true;
         }
     }

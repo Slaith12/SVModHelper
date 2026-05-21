@@ -398,6 +398,7 @@
 
 	<ItemGroup>
 		<Compile Include="ModContent\ModPilotViewData.cs" />
+		<Compile Include="ModContent\MissingCard.cs" />
 		<Compile Include="ModContent\PilotModification.cs" />
 		<Compile Include="PilotFixer.cs" />
 		<Compile Include="ModContent\AModPilot.cs" />
@@ -436,6 +437,7 @@
 		<Compile Include="ModifierFixer.cs" />
 		<Compile Include="LocalizationFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
+		<Compile Include="ModSaveManager.cs" />
 		<Compile Include="SpriteHelper.cs" />
 		<Compile Include="ModContentManager.cs" />
 		<Compile Include="ResourceHelper.cs" />
