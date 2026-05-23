@@ -41,15 +41,16 @@ namespace SVModHelper
             }
             Melon<Core>.Logger.Msg("Sprites loaded.");
 
-            Melon<Core>.Logger.Msg("Loading initial mod data.");
-            ModSaveManager.LoadInitialModData();
-            Melon<Core>.Logger.Msg("Mod data loaded.");
         }
 
         public override void OnInitializeMelon()
         {
             RegisterTypeOptions enumLinkOptions = new RegisterTypeOptions() { Interfaces = new Il2CppInterfaceCollection([typeof(Il2CppSystem.Collections.IEnumerator)]) };
             ClassInjector.RegisterTypeInIl2Cpp<EnumeratorLink>(enumLinkOptions);
+
+            Melon<Core>.Logger.Msg("Loading initial mod data.");
+            ModSaveManager.LoadInitialModData();
+            Melon<Core>.Logger.Msg("Mod data loaded.");
 
             List<SVMod> mods = RegisteredMelons.Where(mod => mod is SVMod).Cast<SVMod>().ToList();
             bool error = false;
@@ -117,6 +118,7 @@ namespace SVModHelper
             ModContentManager.ApplyMods();
             ModContentManager.FillMissingContent();
             ModContentManager.postInit = true;
+            ModContentManager.PrintModCardList();
         }
     }
 }

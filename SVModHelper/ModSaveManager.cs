@@ -1,10 +1,22 @@
-﻿using System.Text.Json;
+﻿using MelonLoader;
+using System.Text;
+using System.Text.Json;
+using UnityEngine;
 
 namespace SVModHelper
 {
     struct IDSaveDict
     {
         public List<string> cardIDs;
+
+        public override string ToString()
+        {
+            StringBuilder str = new StringBuilder();
+            str.AppendLine("---Cards---");
+            foreach (string id in cardIDs)
+                str.AppendLine(id);
+            return str.ToString();
+        }
     }
 
     internal static class ModSaveManager
@@ -14,6 +26,7 @@ namespace SVModHelper
 
         public static void SaveModDataToProfile(int profileIndex)
         {
+            Melon<Core>.Logger.Msg($"Saving mod data to profile {profileIndex}.");
             string folderPath = Path.Combine(SaveManager.GetSaveProfilePath(new(profileIndex)), modDataFolder);
             if (!Directory.Exists(folderPath))
             {
@@ -26,14 +39,25 @@ namespace SVModHelper
 
         public static void LoadModDataFromProfile(int profileIndex)
         {
-            string folderPath = Path.Combine(SaveManager.GetSaveProfilePath(new(profileIndex)), modDataFolder);
+            Melon<Core>.Logger.Msg($"Loading mod data from profile {profileIndex}.");
+            //SaveManager.GetSaveProfilePath() doesn't seem to work during startup, so it's implemented manually here.
+            string folderPath = Path.Combine(
+                Application.persistentDataPath, 
+                SaveManager.GetGeneralSavePath(), 
+                SaveManager._profileFolderPrefix + "_" + profileIndex, 
+                modDataFolder);
 
             string idsFilePath = Path.Combine(folderPath, modIDsFile);
             if(File.Exists(idsFilePath))
             {
                 IDSaveDict ids = LoadIDs(idsFilePath);
+                Melon<Core>.Logger.Msg(ids);
                 //TODO: check if ids are compatible with existing dictionary
                 ApplySaveDict(ids);
+            }
+            else
+            {
+                Melon<Core>.Logger.Warning($"Mod data not found at {idsFilePath}");
             }
         }
 
@@ -57,6 +81,7 @@ namespace SVModHelper
 
         private static void SaveIDs(IDSaveDict ids, string filePath)
         {
+            Melon<Core>.Logger.Msg($"Saving IDs to {filePath}.");
             JsonSerializerOptions options = new()
             {
                 IncludeFields = true,
@@ -71,6 +96,7 @@ namespace SVModHelper
 
         private static IDSaveDict LoadIDs(string filePath)
         {
+            Melon<Core>.Logger.Msg($"Loading IDs from {filePath}.");
             JsonSerializerOptions options = new()
             {
                 IncludeFields = true,
@@ -111,7 +137,12 @@ namespace SVModHelper
                 }
                 else
                 {
-
+                    if (!ModContentManager.moddedCardIDDict.TryGetValue(ids.cardIDs[i], out CardName value) ||
+                        value != ModContentManager.MINCARDID + i)
+                    {
+                        Melon<Core>.Logger.Warning($"Conflict found with modded card {i} [{ids.cardIDs[i]}].");
+                        return false;
+                    }
                 }
             }
             return true;

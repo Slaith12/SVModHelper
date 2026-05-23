@@ -442,6 +442,19 @@ namespace SVModHelper
             }
         }
 
+        internal static void PrintModCardList()
+        {
+            foreach(AModCard card in moddedCards)
+            {
+                if (card == null)
+                    Melon<Core>.Logger.Error("!!NULL CARD!!");
+                else if (card is MissingCard missingCard)
+                    Melon<Core>.Logger.Msg($"Missing Card: {missingCard.stringID}");
+                else
+                    Melon<Core>.Logger.Msg(card.ID);
+            }
+        }
+
         internal static string SetCardTitle(CardName cardName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = cardName.ToString() + "_CardTitle";
