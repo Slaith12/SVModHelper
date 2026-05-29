@@ -7,6 +7,11 @@ namespace SVModHelper.ModContent
         public ArtifactName ArtifactName => ModContentManager.GetModArtifactName(GetType());
 
         /// <summary>
+        /// The internal name that the mod helper and other mods will use to reference this spell.
+        /// This cannot match the ID of any other modded spell or artifact.
+        /// </summary>
+        public virtual string ID => GetType().Assembly.GetName().Name + "-" + GetType().Name;
+        /// <summary>
         /// The name that's shown for this spell. Only used when no localization is provided for the current locale.
         /// </summary>
         public abstract string DisplayName { get; }

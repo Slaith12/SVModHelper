@@ -7,6 +7,11 @@ namespace SVModHelper.ModContent
         public ItemPackName PackName => ModContentManager.GetModPackName(GetType());
 
         /// <summary>
+        /// The internal name that the mod helper and other mods will use to reference this pack.
+        /// This cannot match the ID of any other modded pack.
+        /// </summary>
+        public virtual string ID => GetType().Assembly.GetName().Name + "-" + GetType().Name;
+        /// <summary>
         /// The name that's shown for this pack. Only used when no localization is provided for the current locale.
         /// </summary>
         public abstract string DisplayName { get; }

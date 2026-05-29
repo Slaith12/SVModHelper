@@ -5,6 +5,11 @@
         public ItemName ItemName => ModContentManager.GetModItemName(GetType());
 
         /// <summary>
+        /// The internal name that the mod helper and other mods will use to reference this item.
+        /// This cannot match the ID of any other modded item.
+        /// </summary>
+        public virtual string ID => GetType().Assembly.GetName().Name + "-" + GetType().Name;
+        /// <summary>
         /// The name that's shown for this item. Only used when no localization is provided for the current locale.
         /// </summary>
         public abstract string DisplayName { get; }

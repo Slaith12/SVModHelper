@@ -14,6 +14,7 @@ namespace SVModHelper
     {
         public override void OnEarlyInitializeMelon()
         {
+            ModSaveManager.allowModDataSave = false;
             base.OnEarlyInitializeMelon();
 
             Melon<Core>.Logger.Msg("Loading default sprites");
@@ -118,6 +119,7 @@ namespace SVModHelper
             ModContentManager.ApplyMods();
             ModContentManager.FillMissingContent();
             ModContentManager.postInit = true;
+            ModSaveManager.allowModDataSave = true;
             ModContentManager.PrintModCardList();
         }
     }

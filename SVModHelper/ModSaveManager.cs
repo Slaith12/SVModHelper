@@ -8,19 +8,47 @@ namespace SVModHelper
     struct IDSaveDict
     {
         public List<string> cardIDs;
+        public List<string> artifactIDs;
+        public List<string> componentIDs;
+        public List<string> packIDs;
+        public List<string> pilotIDs;
+        public List<string> itemIDs;
 
         public override string ToString()
         {
             StringBuilder str = new StringBuilder();
+
             str.AppendLine("---Cards---");
             foreach (string id in cardIDs)
                 str.AppendLine(id);
+
+            str.AppendLine("---Artifacts---");
+            foreach (string id in artifactIDs)
+                str.AppendLine(id);
+
+            str.AppendLine("---Components---");
+            foreach (string id in componentIDs)
+                str.AppendLine(id);
+
+            str.AppendLine("---Packs---");
+            foreach (string id in packIDs)
+                str.AppendLine(id);
+
+            str.AppendLine("---Pilot---");
+            foreach (string id in pilotIDs)
+                str.AppendLine(id);
+
+            str.AppendLine("---Items---");
+            foreach (string id in itemIDs)
+                str.AppendLine(id);
+
             return str.ToString();
         }
     }
 
     internal static class ModSaveManager
     {
+        public static bool allowModDataSave = false; //set to true after initialization
         const string modDataFolder = "ModData";
         const string modIDsFile = "modIDs.json";
 
@@ -53,7 +81,13 @@ namespace SVModHelper
                 IDSaveDict ids = LoadIDs(idsFilePath);
                 Melon<Core>.Logger.Msg(ids);
                 //TODO: check if ids are compatible with existing dictionary
-                ApplySaveDict(ids);
+                bool compatible = ApplySaveDict(ids);
+                if(!compatible)
+                {
+                    Melon<Core>.Logger.Msg("Closing game due to incompatible mod data. Reopening the game should correct the mod data.");
+                    allowModDataSave = false;
+                    Application.Quit();
+                }
             }
             else
             {
@@ -115,7 +149,12 @@ namespace SVModHelper
         {
             return new IDSaveDict()
             {
-                cardIDs = ModContentManager.moddedCards.Select(card => card.ID).ToList()
+                cardIDs = ModContentManager.moddedCards.Select(content => content.ID).ToList(),
+                artifactIDs = ModContentManager.moddedArtifacts.Select(content => content.ID).ToList(),
+                componentIDs = ModContentManager.moddedComponents.Select(content => content.ID).ToList(),
+                packIDs = ModContentManager.moddedPacks.Select(content => content.ID).ToList(),
+                pilotIDs = ModContentManager.moddedPilots.Select(content => content.ID).ToList(),
+                itemIDs = ModContentManager.moddedItems.Select(content => content.ID).ToList(),
             };
         }
 
@@ -145,6 +184,91 @@ namespace SVModHelper
                     }
                 }
             }
+            for (int i = 0; i < ids.artifactIDs.Count; i++)
+            {
+                if (ModContentManager.moddedArtifacts.Count <= i)
+                {
+                    ModContentManager.moddedArtifacts.Add(null);
+                    ModContentManager.moddedArtifactIDDict.Add(ids.artifactIDs[i], ModContentManager.MINARTIFACTID + i);
+                }
+                else
+                {
+                    if (!ModContentManager.moddedArtifactIDDict.TryGetValue(ids.artifactIDs[i], out ArtifactName value) ||
+                        value != ModContentManager.MINARTIFACTID + i)
+                    {
+                        Melon<Core>.Logger.Warning($"Conflict found with modded artifact {i} [{ids.artifactIDs[i]}].");
+                        return false;
+                    }
+                }
+            }
+            for (int i = 0; i < ids.componentIDs.Count; i++)
+            {
+                if (ModContentManager.moddedComponents.Count <= i)
+                {
+                    ModContentManager.moddedComponents.Add(null);
+                    ModContentManager.moddedComponentIDDict.Add(ids.componentIDs[i], ModContentManager.MINCOMPID + i);
+                }
+                else
+                {
+                    if (!ModContentManager.moddedComponentIDDict.TryGetValue(ids.componentIDs[i], out ComponentName value) ||
+                        value != ModContentManager.MINCOMPID + i)
+                    {
+                        Melon<Core>.Logger.Warning($"Conflict found with modded component {i} [{ids.componentIDs[i]}].");
+                        return false;
+                    }
+                }
+            }
+            for (int i = 0; i < ids.packIDs.Count; i++)
+            {
+                if (ModContentManager.moddedPacks.Count <= i)
+                {
+                    ModContentManager.moddedPacks.Add(null);
+                    ModContentManager.moddedPackIDDict.Add(ids.packIDs[i], ModContentManager.MINPACKID + i);
+                }
+                else
+                {
+                    if (!ModContentManager.moddedPackIDDict.TryGetValue(ids.packIDs[i], out ItemPackName value) ||
+                        value != ModContentManager.MINPACKID + i)
+                    {
+                        Melon<Core>.Logger.Warning($"Conflict found with modded pack {i} [{ids.packIDs[i]}].");
+                        return false;
+                    }
+                }
+            }
+            for (int i = 0; i < ids.pilotIDs.Count; i++)
+            {
+                if (ModContentManager.moddedPilots.Count <= i)
+                {
+                    ModContentManager.moddedPilots.Add(null);
+                    ModContentManager.moddedPilotIDDict.Add(ids.pilotIDs[i], ModContentManager.MINPILOTID + i);
+                }
+                else
+                {
+                    if (!ModContentManager.moddedPilotIDDict.TryGetValue(ids.pilotIDs[i], out PilotName value) ||
+                        value != ModContentManager.MINPILOTID + i)
+                    {
+                        Melon<Core>.Logger.Warning($"Conflict found with modded pilot {i} [{ids.pilotIDs[i]}].");
+                        return false;
+                    }
+                }
+            }
+            for (int i = 0; i < ids.itemIDs.Count; i++)
+            {
+                if (ModContentManager.moddedItems.Count <= i)
+                {
+                    ModContentManager.moddedItems.Add(null);
+                    ModContentManager.moddedItemIDDict.Add(ids.itemIDs[i], ModContentManager.MINITEMID + i);
+                }
+                else
+                {
+                    if (!ModContentManager.moddedItemIDDict.TryGetValue(ids.itemIDs[i], out ItemName value) ||
+                        value != ModContentManager.MINITEMID + i)
+                    {
+                        Melon<Core>.Logger.Warning($"Conflict found with modded item {i} [{ids.itemIDs[i]}].");
+                        return false;
+                    }
+                }
+            }
             return true;
         }
     }
@@ -154,7 +278,8 @@ namespace SVModHelper
     {
         private static void Postfix()
         {
-            ModSaveManager.SaveModDataToProfile(DataManager.SettingsData.SaveProfileIndex);
+            if(ModSaveManager.allowModDataSave)
+                ModSaveManager.SaveModDataToProfile(DataManager.SettingsData.SaveProfileIndex);
         }
     }
 

@@ -148,174 +148,32 @@ namespace SVModHelper
 
         protected ArtifactName RegisterArtifact(AModArtifact modArtifactDef)
         {
-            ModContentManager.CheckInitStatus();
-            Melon<Core>.Logger.Msg("Registering artifact " + modArtifactDef.GetType().Name);
-            Type artifactType = modArtifactDef.GetType();
-            if (ModContentManager.moddedArtifactDict.ContainsKey(artifactType))
-            {
-                throw new InvalidOperationException("Can not register the same artifact multiple times.");
-            }
-
-            ArtifactName id = ModContentManager.moddedArtifacts.Count + ModContentManager.MINARTIFACTID;
-
-            ModContentManager.moddedArtifacts.Add(modArtifactDef);
-            ModContentManager.moddedArtifactDict.Add(artifactType, id);
-
-            ModContentManager.SetArtifactTitle(id, modArtifactDef.DisplayName);
-            ModContentManager.SetArtifactDesc(id, modArtifactDef.Description);
-            ModContentManager.SetArtifactImage(id, modArtifactDef.Sprite);
-            foreach (var locName in modArtifactDef.LocalizedNames)
-            {
-                ModContentManager.SetArtifactTitle(id, locName.Value, locName.Key);
-            }
-            foreach (var locDesc in modArtifactDef.LocalizedDescriptions)
-            {
-                ModContentManager.SetArtifactDesc(id, locDesc.Value, locDesc.Key);
-            }
-
-            return id;
+            return ModContentManager.RegisterArtifact(modArtifactDef, this);
         }
 
         protected ComponentName RegisterComponent(AModComponent modComponentDef)
         {
-            ModContentManager.CheckInitStatus();
-            Type componentType = modComponentDef.GetType();
-            if (ModContentManager.moddedComponentDict.ContainsKey(componentType))
-            {
-                throw new InvalidOperationException("Can not register the same component multiple times.");
-            }
-
-            ComponentName id = ModContentManager.moddedComponents.Count + ModContentManager.MINCOMPID;
-            ModContentManager.moddedComponents.Add(modComponentDef);
-            ModContentManager.moddedComponentDict.Add(componentType, id);
-
-            ModContentManager.SetComponentTitle(id, modComponentDef.DisplayName);
-            ModContentManager.SetComponentDesc(id, modComponentDef.Description);
-            ModContentManager.SetComponentImage(id, modComponentDef.Sprite);
-            foreach (var locName in modComponentDef.LocalizedNames)
-            {
-                ModContentManager.SetComponentTitle(id, locName.Value, locName.Key);
-            }
-            foreach (var locDesc in modComponentDef.LocalizedDescriptions)
-            {
-                ModContentManager.SetComponentDesc(id, locDesc.Value, locDesc.Key);
-            }
-
-            return id;
+            return ModContentManager.RegisterComponent(modComponentDef, this);
         }
 
         protected ItemName RegisterItem(AModItem modItemDef)
         {
-            ModContentManager.CheckInitStatus();
-            Type itemType = modItemDef.GetType();
-            if (ModContentManager.moddedItemDict.ContainsKey(itemType))
-            {
-                throw new InvalidOperationException("Can not register the same item multiple times.");
-            }
-
-            ItemName id = ModContentManager.moddedItems.Count + ModContentManager.MINITEMID;
-            ModContentManager.moddedItems.Add(modItemDef);
-            ModContentManager.moddedItemDict.Add(itemType, id);
-
-            ModContentManager.SetItemTitle(id, modItemDef.DisplayName);
-            ModContentManager.SetItemDesc(id, modItemDef.Description);
-            ModContentManager.SetItemImage(id, modItemDef.ItemViewData);
-            foreach (var locName in modItemDef.LocalizedNames)
-            {
-                ModContentManager.SetItemTitle(id, locName.Value, locName.Key);
-            }
-            foreach (var locDesc in modItemDef.LocalizedDescriptions)
-            {
-                ModContentManager.SetItemDesc(id, locDesc.Value, locDesc.Key);
-            }
-
-            return id;
+            return ModContentManager.RegisterItem(modItemDef, this);
         }
 
         protected ItemPackName RegisterPack(AModPack modPackDef)
         {
-            ModContentManager.CheckInitStatus();
-            Type packType = modPackDef.GetType();
-            if (ModContentManager.moddedPackDict.ContainsKey(packType))
-            {
-                throw new InvalidOperationException("Can not register the same pack multiple times.");
-            }
-
-            ItemPackName id = ModContentManager.moddedPacks.Count + ModContentManager.MINPACKID;
-            ModContentManager.moddedPacks.Add(modPackDef);
-            ModContentManager.moddedPackDict.Add(packType, id);
-
-            ModContentManager.SetPackTitle(id, modPackDef.DisplayName);
-            ModContentManager.SetPackDesc(id, modPackDef.Description);
-            ModContentManager.SetPackImage(id, modPackDef.Sprite);
-            foreach (var locName in modPackDef.LocalizedNames)
-            {
-                ModContentManager.SetPackTitle(id, locName.Value, locName.Key);
-            }
-            foreach (var locDesc in modPackDef.LocalizedDescriptions)
-            {
-                ModContentManager.SetPackDesc(id, locDesc.Value, locDesc.Key);
-            }
-
-            return id;
+            return ModContentManager.RegisterPack(modPackDef, this);
         }
 
         protected ArtifactName RegisterSpell(AModSpell modSpellDef)
         {
-            ModContentManager.CheckInitStatus();
-            Melon<Core>.Logger.Msg("Registering spell " + modSpellDef.GetType().Name);
-            Type artifactType = modSpellDef.GetType();
-            if (ModContentManager.moddedArtifactDict.ContainsKey(artifactType))
-            {
-                throw new InvalidOperationException("Can not register the same spell multiple times.");
-            }
-
-            ArtifactName id = ModContentManager.moddedArtifacts.Count + ModContentManager.MINARTIFACTID;
-            ModContentManager.moddedArtifacts.Add(modSpellDef);
-            ModContentManager.moddedArtifactDict.Add(artifactType, id);
-
-            ModContentManager.SetArtifactTitle(id, modSpellDef.DisplayName);
-            ModContentManager.SetArtifactDesc(id, modSpellDef.Description);
-            ModContentManager.SetArtifactImage(id, modSpellDef.Sprite);
-            foreach (var locName in modSpellDef.LocalizedNames)
-            {
-                ModContentManager.SetArtifactTitle(id, locName.Value, locName.Key);
-            }
-            foreach (var locDesc in modSpellDef.LocalizedDescriptions)
-            {
-                ModContentManager.SetArtifactDesc(id, locDesc.Value, locDesc.Key);
-            }
-
-            return id;
+            return ModContentManager.RegisterArtifact(modSpellDef, this);
         }
 
         protected PilotName RegisterPilot(AModPilot modPilot)
         {
-            ModContentManager.CheckInitStatus();
-            Melon<Core>.Logger.Msg("Registering pilot " + modPilot.GetType().Name);
-            Type pilotType = modPilot.GetType();
-            if (ModContentManager.moddedPilotDict.ContainsKey(pilotType))
-            {
-				throw new InvalidOperationException("Can not register the same pilot multiple times.");
-            }
-
-            PilotName id = ModContentManager.moddedPilots.Count + ModContentManager.MINPILOTID;
-            ModContentManager.moddedPilots.Add(modPilot);
-            ModContentManager.moddedPilotDict.Add(pilotType, id);
-
-            ModContentManager.SetPilotName(id, modPilot.DisplayName);
-            ModContentManager.SetPilotDesc(id, modPilot.Description);
-            ModContentManager.SetPilotViewData(id, PilotSkinName.Standard, modPilot.GetFullPilotData(PilotSkinName.Standard));
-            foreach (var locDesc in modPilot.LocalizedDescriptions)
-            {
-                ModContentManager.SetPilotDesc(id, locDesc.Value, locDesc.Key);
-            }
-            foreach (var locDialogue in modPilot.LocalizedTrueEndDialogues)
-            {
-                ModContentManager.SetPilotTrueEndDialogue(id, locDialogue.Value.dialogue1, locDialogue.Value.dialogue2, locale: locDialogue.Key);
-            }
-
-            return id;
+            return ModContentManager.RegisterPilot(modPilot, this);
         }
 
         protected string RegisterTask(AModTask task)
