@@ -14,6 +14,7 @@ namespace SVModHelper
     {
         public override void OnEarlyInitializeMelon()
         {
+            ModSaveManager.allowModDataSave = false;
             base.OnEarlyInitializeMelon();
 
             Melon<Core>.Logger.Msg("Loading default sprites");
@@ -40,12 +41,17 @@ namespace SVModHelper
                 ModContentManager.contentData.Add("SVModHelper.DefaultEntity.png", arr);
             }
             Melon<Core>.Logger.Msg("Sprites loaded.");
+
         }
 
         public override void OnInitializeMelon()
         {
             RegisterTypeOptions enumLinkOptions = new RegisterTypeOptions() { Interfaces = new Il2CppInterfaceCollection([typeof(Il2CppSystem.Collections.IEnumerator)]) };
             ClassInjector.RegisterTypeInIl2Cpp<EnumeratorLink>(enumLinkOptions);
+
+            Melon<Core>.Logger.Msg("Loading initial mod data.");
+            ModSaveManager.LoadInitialModData();
+            Melon<Core>.Logger.Msg("Mod data loaded.");
 
             List<SVMod> mods = RegisteredMelons.Where(mod => mod is SVMod).Cast<SVMod>().ToList();
             bool error = false;
@@ -111,7 +117,10 @@ namespace SVModHelper
         public override void OnLateInitializeMelon()
         {
             ModContentManager.ApplyMods();
+            ModContentManager.FillMissingContent();
             ModContentManager.postInit = true;
+            ModSaveManager.allowModDataSave = true;
+            ModContentManager.PrintModCardList();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Il2CppStarVaders;
+﻿using MelonLoader;
 using SVModHelper.ModContent;
 using UnityEngine;
 
@@ -26,26 +26,32 @@ namespace SVModHelper
 
         internal static List<AModCard> moddedCards;
         internal static Dictionary<Type, CardName> moddedCardDict;
+        internal static Dictionary<string, CardName> moddedCardIDDict;
         internal static Dictionary<CardName, CardViewData> moddedCardVDs;
 
         internal static List<IHasArtifactID> moddedArtifacts;
         internal static Dictionary<Type, ArtifactName> moddedArtifactDict;
+        internal static Dictionary<string, ArtifactName> moddedArtifactIDDict;
         internal static Dictionary<ArtifactName, Sprite> moddedArtifactVDs;
 
         internal static List<AModComponent> moddedComponents;
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
+        internal static Dictionary<string, ComponentName> moddedComponentIDDict;
         internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
 
         internal static List<AModItem> moddedItems;
         internal static Dictionary<Type, ItemName> moddedItemDict;
+        internal static Dictionary<string, ItemName> moddedItemIDDict;
         internal static Dictionary<ItemName, ItemViewDataSO> moddedItemVDs;
 
         internal static List<AModPack> moddedPacks;
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
+        internal static Dictionary<string, ItemPackName> moddedPackIDDict;
         internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
 
         internal static List<AModPilot> moddedPilots;
         internal static Dictionary<Type, PilotName> moddedPilotDict;
+        internal static Dictionary<string, PilotName> moddedPilotIDDict;
         internal static Dictionary<(PilotName, PilotSkinName), ModPilotViewData> moddedPilotVDs;
         internal static Dictionary<PilotName, string> moddedPilotNames;
 
@@ -90,26 +96,32 @@ namespace SVModHelper
 
             moddedCards = new();
             moddedCardDict = new();
+            moddedCardIDDict = new();
             moddedCardVDs = new();
 
             moddedArtifacts = new();
             moddedArtifactDict = new();
+            moddedArtifactIDDict = new();
             moddedArtifactVDs = new();
 
             moddedComponents = new();
             moddedComponentDict = new();
+            moddedComponentIDDict = new();
             moddedComponentVDs = new();
 
             moddedItems = new();
             moddedItemDict = new();
+            moddedItemIDDict = new();
             moddedItemVDs = new();
 
             moddedPacks = new();
             moddedPackDict = new();
+            moddedPackIDDict = new();
             moddedPackVDs = new();
 
             moddedPilots = new();
             moddedPilotDict = new();
+            moddedPilotIDDict = new();
             moddedPilotVDs = new();
             moddedPilotNames = new();
 
@@ -361,6 +373,86 @@ namespace SVModHelper
         #endregion
 
         #region Cards
+        internal static CardName RegisterCard(AModCard modCardDef, SVMod sourceMod)
+        {
+            CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering card " + modCardDef.GetType().Name);
+            Type cardType = modCardDef.GetType();
+            if (moddedCardDict.ContainsKey(cardType))
+            {
+                throw new InvalidOperationException("Can not register the same card multiple times.");
+            }
+
+            CardName cardName = GetModCardName(modCardDef.ID);
+            if (cardName == INVALIDCARDID) //new card not in dictionary
+            {
+                cardName = moddedCards.Count + MINCARDID;
+                moddedCardIDDict.Add(modCardDef.ID, cardName);
+                moddedCards.Add(modCardDef);
+            }
+            else //card used in previous session, is in dictionary
+            {
+                int cardIndex = cardName - MINCARDID;
+                if (moddedCards[cardIndex] != null)
+                {
+                    throw new InvalidOperationException($"Multiple cards have the same ID ({modCardDef.ID}).");
+                }
+                moddedCards[cardIndex] = modCardDef;
+            }
+
+            moddedCardDict.Add(cardType, cardName);
+
+            SetCardTitle(cardName, modCardDef.DisplayName);
+            SetCardDesc(cardName, modCardDef.Description);
+            SetCardImage(cardName, modCardDef.CardViewData);
+            foreach ((string title, string locale) in modCardDef.LocalizedNames)
+            {
+                SetCardTitle(cardName, title, locale);
+            }
+            foreach ((string desc, string locale) in modCardDef.LocalizedDescriptions)
+            {
+                SetCardDesc(cardName, desc, locale);
+            }
+
+            return cardName;
+        }
+
+        internal static void FillMissingCards()
+        {
+            foreach((string id, CardName name) in moddedCardIDDict)
+            {
+                if (moddedCards[name - MINCARDID] == null)
+                {
+                    MissingCard card = new MissingCard(name, id);
+                    moddedCards[name - MINCARDID] = card;
+                    SetCardTitle(name, card.DisplayName);
+                    SetCardDesc(name, card.Description);
+                    SetCardImage(name, card.CardViewData);
+                    foreach ((string title, string locale) in card.LocalizedNames)
+                    {
+                        SetCardTitle(name, title, locale);
+                    }
+                    foreach ((string desc, string locale) in card.LocalizedDescriptions)
+                    {
+                        SetCardDesc(name, desc, locale);
+                    }
+                }
+            }
+        }
+
+        internal static void PrintModCardList()
+        {
+            foreach(AModCard card in moddedCards)
+            {
+                if (card == null)
+                    Melon<Core>.Logger.Error("!!NULL CARD!!");
+                else if (card is MissingCard missingCard)
+                    Melon<Core>.Logger.Msg($"Missing Card: {missingCard.stringID}");
+                else
+                    Melon<Core>.Logger.Msg(card.ID);
+            }
+        }
+
         internal static string SetCardTitle(CardName cardName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = cardName.ToString() + "_CardTitle";
@@ -393,6 +485,15 @@ namespace SVModHelper
             return INVALIDCARDID;
         }
 
+        public static CardName GetModCardName(string id)
+        {
+            if(moddedCardIDDict.TryGetValue(id, out CardName cardName))
+            {
+                return cardName;
+            }
+            return INVALIDCARDID;
+        }
+
         public static AModCard GetModCardInstance(CardName cardName)
         {
             if (cardName < MINCARDID || cardName >= MINCARDID + moddedCards.Count)
@@ -402,6 +503,74 @@ namespace SVModHelper
         #endregion
 
         #region Artifacts
+
+        internal static ArtifactName RegisterArtifact(IHasArtifactID modArtifactDef, SVMod sourceMod)
+        {
+            CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering artifact " + modArtifactDef.GetType().Name);
+            Type artifactType = modArtifactDef.GetType();
+            if (moddedArtifactDict.ContainsKey(artifactType))
+            {
+                throw new InvalidOperationException("Can not register the same artifact multiple times.");
+            }
+
+            ArtifactName artifactName = GetModArtifactName(modArtifactDef.ID);
+            if (artifactName == INVALIDARTIFACTID) //new artifact not in dictionary
+            {
+                artifactName = moddedArtifacts.Count + MINARTIFACTID;
+                moddedArtifactIDDict.Add(modArtifactDef.ID, artifactName);
+                moddedArtifacts.Add(modArtifactDef);
+            }
+            else //artifact used in previous session, is in dictionary
+            {
+                int artifactIndex = artifactName - MINARTIFACTID;
+                if (moddedArtifacts[artifactIndex] != null)
+                {
+                    throw new InvalidOperationException($"Multiple artifacts have the same ID ({modArtifactDef.ID}).");
+                }
+                moddedArtifacts[artifactIndex] = modArtifactDef;
+            }
+
+            moddedArtifactDict.Add(artifactType, artifactName);
+
+            SetArtifactTitle(artifactName, modArtifactDef.DisplayName);
+            SetArtifactDesc(artifactName, modArtifactDef.Description);
+            SetArtifactImage(artifactName, modArtifactDef.Sprite);
+            foreach (var locName in modArtifactDef.LocalizedNames)
+            {
+                SetArtifactTitle(artifactName, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modArtifactDef.LocalizedDescriptions)
+            {
+                SetArtifactDesc(artifactName, locDesc.Value, locDesc.Key);
+            }
+
+            return artifactName;
+        }
+
+        internal static void FillMissingArtifacts()
+        {
+            foreach ((string id, ArtifactName name) in moddedArtifactIDDict)
+            {
+                if (moddedArtifacts[name - MINARTIFACTID] == null)
+                {
+                    MissingArtifact artifact = new MissingArtifact(name, id);
+                    moddedArtifacts[name - MINARTIFACTID] = artifact;
+                    SetArtifactTitle(name, artifact.DisplayName);
+                    SetArtifactDesc(name, artifact.Description);
+                    SetArtifactImage(name, artifact.Sprite);
+                    foreach ((string title, string locale) in artifact.LocalizedNames)
+                    {
+                        SetArtifactTitle(name, title, locale);
+                    }
+                    foreach ((string desc, string locale) in artifact.LocalizedDescriptions)
+                    {
+                        SetArtifactDesc(name, desc, locale);
+                    }
+                }
+            }
+        }
+
         internal static string SetArtifactTitle(ArtifactName artifactName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = artifactName.ToString() + "_ArtiTitle";
@@ -434,6 +603,15 @@ namespace SVModHelper
             return INVALIDARTIFACTID;
         }
 
+        public static ArtifactName GetModArtifactName(string id)
+        {
+            if (moddedArtifactIDDict.TryGetValue(id, out ArtifactName artifactName))
+            {
+                return artifactName;
+            }
+            return INVALIDARTIFACTID;
+        }
+
         public static IHasArtifactID GetModArtifactInstance(ArtifactName artifactName)
         {
             if (artifactName < MINARTIFACTID || artifactName >= MINARTIFACTID + moddedArtifacts.Count)
@@ -443,6 +621,74 @@ namespace SVModHelper
         #endregion
 
         #region Components
+
+        internal static ComponentName RegisterComponent(AModComponent modComponentDef, SVMod sourceMod)
+        {
+            CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering component " + modComponentDef.GetType().Name);
+            Type componentType = modComponentDef.GetType();
+            if (moddedComponentDict.ContainsKey(componentType))
+            {
+                throw new InvalidOperationException("Can not register the same component multiple times.");
+            }
+
+            ComponentName componentName = GetModComponentName(modComponentDef.ID);
+            if (componentName == INVALIDCOMPID) //new component not in dictionary
+            {
+                componentName = moddedComponents.Count + MINCOMPID;
+                moddedComponentIDDict.Add(modComponentDef.ID, componentName);
+                moddedComponents.Add(modComponentDef);
+            }
+            else //component used in previous session, is in dictionary
+            {
+                int componentIndex = componentName - MINCOMPID;
+                if (moddedComponents[componentIndex] != null)
+                {
+                    throw new InvalidOperationException($"Multiple components have the same ID ({modComponentDef.ID}).");
+                }
+                moddedComponents[componentIndex] = modComponentDef;
+            }
+
+            moddedComponentDict.Add(componentType, componentName);
+
+            SetComponentTitle(componentName, modComponentDef.DisplayName);
+            SetComponentDesc(componentName, modComponentDef.Description);
+            SetComponentImage(componentName, modComponentDef.Sprite);
+            foreach (var locName in modComponentDef.LocalizedNames)
+            {
+                SetComponentTitle(componentName, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modComponentDef.LocalizedDescriptions)
+            {
+                SetComponentDesc(componentName, locDesc.Value, locDesc.Key);
+            }
+
+            return componentName;
+        }
+
+        internal static void FillMissingComponents()
+        {
+            foreach ((string id, ComponentName name) in moddedComponentIDDict)
+            {
+                if (moddedComponents[name - MINCOMPID] == null)
+                {
+                    MissingComponent component = new MissingComponent(name, id);
+                    moddedComponents[name - MINCOMPID] = component;
+                    SetComponentTitle(name, component.DisplayName);
+                    SetComponentDesc(name, component.Description);
+                    SetComponentImage(name, component.Sprite);
+                    foreach ((string title, string locale) in component.LocalizedNames)
+                    {
+                        SetComponentTitle(name, title, locale);
+                    }
+                    foreach ((string desc, string locale) in component.LocalizedDescriptions)
+                    {
+                        SetComponentDesc(name, desc, locale);
+                    }
+                }
+            }
+        }
+
         internal static string SetComponentTitle(ComponentName componentName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = componentName.ToString() + "_CompTitle";
@@ -475,6 +721,15 @@ namespace SVModHelper
             return INVALIDCOMPID;
         }
 
+        public static ComponentName GetModComponentName(string id)
+        {
+            if (moddedComponentIDDict.TryGetValue(id, out ComponentName componentName))
+            {
+                return componentName;
+            }
+            return INVALIDCOMPID;
+        }
+
         public static AModComponent GetModComponentInstance(ComponentName componentName)
         {
             if (componentName < MINCOMPID || componentName >= MINCOMPID + moddedComponents.Count)
@@ -484,6 +739,74 @@ namespace SVModHelper
         #endregion
 
         #region Items
+
+        internal static ItemName RegisterItem(AModItem modItemDef, SVMod sourceMod)
+        {
+            CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering item " + modItemDef.GetType().Name);
+            Type itemType = modItemDef.GetType();
+            if (moddedItemDict.ContainsKey(itemType))
+            {
+                throw new InvalidOperationException("Can not register the same item multiple times.");
+            }
+
+            ItemName itemName = GetModItemName(modItemDef.ID);
+            if (itemName == INVALIDITEMID) //new item not in dictionary
+            {
+                itemName = moddedItems.Count + MINITEMID;
+                moddedItemIDDict.Add(modItemDef.ID, itemName);
+                moddedItems.Add(modItemDef);
+            }
+            else //item used in previous session, is in dictionary
+            {
+                int itemIndex = itemName - MINITEMID;
+                if (moddedItems[itemIndex] != null)
+                {
+                    throw new InvalidOperationException($"Multiple items have the same ID ({modItemDef.ID}).");
+                }
+                moddedItems[itemIndex] = modItemDef;
+            }
+
+            moddedItemDict.Add(itemType, itemName);
+
+            SetItemTitle(itemName, modItemDef.DisplayName);
+            SetItemDesc(itemName, modItemDef.Description);
+            SetItemImage(itemName, modItemDef.ItemViewData);
+            foreach (var locName in modItemDef.LocalizedNames)
+            {
+                SetItemTitle(itemName, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modItemDef.LocalizedDescriptions)
+            {
+                SetItemDesc(itemName, locDesc.Value, locDesc.Key);
+            }
+
+            return itemName;
+        }
+
+        internal static void FillMissingItems()
+        {
+            foreach ((string id, ItemName name) in moddedItemIDDict)
+            {
+                if (moddedItems[name - MINITEMID] == null)
+                {
+                    MissingItem item = new MissingItem(name, id);
+                    moddedItems[name - MINITEMID] = item;
+                    SetItemTitle(name, item.DisplayName);
+                    SetItemDesc(name, item.Description);
+                    SetItemImage(name, item.ItemViewData);
+                    foreach ((string title, string locale) in item.LocalizedNames)
+                    {
+                        SetItemTitle(name, title, locale);
+                    }
+                    foreach ((string desc, string locale) in item.LocalizedDescriptions)
+                    {
+                        SetItemDesc(name, desc, locale);
+                    }
+                }
+            }
+        }
+
         internal static string SetItemTitle(ItemName itemName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = itemName.ToString() + "_EntityTitle";
@@ -516,6 +839,15 @@ namespace SVModHelper
             return INVALIDITEMID;
         }
 
+        public static ItemName GetModItemName(string id)
+        {
+            if (moddedItemIDDict.TryGetValue(id, out ItemName itemName))
+            {
+                return itemName;
+            }
+            return INVALIDITEMID;
+        }
+
         public static AModItem GetModItemInstance(ItemName itemName)
         {
             if (itemName < MINITEMID || itemName >= MINITEMID + moddedItems.Count)
@@ -525,6 +857,74 @@ namespace SVModHelper
         #endregion
 
         #region Packs
+
+        internal static ItemPackName RegisterPack(AModPack modPackDef, SVMod sourceMod)
+        {
+            CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering pack " + modPackDef.GetType().Name);
+            Type packType = modPackDef.GetType();
+            if (moddedPackDict.ContainsKey(packType))
+            {
+                throw new InvalidOperationException("Can not register the same pack multiple times.");
+            }
+
+            ItemPackName packName = GetModPackName(modPackDef.ID);
+            if (packName == INVALIDPACKID) //new pack not in dictionary
+            {
+                packName = moddedPacks.Count + MINPACKID;
+                moddedPackIDDict.Add(modPackDef.ID, packName);
+                moddedPacks.Add(modPackDef);
+            }
+            else //pack used in previous session, is in dictionary
+            {
+                int packIndex = packName - MINPACKID;
+                if (moddedPacks[packIndex] != null)
+                {
+                    throw new InvalidOperationException($"Multiple packs have the same ID ({modPackDef.ID}).");
+                }
+                moddedPacks[packIndex] = modPackDef;
+            }
+
+            moddedPackDict.Add(packType, packName);
+
+            SetPackTitle(packName, modPackDef.DisplayName);
+            SetPackDesc(packName, modPackDef.Description);
+            SetPackImage(packName, modPackDef.Sprite);
+            foreach (var locName in modPackDef.LocalizedNames)
+            {
+                SetPackTitle(packName, locName.Value, locName.Key);
+            }
+            foreach (var locDesc in modPackDef.LocalizedDescriptions)
+            {
+                SetPackDesc(packName, locDesc.Value, locDesc.Key);
+            }
+
+            return packName;
+        }
+
+        internal static void FillMissingPacks()
+        {
+            foreach ((string id, ItemPackName name) in moddedPackIDDict)
+            {
+                if (moddedPacks[name - MINPACKID] == null)
+                {
+                    MissingPack pack = new MissingPack(name, id);
+                    moddedPacks[name - MINPACKID] = pack;
+                    SetPackTitle(name, pack.DisplayName);
+                    SetPackDesc(name, pack.Description);
+                    SetPackImage(name, pack.Sprite);
+                    foreach ((string title, string locale) in pack.LocalizedNames)
+                    {
+                        SetPackTitle(name, title, locale);
+                    }
+                    foreach ((string desc, string locale) in pack.LocalizedDescriptions)
+                    {
+                        SetPackDesc(name, desc, locale);
+                    }
+                }
+            }
+        }
+
         internal static string SetPackTitle(ItemPackName packName, string title, string locale = LocalizationFixer.GLOBALDEFAULT)
         {
             string id = packName.ToString() + "_Misc";
@@ -557,6 +957,15 @@ namespace SVModHelper
             return INVALIDPACKID;
         }
 
+        public static ItemPackName GetModPackName(string id)
+        {
+            if(moddedPackIDDict.TryGetValue(id, out ItemPackName packName))
+            {
+                return packName;
+            }
+            return INVALIDPACKID;
+        }
+
         public static AModPack GetModPackInstance(ItemPackName packName)
         {
             if (packName < MINPACKID || packName >= MINPACKID + moddedPacks.Count)
@@ -571,6 +980,69 @@ namespace SVModHelper
         #endregion
 
         #region Pilots
+
+        internal static PilotName RegisterPilot(AModPilot modPilotDef, SVMod sourceMod)
+        {
+            CheckInitStatus();
+            Melon<Core>.Logger.Msg("Registering pilot " + modPilotDef.GetType().Name);
+            Type pilotType = modPilotDef.GetType();
+            if (moddedPilotDict.ContainsKey(pilotType))
+            {
+                throw new InvalidOperationException("Can not register the same pilot multiple times.");
+            }
+
+            PilotName pilotName = GetModPilotName(modPilotDef.ID);
+            if (pilotName == INVALIDPILOTID) //new pilot not in dictionary
+            {
+                pilotName = moddedPilots.Count + MINPILOTID;
+                moddedPilotIDDict.Add(modPilotDef.ID, pilotName);
+                moddedPilots.Add(modPilotDef);
+            }
+            else //pilot used in previous session, is in dictionary
+            {
+                int pilotIndex = pilotName - MINPILOTID;
+                if (moddedPilots[pilotIndex] != null)
+                {
+                    throw new InvalidOperationException($"Multiple pilots have the same ID ({modPilotDef.ID}).");
+                }
+                moddedPilots[pilotIndex] = modPilotDef;
+            }
+
+            moddedPilotDict.Add(pilotType, pilotName);
+
+            SetPilotName(pilotName, modPilotDef.DisplayName);
+            SetPilotDesc(pilotName, modPilotDef.Description);
+            SetPilotViewData(pilotName, PilotSkinName.Standard, modPilotDef.GetFullPilotData(PilotSkinName.Standard));
+            foreach (var locDesc in modPilotDef.LocalizedDescriptions)
+            {
+                SetPilotDesc(pilotName, locDesc.Value, locDesc.Key);
+            }
+            foreach (var locDialogue in modPilotDef.LocalizedTrueEndDialogues)
+            {
+                SetPilotTrueEndDialogue(pilotName, locDialogue.Value.dialogue1, locDialogue.Value.dialogue2, locale: locDialogue.Key);
+            }
+
+            return pilotName;
+        }
+
+        internal static void FillMissingPilots()
+        {
+            foreach ((string id, PilotName name) in moddedPilotIDDict)
+            {
+                if (moddedPilots[name - MINPILOTID] == null)
+                {
+                    MissingPilot pilot = new MissingPilot(name, id);
+                    moddedPilots[name - MINPILOTID] = pilot;
+                    SetPilotName(name, pilot.DisplayName);
+                    SetPilotDesc(name, pilot.Description);
+                    SetPilotViewData(name, PilotSkinName.Standard, pilot.GetFullPilotData(PilotSkinName.Standard));
+                    foreach ((string desc, string locale) in pilot.LocalizedDescriptions)
+                    {
+                        SetPilotDesc(name, desc, locale);
+                    }
+                }
+            }
+        }
 
         internal static void SetPilotName(PilotName pilotName, string name)
         {
@@ -620,6 +1092,15 @@ namespace SVModHelper
             if (moddedPilotDict.TryGetValue(pilotType, out PilotName id))
             {
                 return id;
+            }
+            return INVALIDPILOTID;
+        }
+
+        public static PilotName GetModPilotName(string id)
+        {
+            if (moddedPilotIDDict.TryGetValue(id, out PilotName pilotName))
+            {
+                return pilotName;
             }
             return INVALIDPILOTID;
         }
@@ -710,6 +1191,16 @@ namespace SVModHelper
             return moddedMoreInfoPanels[moreInfoName - MINMOREINFOID];
         }
         #endregion
+
+        internal static void FillMissingContent()
+        {
+            FillMissingCards();
+            FillMissingArtifacts();
+            FillMissingComponents();
+            FillMissingItems();
+            FillMissingPacks();
+            FillMissingPilots();
+        }
 
         internal static void CheckInitStatus()
         {

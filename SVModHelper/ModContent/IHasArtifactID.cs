@@ -1,8 +1,16 @@
-﻿namespace SVModHelper.ModContent
+﻿using UnityEngine;
+
+namespace SVModHelper.ModContent
 {
     public interface IHasArtifactID
     {
-        public ArtifactName ArtifactName => ModContentManager.GetModArtifactName(GetType());
+        public ArtifactName ArtifactName { get; }
+        public string ID { get; }
+        public string DisplayName { get; }
+        public string Description { get; }
+        public Dictionary<string, string> LocalizedNames { get; }
+        public Dictionary<string, string> LocalizedDescriptions { get; }
+        public Sprite Sprite { get; }
 
         public bool CanBeDuplicated { get; }
         public ClassName Class { get; }

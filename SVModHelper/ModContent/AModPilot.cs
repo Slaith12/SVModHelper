@@ -13,6 +13,11 @@ namespace SVModHelper.ModContent
         public abstract ClassName ClassName { get; }
 
         /// <summary>
+        /// The internal name that the mod helper and other mods will use to reference this pilot.
+        /// This cannot match the ID of any other modded pilot.
+        /// </summary>
+        public virtual string ID => GetType().Assembly.GetName().Name + "-" + GetType().Name;
+        /// <summary>
         /// The pilot's name when displayed in text.
         /// Note that some panels use an image for the pilot's name instead, which is defined in PilotTitleSprite.
         /// </summary>

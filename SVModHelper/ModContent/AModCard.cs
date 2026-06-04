@@ -17,6 +17,11 @@ namespace SVModHelper.ModContent
         public CardName CardName => ModContentManager.GetModCardName(GetType());
 
         /// <summary>
+        /// The internal name that the mod helper and other mods will use to reference this card.
+        /// This cannot match the ID of any other modded card.
+        /// </summary>
+        public virtual string ID => GetType().Assembly.GetName().Name + "-" + GetType().Name;
+        /// <summary>
         /// The name that's shown for this card. Only used when no localization is provided for the current locale.
         /// </summary>
         public abstract string DisplayName { get; }
