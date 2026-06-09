@@ -19,7 +19,7 @@ namespace SVModHelper.ModContent
         }
 
         //TODO: Update this function to cache textures for future calls
-        protected Texture2D GetTexture(string imageName,
+        protected Texture2D oldGetTexture(string imageName,
             FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
             bool localName = true, bool warnOnFail = true)
         {
@@ -31,24 +31,32 @@ namespace SVModHelper.ModContent
         }
 
         //TODO: Update this function to cache sprites for future calls
-        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100,
+        protected Sprite oldGetStandardSprite(string imageName, float pixelsPerUnit = 100,
             FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
             bool localName = true, bool warnOnFail = true)
         {
-            Texture2D texture = GetTexture(imageName, filter, wrapMode, localName, warnOnFail);
+            Texture2D texture = oldGetTexture(imageName, filter, wrapMode, localName, warnOnFail);
             if (texture == null)
                 return null;
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
         }
 
+        protected SpriteDescriptor GetStandardSprite(string imageName, float pixelsPerUnit = 100,
+            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
+            Rect? rect = null, Vector2? pivot = null,
+            bool localName = true)
+        {
+            return new SpriteDescriptor(GetContentKeyString(imageName, localName), filter, wrapMode, rect, pivot, pixelsPerUnit);
+        }
+
         protected Sprite GetDefaultEntitySprite()
         {
-            return GetStandardSprite("SVModHelper.DefaultEntity.png", localName: false);
+            return oldGetStandardSprite("SVModHelper.DefaultEntity.png", localName: false);
         }
 
         protected Sprite GetDefaultShadowSprite()
         {
-            return GetStandardSprite("SVModHelper.DefaultShadow.png", localName: false);
+            return oldGetStandardSprite("SVModHelper.DefaultShadow.png", localName: false);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

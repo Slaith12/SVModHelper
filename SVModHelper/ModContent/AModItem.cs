@@ -28,7 +28,7 @@
 
         public virtual ItemViewDataSO ItemViewData => new ItemViewDataSO() 
         { 
-            Sprite = GetStandardSprite(GetType().Name + ".png", warnOnFail: true) ?? GetDefaultEntitySprite(),
+            Sprite = oldGetStandardSprite(GetType().Name + ".png", warnOnFail: true) ?? GetDefaultEntitySprite(),
             Shadow = GetDefaultShadowSprite()
         };
 

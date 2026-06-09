@@ -27,7 +27,7 @@ namespace SVModHelper.ModContent
         /// The description that's shown for this component on different locales. Falls back to Description for any locales that are missing localizations.
         /// </summary>
         public virtual Dictionary<string, string> LocalizedDescriptions => new();
-        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: true);
+        public virtual Sprite Sprite => oldGetStandardSprite(GetType().Name + ".png", warnOnFail: true);
 
         /// <summary>
         /// The mech class this component is available to. Set to Neutral to allow any class to obtain it.

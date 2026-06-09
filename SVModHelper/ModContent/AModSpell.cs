@@ -27,7 +27,14 @@ namespace SVModHelper.ModContent
         /// The description that's shown for this spell on different locales. Falls back to Description for any locales that are missing localizations.
         /// </summary>
         public virtual Dictionary<string, string> LocalizedDescriptions => new();
-        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: true);
+        /// <summary>
+        /// The sprite used for this spell.
+        /// </summary>
+        public virtual SpriteDescriptor Sprite => GetStandardSprite(GetType().Name + ".png");
+        /// <summary>
+        /// If false, the mod helper will print an error to the console if it's unable to find the sprite for this spell.
+        /// </summary>
+        public virtual bool SurpressMissingSpriteError => false;
 
         /// <summary>
         /// The pilot this spell belongs to. Set to None to allow any Keeper pilot to get it.

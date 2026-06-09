@@ -42,58 +42,58 @@ namespace SVModHelper.ModContent
         /// The sprite used for the pilot's portrait on the Pilot Selection screen.
         /// Defaults to <code>[BaseImagePath]Portrait.png</code>
         /// </summary>
-        public virtual Sprite FrontPortrait => GetStandardSprite(BaseImagePath + "Portrait.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite FrontPortrait => oldGetStandardSprite(BaseImagePath + "Portrait.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite displayed in front of the pilot's portrait on the Pilot Selection screen.
         /// Defaults to <code>[BaseImagePath]PortraitParallax.png</code>
         /// </summary>
-        public virtual Sprite FrontPortraitParallax => GetStandardSprite(BaseImagePath + "PortraitParallax.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite FrontPortraitParallax => oldGetStandardSprite(BaseImagePath + "PortraitParallax.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used to display the pilot's name on the Pilot Selection screen (standard text is not used for this).
         /// Defaults to <code>[BaseImagePath]Name.png</code>
         /// </summary>
-        public virtual Sprite PilotTitleSprite => GetStandardSprite(BaseImagePath + "Name.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite PilotTitleSprite => oldGetStandardSprite(BaseImagePath + "Name.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used in the pilot display during an encounter.
         /// Defaults to <code>[BaseImagePath]CombatNeutral.png</code> or <code>[BaseImagePath]Combat.png</code>
         /// </summary>
-        public virtual Sprite CombatPortraitNeutral => GetStandardSprite(BaseImagePath + "CombatNeutral.png", warnOnFail: false)
-            ?? GetStandardSprite(BaseImagePath + "Combat.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite CombatPortraitNeutral => oldGetStandardSprite(BaseImagePath + "CombatNeutral.png", warnOnFail: false)
+            ?? oldGetStandardSprite(BaseImagePath + "Combat.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used in the pilot display during an encounter when something good happens.
         /// Defaults to <code>[BaseImagePath]CombatPositive.png</code> or to the neutral combat portrait.
         /// </summary>
-        public virtual Sprite CombatPortraitPositive => GetStandardSprite(BaseImagePath + "CombatPositive.png", warnOnFail: false) ?? CombatPortraitNeutral;
+        public virtual Sprite CombatPortraitPositive => oldGetStandardSprite(BaseImagePath + "CombatPositive.png", warnOnFail: false) ?? CombatPortraitNeutral;
         /// <summary>
         /// The sprite used in the pilot display during an encounter when something bad happens.
         /// Defaults to <code>[BaseImagePath]CombatNegative.png</code> or to the neutral combat portrait.
         /// </summary>
-        public virtual Sprite CombatPortraitNegative => GetStandardSprite(BaseImagePath + "CombatNegative.png", warnOnFail: false) ?? CombatPortraitNeutral;
+        public virtual Sprite CombatPortraitNegative => oldGetStandardSprite(BaseImagePath + "CombatNegative.png", warnOnFail: false) ?? CombatPortraitNeutral;
         /// <summary>
         /// The sprite used in the pilot display during an encounter when the mech overheats (gunner mech only).
         /// Defaults to <code>[BaseImagePath]CombatBurning.png</code> or to the negative combat portrait.
         /// </summary>
-        public virtual Sprite CombatPortraitBurning => GetStandardSprite(BaseImagePath + "CombatBurning.png", warnOnFail: false) ?? CombatPortraitNegative;
+        public virtual Sprite CombatPortraitBurning => oldGetStandardSprite(BaseImagePath + "CombatBurning.png", warnOnFail: false) ?? CombatPortraitNegative;
         /// <summary>
         /// The sprite used in the pilot display during a campaign outside an encounter.
         /// Defaults to <code>[BaseImagePath]Campaign.png</code>
         /// </summary>
-        public virtual Sprite CampaignPortrait => GetStandardSprite(BaseImagePath + "Campaign.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite CampaignPortrait => oldGetStandardSprite(BaseImagePath + "Campaign.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used for the photo on the victory screen.
         /// Defaults to <code>[BaseImagePath]Victory.png</code>
         /// </summary>
-        public virtual Sprite VictoryPhoto => GetStandardSprite(BaseImagePath + "Victory.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual Sprite VictoryPhoto => oldGetStandardSprite(BaseImagePath + "Victory.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
         /// <summary>
         /// The sprite used on the second panel of the true ending cutscene (the handhake with the alien).
         /// Defaults to <code>[BaseImagePath]Handshake.png</code>
         /// </summary>
-        public virtual Sprite TrueEndHandshake => GetStandardSprite(BaseImagePath + "Handhake.png", warnOnFail: false) ?? null;
+        public virtual Sprite TrueEndHandshake => oldGetStandardSprite(BaseImagePath + "Handhake.png", warnOnFail: false) ?? null;
         /// <summary>
         /// The sprite used on the final panel of the true ending cutscene (the lineup with all pilots).
         /// Defaults to <code>[BaseImagePath]Lineup.png</code>
         /// </summary>
-        public virtual Sprite TrueEndLineup => GetStandardSprite(BaseImagePath + "Lineup.png", warnOnFail: false) ?? null;
+        public virtual Sprite TrueEndLineup => oldGetStandardSprite(BaseImagePath + "Lineup.png", warnOnFail: false) ?? null;
 
         /// <summary>
         /// The pilot's dialogue when talking to the Overseer in the true ending. Defaults to a generic sequence for each locale.

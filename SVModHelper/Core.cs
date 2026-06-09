@@ -18,28 +18,8 @@ namespace SVModHelper
             base.OnEarlyInitializeMelon();
 
             Melon<Core>.Logger.Msg("Loading default sprites");
-            Assembly assembly = typeof(AModContent).Assembly;
-            //I was originally planning on automatically grabbing the shadow sprite from the game directly,
-            //but I'm not sure how to do that so I'm just adding the shadow sprite to the build instead.
-            byte[] arr = ResourceHelper.LoadResource(assembly, "SVModHelper.shadow.png");
-            if (arr == null)
-            {
-                Melon<Core>.Logger.Error("Unable to load default shadow image.");
-            }
-            else
-            {
-                ModContentManager.contentData.Add("SVModHelper.DefaultShadow.png", arr);
-            }
-
-            arr = ResourceHelper.LoadResource(assembly, "SVModHelper.EntityUnknown.png");
-            if (arr == null)
-            {
-                Melon<Core>.Logger.Error("Unable to load default entity image.");
-            }
-            else
-            {
-                ModContentManager.contentData.Add("SVModHelper.DefaultEntity.png", arr);
-            }
+            SpriteHelper.InitDefaultSprites();
+            SpriteHelper.ResetSpriteCaches();
             Melon<Core>.Logger.Msg("Sprites loaded.");
 
         }

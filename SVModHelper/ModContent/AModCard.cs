@@ -8,7 +8,7 @@ namespace SVModHelper.ModContent
             FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
             bool localName = true, bool warnOnFail = true)
         {
-            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, wrapMode, localName, warnOnFail);
+            Sprite sprite = oldGetStandardSprite(imageName, pixelsPerUnit, filter, wrapMode, localName, warnOnFail);
             if (sprite == null)
                 return null;
             return new CardViewData(CardName, sprite, null);

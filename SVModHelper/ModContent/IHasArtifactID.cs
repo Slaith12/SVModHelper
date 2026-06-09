@@ -10,7 +10,7 @@ namespace SVModHelper.ModContent
         public string Description { get; }
         public Dictionary<string, string> LocalizedNames { get; }
         public Dictionary<string, string> LocalizedDescriptions { get; }
-        public Sprite Sprite { get; }
+        public SpriteDescriptor Sprite { get; }
 
         public bool CanBeDuplicated { get; }
         public ClassName Class { get; }

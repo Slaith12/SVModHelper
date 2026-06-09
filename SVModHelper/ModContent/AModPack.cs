@@ -27,7 +27,7 @@ namespace SVModHelper.ModContent
         /// The description that's shown for this pack on different locales. Falls back to Description for any locales that are missing localizations.
         /// </summary>
         public virtual Dictionary<string, string> LocalizedDescriptions => new();
-        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: true);
+        public virtual Sprite Sprite => oldGetStandardSprite(GetType().Name + ".png", warnOnFail: true);
 
         public abstract Il2CppCollections.HashSet<CardName> cards { get; }
         public abstract Il2CppCollections.HashSet<ArtifactName> artifacts { get; }
