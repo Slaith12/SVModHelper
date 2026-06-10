@@ -68,7 +68,7 @@ namespace DemoMod
             {
                 displayName = "Scarlet",
                 description = "Offerings from the Scarlet Mask.",
-                sprite = GetStandardSprite("ScarletPack.png"),
+                sprite = oldGetStandardSprite("ScarletPack.png"),
                 isHidden = false
             });
 
@@ -145,7 +145,7 @@ namespace DemoMod
                 description = "Due to technical limitations, this is currently only a normal sized bomb. :(",
                 newViewData = new ItemViewDataSO()
                 {
-                    Sprite = GetStandardSprite("AegisBomb.png", 40),
+                    Sprite = oldGetStandardSprite("AegisBomb.png", 40),
                     Shadow = GetDefaultShadowSprite(),
                     SpawnType = SpawnType.Heavy,
                     Floatiness = 0

@@ -10,7 +10,29 @@ namespace SVModHelper
         public const string DEFAULT_ENTITY_SPRITE_ID = "SVModHelper.DefaultEntity.png";
         public const string TRANSPARENT_SPRITE_ID = "SVModHelper.TransparentSprite.png";
 
-        public enum WarnLevel { None, Fail, MissOrFail }
+        public enum LogLevel
+        {
+            /// <summary>
+            /// Don't print anything to the logs
+            /// </summary>
+            None,
+            /// <summary>
+            /// Print an error if a texture fails to load
+            /// </summary>
+            Fail,
+            /// <summary>
+            /// Print an error if a texture fails to load, and print a warning if a cache miss occurs
+            /// </summary>
+            MissOrFail,
+            /// <summary>
+            /// Print a message whenever a SpriteHelper function is called. Becomes LogLevel.Fail for internal calls.
+            /// </summary>
+            InitialQueryOrFail,
+            /// <summary>
+            /// Print a message whenever a SpriteHelper function is called, including all internal calls.
+            /// </summary>
+            AllQueriesOrFail
+        }
 
 		private static Sprite _transparentSprite;
 
@@ -38,10 +60,13 @@ namespace SVModHelper
         /// </summary>
         /// <param name="descriptor">Descriptor for constructing the texture.</param>
         /// <param name="texture">The newly constructed texture.</param>
-        /// <param name="warnLevel">What types of warnings/errors should be printed to the console?</param>
+        /// <param name="logLevel">What types of messages should be printed to the console?</param>
         /// <returns>Returns true if the texture was loaded successfully, otherwise false.</returns>
-        public static bool LoadTexture(TextureDescriptor descriptor, out Texture2D texture, WarnLevel warnLevel = WarnLevel.Fail)
+        public static bool LoadTexture(TextureDescriptor descriptor, out Texture2D texture, LogLevel logLevel = LogLevel.Fail)
         {
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling LoadTexture for {descriptor}.");
+
             //cheating a bit for the transparent sprite
             //i'm too lazy to include an actual transparent sprite in the assets
             if (descriptor.textureID == TRANSPARENT_SPRITE_ID)
@@ -56,7 +81,7 @@ namespace SVModHelper
                 if (!success)
                 {
                     texture = null;
-                    if (warnLevel != WarnLevel.None)
+                    if (logLevel != LogLevel.None)
                         Melon<Core>.Logger.Error($"Failed to load file - {descriptor.textureID}. Make sure the file exists, it has been added as an Embedded Resource, and that the path is specified relative to the .csproj file.");
                     return false;
                 }
@@ -71,16 +96,20 @@ namespace SVModHelper
         /// Gets a cached texture based on a descriptor. If the texture wasn't cached, it is automatically created.
         /// </summary>
         /// <param name="descriptor">Descriptor for finding/constructing the texture.</param>
-        /// <param name="warnLevel">What types of warnings/errors should be printed to the console?</param>
+        /// <param name="logLevel">What types of messages should be printed to the console?</param>
         /// <returns>Returns the cached texture.</returns>
-        public static Texture2D GetTexture(TextureDescriptor descriptor, WarnLevel warnLevel = WarnLevel.MissOrFail)
+        public static Texture2D GetTexture(TextureDescriptor descriptor, LogLevel logLevel = LogLevel.MissOrFail)
         {
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling GetTexture for {descriptor}.");
             if (cachedTextures.TryGetValue(descriptor, out Texture2D texture) && texture != null)
                 return texture;
 
-            if(LoadTexture(descriptor, out texture, warnLevel))
+            if (logLevel == LogLevel.InitialQueryOrFail)
+                logLevel = LogLevel.Fail;
+            if (LoadTexture(descriptor, out texture, logLevel))
             {
-                if (warnLevel == WarnLevel.MissOrFail)
+                if (logLevel == LogLevel.MissOrFail)
                 {
                     Melon<Core>.Logger.Warning($"Cache miss when getting texture {descriptor}.");
                 }
@@ -98,11 +127,23 @@ namespace SVModHelper
         /// </summary>
         /// <param name="descriptor">Descriptor for constructing the sprite.</param>
         /// <param name="sprite">The newly constructed sprite.</param>
-        /// <param name="warnLevel">What types of warnings/errors should be printed to the console?</param>
+        /// <param name="logLevel">What types of messages should be printed to the console?</param>
         /// <returns>Returns true if the sprite was loaded successfully, otherwise false.</returns>
-        public static bool LoadSprite(SpriteDescriptor descriptor, out Sprite sprite, WarnLevel warnLevel = WarnLevel.Fail)
+        public static bool LoadSprite(SpriteDescriptor descriptor, out Sprite sprite, LogLevel logLevel = LogLevel.Fail)
         {
-            Texture2D texture = GetTexture(descriptor.texture, warnLevel);
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling LoadSprite for {descriptor}.");
+
+            if (descriptor.IsEmpty())
+            {
+                //exit early without printing warnings
+                sprite = null;
+                return false;
+            }
+
+            if (logLevel == LogLevel.InitialQueryOrFail)
+                logLevel = LogLevel.Fail;
+            Texture2D texture = GetTexture(descriptor.texture, logLevel);
             if (texture == null)
             {
                 //GetTexture would've logged the fail [in LoadTexture], so no need to log it here
@@ -119,16 +160,26 @@ namespace SVModHelper
         /// Gets a cached sprite based on a descriptor. If the sprite wasn't cached, it is automatically created.
         /// </summary>
         /// <param name="descriptor">Descriptor for finding/constructing the sprite.</param>
-        /// <param name="warnLevel">What types of warnings/errors should be printed to the console?</param>
+        /// <param name="logLevel">What types of messages should be printed to the console?</param>
         /// <returns>Returns the cached sprite.</returns>
-        public static Sprite GetSprite(SpriteDescriptor descriptor, WarnLevel warnLevel = WarnLevel.MissOrFail)
+        public static Sprite GetSprite(SpriteDescriptor descriptor, LogLevel logLevel = LogLevel.MissOrFail)
         {
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling GetSprite for {descriptor}.");
+
+            if (descriptor.IsEmpty())
+            {
+                //exit early without printing warnings
+                return null;
+            }
             if (cachedSprites.TryGetValue(descriptor, out Sprite sprite) && sprite != null)
                 return sprite;
 
-            if(LoadSprite(descriptor, out sprite, warnLevel))
+            if (logLevel == LogLevel.InitialQueryOrFail)
+                logLevel = LogLevel.Fail;
+            if (LoadSprite(descriptor, out sprite, logLevel))
             {
-                if (warnLevel == WarnLevel.MissOrFail)
+                if (logLevel == LogLevel.MissOrFail)
                 {
                     Melon<Core>.Logger.Warning($"Cache miss when getting sprite {descriptor}.");
                 }

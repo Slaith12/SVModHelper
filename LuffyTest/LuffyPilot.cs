@@ -21,7 +21,7 @@ namespace LuffyTest
 		public override ClassName ClassName => ClassName.Melee;
 
         public override string BaseImagePath => "Luffy";
-        public override Sprite FrontPortrait => GetStandardSprite("LuffySelect2.png");
+        public override Sprite FrontPortrait => oldGetStandardSprite("LuffySelect2.png");
 
 		public override Il2CppCollections.List<PlayerCardData> StartingCards => 
 			new List<PlayerCardData>{

@@ -19,7 +19,7 @@ namespace DemoMod
 
         //No sprite included for this spell
         //Overriding sprite property to suppress warning
-        public override Sprite Sprite => null;
+        public override SpriteDescriptor Sprite => new();
 
         public override Il2CppCollections.HashSet<ItemName> MoreInfoItems => new HashSet<ItemName> { ItemName.Boulder }.ToILCPP();
 

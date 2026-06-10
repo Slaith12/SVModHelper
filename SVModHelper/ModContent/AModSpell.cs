@@ -31,10 +31,6 @@ namespace SVModHelper.ModContent
         /// The sprite used for this spell.
         /// </summary>
         public virtual SpriteDescriptor Sprite => GetStandardSprite(GetType().Name + ".png");
-        /// <summary>
-        /// If false, the mod helper will print an error to the console if it's unable to find the sprite for this spell.
-        /// </summary>
-        public virtual bool SurpressMissingSpriteError => false;
 
         /// <summary>
         /// The pilot this spell belongs to. Set to None to allow any Keeper pilot to get it.

@@ -32,7 +32,7 @@ namespace SVModHelper
         internal static List<IHasArtifactID> moddedArtifacts;
         internal static Dictionary<Type, ArtifactName> moddedArtifactDict;
         internal static Dictionary<string, ArtifactName> moddedArtifactIDDict;
-        internal static Dictionary<ArtifactName, Sprite> moddedArtifactVDs;
+        internal static Dictionary<ArtifactName, SpriteDescriptor> moddedArtifactVDs;
 
         internal static List<AModComponent> moddedComponents;
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
@@ -216,7 +216,7 @@ namespace SVModHelper
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetArtifactDesc(activeMod.targetArtifact, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
-                    SetArtifactImage(activeMod.targetArtifact, activeMod.sprite);
+                    SetArtifactImage(activeMod.targetArtifact, activeMod.sprite.Value);
 
                 if(activeMod.isEncounterModifier == true)
                 {
@@ -583,10 +583,9 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetArtifactImage(ArtifactName artifactName, Sprite sprite)
+        internal static void SetArtifactImage(ArtifactName artifactName, SpriteDescriptor sprite)
         {
-            if (sprite != null)
-                moddedArtifactVDs[artifactName] = sprite;
+            moddedArtifactVDs[artifactName] = sprite;
         }
 
         public static ArtifactName GetModArtifactName<T>() where T : IHasArtifactID
@@ -1200,6 +1199,12 @@ namespace SVModHelper
             FillMissingItems();
             FillMissingPacks();
             FillMissingPilots();
+        }
+
+        internal static void CacheSprites(SpriteHelper.LogLevel warnLevel = SpriteHelper.LogLevel.Fail)
+        {
+            foreach (SpriteDescriptor descriptor in moddedArtifactVDs.Values)
+                SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
         }
 
         internal static void CheckInitStatus()

@@ -25,9 +25,9 @@ namespace SVModHelper
     {
         public static void Postfix(ArtifactSpritesSO __instance)
         {
-            foreach (var vdPair in ModContentManager.moddedArtifactVDs)
+            foreach ((ArtifactName artifact, SpriteDescriptor descriptor) in ModContentManager.moddedArtifactVDs)
             {
-                __instance._dict[vdPair.Key] = vdPair.Value;
+                __instance._dict[artifact] = SpriteHelper.GetSprite(descriptor);
             }
         }
     }

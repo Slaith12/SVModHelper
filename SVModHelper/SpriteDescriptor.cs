@@ -32,6 +32,11 @@ namespace SVModHelper
         public Rect? rect;
         public Vector2 pivot;
         public float pixelsPerUnit;
+        
+        public SpriteDescriptor() : this("")
+        {
+
+        }
 
         public SpriteDescriptor(string textureID, FilterMode textureFilter = FilterMode.Bilinear, TextureWrapMode textureWrap = TextureWrapMode.Clamp,
             Rect? spriteRect = null, Vector2? spritePivot = null, float pixelsPerUnit = 100)
@@ -45,6 +50,11 @@ namespace SVModHelper
             this.rect = rect;
             this.pivot = pivot ?? new Vector2(0.5f, 0.5f);
             this.pixelsPerUnit = pixelsPerUnit;
+        }
+
+        public bool IsEmpty()
+        {
+            return texture.textureID == "";
         }
 
         public override string ToString()

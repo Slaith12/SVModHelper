@@ -14,6 +14,16 @@ namespace SVModHelper
         public List<string> pilotIDs;
         public List<string> itemIDs;
 
+        public void CreateMissingLists()
+        {
+            cardIDs ??= new();
+            artifactIDs ??= new();
+            componentIDs ??= new();
+            packIDs ??= new();
+            pilotIDs ??= new();
+            itemIDs ??= new();
+        }
+
         public override string ToString()
         {
             StringBuilder str = new StringBuilder();
@@ -79,7 +89,7 @@ namespace SVModHelper
             if(File.Exists(idsFilePath))
             {
                 IDSaveDict ids = LoadIDs(idsFilePath);
-                Melon<Core>.Logger.Msg(ids);
+                Melon<Core>.Logger.Msg($"IDs from save file:\n{ids}");
                 //TODO: check if ids are compatible with existing dictionary
                 bool compatible = ApplySaveDict(ids);
                 if(!compatible)
@@ -142,6 +152,7 @@ namespace SVModHelper
             {
                 ids = JsonSerializer.Deserialize<IDSaveDict>(fileStream, options);
             }
+            ids.CreateMissingLists();
             return ids;
         }
 

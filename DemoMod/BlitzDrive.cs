@@ -22,7 +22,7 @@ namespace DemoMod
 
         //No sprite included for this artifact
         //Overriding sprite property to suppress warning
-        public override Sprite Sprite => null;
+        public override SpriteDescriptor Sprite => new();
 
         public override ContextPreviewType ContextPreviewType => ContextPreviewType.Upgraded;
         public override Il2CppCollections.HashSet<MoreInfoWordName> MoreInfoWords => new HashSet<MoreInfoWordName>()
