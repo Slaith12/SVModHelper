@@ -37,7 +37,7 @@ namespace SVModHelper
         internal static List<AModComponent> moddedComponents;
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
         internal static Dictionary<string, ComponentName> moddedComponentIDDict;
-        internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
+        internal static Dictionary<ComponentName, SpriteDescriptor> moddedComponentVDs;
 
         internal static List<AModItem> moddedItems;
         internal static Dictionary<Type, ItemName> moddedItemDict;
@@ -266,7 +266,7 @@ namespace SVModHelper
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetComponentDesc(activeMod.targetComponent, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
-                    SetComponentImage(activeMod.targetComponent, activeMod.sprite);
+                    SetComponentImage(activeMod.targetComponent, activeMod.sprite.Value);
             }
         }
 
@@ -585,7 +585,8 @@ namespace SVModHelper
 
         internal static void SetArtifactImage(ArtifactName artifactName, SpriteDescriptor sprite)
         {
-            moddedArtifactVDs[artifactName] = sprite;
+            if(!sprite.IsEmpty())
+                moddedArtifactVDs[artifactName] = sprite;
         }
 
         public static ArtifactName GetModArtifactName<T>() where T : IHasArtifactID
@@ -700,9 +701,9 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetComponentImage(ComponentName componentName, Sprite sprite)
+        internal static void SetComponentImage(ComponentName componentName, SpriteDescriptor sprite)
         {
-            if (sprite != null)
+            if(!sprite.IsEmpty())
                 moddedComponentVDs[componentName] = sprite;
         }
 
