@@ -4,7 +4,7 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModCard : AModContent
     {
-        protected CardViewData GetStandardCardViewData(string imageName, float pixelsPerUnit = 100,
+        protected CardViewData oldGetStandardCardViewData(string imageName, float pixelsPerUnit = 100,
             FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
             bool localName = true, bool warnOnFail = true)
         {
@@ -12,6 +12,27 @@ namespace SVModHelper.ModContent
             if (sprite == null)
                 return null;
             return new CardViewData(CardName, sprite, null);
+        }
+
+        /// <summary>
+        /// Creates a CardViewDescriptor using a particular sprite.
+        /// </summary>
+        /// <param name="imageName">The file name of the image to use for the sprite.</param>
+        /// <param name="pixelsPerUnit">How many pixels correspond to 1 in-game unit?</param>
+        /// <param name="filter">Anti-aliasing mode</param>
+        /// <param name="wrapMode"></param>
+        /// <param name="rect">The portion of the image (in pixels) that is displayed in the sprite. Set to null to use the whole image.</param>
+        /// <param name="pivot">The sprite's pivot in normalized units. Set to null to use the center.</param>
+        /// <param name="useJunkOutline">Set to true to use the outline sprite used by junk cards. Set to false to use the default outline sprite.</param>
+        /// <param name="localName">The imageName parameter needs to start with the source mod's name to find the correct image. If this is set to true, this mod's name is automatically prepended to imageName.</param>
+        /// <returns></returns>
+        protected CardViewDescriptor GetStandardCardViewData(string imageName, float pixelsPerUnit = 100,
+            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
+            Rect? rect = null, Vector2? pivot = null, bool useJunkOutline = false,
+            bool localName = true)
+        {
+            //TODO: add junk outline
+            return new CardViewDescriptor(new SpriteDescriptor(GetContentKeyString(imageName, localName), filter, wrapMode, rect, pivot, pixelsPerUnit));
         }
 
         public CardName CardName => ModContentManager.GetModCardName(GetType());
@@ -37,7 +58,10 @@ namespace SVModHelper.ModContent
         /// The description that's shown for this card on different locales. Falls back to Description for any locales that are missing localizations.
         /// </summary>
         public virtual Dictionary<string, string> LocalizedDescriptions => new();
-        public virtual CardViewData CardViewData => GetStandardCardViewData(GetType().Name + ".png", warnOnFail: true);
+        /// <summary>
+        /// The sprites used for the card (including the outline sprite)
+        /// </summary>
+        public virtual CardViewDescriptor CardViewData => GetStandardCardViewData(GetType().Name + ".png");
 
         /// <summary>
         /// The main traits that the card has.

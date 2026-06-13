@@ -27,7 +27,7 @@ namespace SVModHelper
         internal static List<AModCard> moddedCards;
         internal static Dictionary<Type, CardName> moddedCardDict;
         internal static Dictionary<string, CardName> moddedCardIDDict;
-        internal static Dictionary<CardName, CardViewData> moddedCardVDs;
+        internal static Dictionary<CardName, CardViewDescriptor> moddedCardVDs;
 
         internal static List<IHasArtifactID> moddedArtifacts;
         internal static Dictionary<Type, ArtifactName> moddedArtifactDict;
@@ -169,7 +169,7 @@ namespace SVModHelper
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetCardDesc(activeMod.targetCard, locDesc.Value, locDesc.Key);
                 if (activeMod.cardView != null)
-                    SetCardImage(activeMod.targetCard, activeMod.cardView);
+                    SetCardImage(activeMod.targetCard, activeMod.cardView.Value);
             }
         }
 
@@ -465,9 +465,9 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetCardImage(CardName cardName, CardViewData cardViewData)
+        internal static void SetCardImage(CardName cardName, CardViewDescriptor cardViewData)
         {
-            if(cardViewData != null)
+            if(!cardViewData.IsEmpty())
                 moddedCardVDs[cardName] = cardViewData;
         }
 
@@ -1206,6 +1206,13 @@ namespace SVModHelper
         {
             foreach (SpriteDescriptor descriptor in moddedArtifactVDs.Values)
                 SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
+            foreach (SpriteDescriptor descriptor in moddedComponentVDs.Values)
+                SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
+            foreach (CardViewDescriptor descriptor in moddedCardVDs.Values)
+            {
+                SpriteHelper.LoadSprite(descriptor.sprite, out _, warnLevel);
+                SpriteHelper.LoadSprite(descriptor.outlineSprite, out _, warnLevel);
+            }
         }
 
         internal static void CheckInitStatus()

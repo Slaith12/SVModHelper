@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace SVModHelper
 {
@@ -59,9 +60,42 @@ namespace SVModHelper
 
         public override string ToString()
         {
+            if (IsEmpty())
+                return "[EmptySprite]";
             string str = texture.ToString();
             if (rect != null)
                 str += $" [{rect.Value}]";
+            return str;
+        }
+    }
+
+    public struct CardViewDescriptor
+    {
+        public SpriteDescriptor sprite;
+        public SpriteDescriptor outlineSprite;
+        //public Material material;
+
+        public CardViewDescriptor() : this(new SpriteDescriptor())
+        {
+
+        }
+
+        public CardViewDescriptor(SpriteDescriptor sprite, SpriteDescriptor? outlineSprite = null)
+        {
+            this.sprite = sprite;
+            this.outlineSprite = outlineSprite ?? new SpriteDescriptor();
+        }
+
+        public bool IsEmpty()
+        {
+            return sprite.IsEmpty();
+        }
+
+        public override string ToString()
+        {
+            string str = sprite.ToString();
+            if (!outlineSprite.IsEmpty())
+                str += $"; Outline: {outlineSprite}";
             return str;
         }
     }

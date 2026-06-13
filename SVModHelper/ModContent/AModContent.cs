@@ -60,7 +60,7 @@ namespace SVModHelper.ModContent
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private string GetContentKeyString(string fileName, bool localName = true)
+        protected string GetContentKeyString(string fileName, bool localName = true)
         {
             if (localName)
                 return GetType().Assembly.GetName().Name + "." + fileName;

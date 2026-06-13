@@ -191,6 +191,39 @@ namespace SVModHelper
                 return null;
             }
         }
+
+        /// <summary>
+        /// Creates a CardViewData object from cached sprites based on a descriptor. If the sprites weren't cached, it is automatically created.
+        /// </summary>
+        /// <param name="descriptor">Descriptor for constructing the card view.</param>
+        /// <param name="logLevel">What types of messages should be printed to the console?</param>
+        /// <returns>Returns the card view.</returns>
+        public static CardViewData GetCardViewData(CardViewDescriptor descriptor, LogLevel logLevel = LogLevel.MissOrFail)
+        {
+            //CardViewData objects are cheap to construct if the sprites already exist, so they aren't cached directly.
+
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling GetCardViewData for {descriptor}.");
+
+            if (descriptor.IsEmpty())
+            {
+                //exit early without printing warnings
+                return null;
+            }
+            if (logLevel == LogLevel.InitialQueryOrFail)
+                logLevel = LogLevel.Fail;
+
+            Sprite sprite = GetSprite(descriptor.sprite, logLevel);
+            if(sprite == null) //failed to load sprite
+            {
+                //GetSprite would've logged the fail [in LoadTexture], so no need to log it here
+                return null;
+            }
+            //The "CardName" property isn't actually important for CardViewData, so just set it to 0 and don't worry about it.
+            CardViewData cardViewData = new CardViewData(0, sprite, null);
+            cardViewData._outlineSprite = GetSprite(descriptor.sprite, logLevel);
+            return cardViewData;
+        }
         
 		internal static void InitDefaultSprites()
         {

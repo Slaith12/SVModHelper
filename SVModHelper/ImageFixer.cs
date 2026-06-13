@@ -8,14 +8,19 @@ namespace SVModHelper
     {
         public static void Postfix(CardViewDataSO __instance)
         {
-            foreach(var vdPair in ModContentManager.moddedCardVDs)
+            foreach((CardName card, CardViewDescriptor descriptor) in ModContentManager.moddedCardVDs)
             {
-                if (vdPair.Value._material == null)
-                    vdPair.Value._material = __instance.defaultMat;
-                if (vdPair.Value._outlineSprite == null)
-                    vdPair.Value._outlineSprite = __instance.defaultOutlineSprite;
+                CardViewData viewData = SpriteHelper.GetCardViewData(descriptor);
+                if (viewData == null)
+                    continue;
 
-                __instance._cardViewDataDict[vdPair.Key] = vdPair.Value;
+                viewData._cardName = card;
+                if (viewData._material == null)
+                    viewData._material = __instance.defaultMat;
+                if (viewData._outlineSprite == null)
+                    viewData._outlineSprite = __instance.defaultOutlineSprite;
+
+                __instance._cardViewDataDict[card] = viewData;
             }
         }
     }
