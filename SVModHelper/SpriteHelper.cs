@@ -38,8 +38,9 @@ namespace SVModHelper
 
         private static Dictionary<TextureDescriptor, Texture2D> cachedTextures;
         private static Dictionary<SpriteDescriptor, Sprite> cachedSprites;
+        private static Dictionary<(PilotName, PilotSkinName), PilotDataSO> cachedPilotDatas;
 
-	    public static Sprite GetTransparentSprite()
+        public static Sprite GetTransparentSprite()
 	    {
 			if (_transparentSprite != null)
 				return _transparentSprite;
@@ -105,9 +106,8 @@ namespace SVModHelper
             if (cachedTextures.TryGetValue(descriptor, out Texture2D texture) && texture != null)
                 return texture;
 
-            if (logLevel == LogLevel.InitialQueryOrFail)
-                logLevel = LogLevel.Fail;
-            if (LoadTexture(descriptor, out texture, logLevel))
+            LogLevel propogatedLog = GetPropogatedLogLevel(logLevel, true);
+            if (LoadTexture(descriptor, out texture, propogatedLog))
             {
                 if (logLevel == LogLevel.MissOrFail)
                 {
@@ -141,9 +141,8 @@ namespace SVModHelper
                 return false;
             }
 
-            if (logLevel == LogLevel.InitialQueryOrFail)
-                logLevel = LogLevel.Fail;
-            Texture2D texture = GetTexture(descriptor.texture, logLevel);
+            LogLevel propogatedLog = GetPropogatedLogLevel(logLevel, false);
+            Texture2D texture = GetTexture(descriptor.texture, propogatedLog);
             if (texture == null)
             {
                 //GetTexture would've logged the fail [in LoadTexture], so no need to log it here
@@ -175,9 +174,8 @@ namespace SVModHelper
             if (cachedSprites.TryGetValue(descriptor, out Sprite sprite) && sprite != null)
                 return sprite;
 
-            if (logLevel == LogLevel.InitialQueryOrFail)
-                logLevel = LogLevel.Fail;
-            if (LoadSprite(descriptor, out sprite, logLevel))
+            LogLevel propogatedLog = GetPropogatedLogLevel(logLevel, true);
+            if (LoadSprite(descriptor, out sprite, propogatedLog))
             {
                 if (logLevel == LogLevel.MissOrFail)
                 {
@@ -210,10 +208,9 @@ namespace SVModHelper
                 //exit early without printing warnings
                 return null;
             }
-            if (logLevel == LogLevel.InitialQueryOrFail)
-                logLevel = LogLevel.Fail;
+            LogLevel propogatedLog = GetPropogatedLogLevel(logLevel, false);
 
-            Sprite sprite = GetSprite(descriptor.sprite, logLevel);
+            Sprite sprite = GetSprite(descriptor.sprite, propogatedLog);
             if(sprite == null) //failed to load sprite
             {
                 //GetSprite would've logged the fail [in LoadTexture], so no need to log it here
@@ -221,8 +218,80 @@ namespace SVModHelper
             }
             //The "CardName" property isn't actually important for CardViewData, so just set it to 0 and don't worry about it.
             CardViewData cardViewData = new CardViewData(0, sprite, null);
-            cardViewData._outlineSprite = GetSprite(descriptor.sprite, logLevel);
+            cardViewData._outlineSprite = GetSprite(descriptor.sprite, propogatedLog);
             return cardViewData;
+        }
+
+        public static bool LoadPilotData(PilotName pilot, out PilotDataSO data, PilotSkinName skin = PilotSkinName.Standard, PilotDataDictSO vanillaData = null, LogLevel logLevel = LogLevel.Fail)
+        {
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling LoadPilotData for {pilot} ({skin} skin).");
+            LogLevel propogatedLog = GetPropogatedLogLevel(logLevel, false);
+
+            if (ModContentManager.moddedPilotDescriptors.TryGetValue((pilot, skin), out var descriptor))
+            {
+                //ModPilotDescriptors would already have PilotModifications applied to them
+                data = descriptor.GetPilotDataSO(propogatedLog);
+                cachedPilotDatas[(pilot, skin)] = data;
+                return true;
+            }
+            else
+            {
+                //No modded pilot found. Check vanilla pilots.
+                PilotDataSO vanillaPilot = vanillaData?.pilotDataList.Find(new Func<PilotDataSO, bool>(p => p.PilotName == pilot && p.SkinName == skin));
+                if (vanillaPilot == null)
+                {
+                    if (logLevel != LogLevel.None)
+                    {
+                        Melon<Core>.Logger.Error($"Unable to find pilot {pilot}.");
+                    }
+                    data = null;
+                    return false;
+                }
+                if (ModContentManager.activePilotMods.TryGetValue(pilot, out PilotModification mods))
+                {
+                    mods.ApplyTo(vanillaPilot);
+                }
+
+                cachedPilotDatas[(pilot, skin)] = vanillaPilot;
+                data = vanillaPilot;
+                return true;
+            }
+        }
+
+        public static PilotDataSO GetPilotData(PilotName pilot, PilotSkinName skin = PilotSkinName.Standard, PilotDataDictSO vanillaData = null, LogLevel logLevel = LogLevel.MissOrFail)
+        {
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling LoadPilotData for {pilot} ({skin} skin).");
+
+            if (cachedPilotDatas.TryGetValue((pilot, skin), out PilotDataSO data) && data != null)
+                return data;
+
+            //Deciding not to log a miss at the pilot level - there will be misses at the sprite level anyway, and this would otherwise catch unmodified vanilla pilots as well
+            //if (logLevel == LogLevel.MissOrFail)
+            //    Melon<Core>.Logger.Warning($"Cache miss when getting data for pilot {pilot}");
+            LogLevel propogatedLog = GetPropogatedLogLevel(logLevel, false);
+            if(LoadPilotData(pilot, out data, skin, vanillaData, propogatedLog))
+            {
+                return data;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        internal static LogLevel GetPropogatedLogLevel(LogLevel logLevel, bool surpressMiss = true)
+        {
+            switch(logLevel)
+            {
+                case LogLevel.MissOrFail:
+                    return surpressMiss ? LogLevel.Fail : LogLevel.MissOrFail;
+                case LogLevel.InitialQueryOrFail:
+                    return LogLevel.Fail;
+                default:
+                    return logLevel;
+            }
         }
         
 		internal static void InitDefaultSprites()
@@ -255,6 +324,7 @@ namespace SVModHelper
         {
             cachedTextures = new();
             cachedSprites = new();
+            cachedPilotDatas = new();
             LoadSprite(new SpriteDescriptor(DEFAULT_SHADOW_SPRITE_ID), out _);
             LoadSprite(new SpriteDescriptor(DEFAULT_ENTITY_SPRITE_ID), out _);
             LoadSprite(new SpriteDescriptor(TRANSPARENT_SPRITE_ID), out _);

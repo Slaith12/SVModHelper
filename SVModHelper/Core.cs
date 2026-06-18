@@ -100,6 +100,15 @@ namespace SVModHelper
             ModContentManager.CacheSprites(SpriteHelper.LogLevel.AllQueriesOrFail);
             ModContentManager.postInit = true;
             ModSaveManager.allowModDataSave = true;
+            foreach(SVMod mod in RegisteredMelons.Where(mod => mod is SVMod).Cast<SVMod>())
+            {
+                if(mod.blockModSaves)
+                {
+                    ModSaveManager.allowModDataSave = false;
+                    Melon<Core>.Logger.Warning("Due to initialization issues, mod data will NOT be saved this session.");
+                    break;
+                }
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SVModHelper.ModContent;
 using Il2CppPixelCrushers.DialogueSystem;
+using UnityEngine;
 
 namespace SVModHelper
 {
@@ -25,11 +26,11 @@ namespace SVModHelper
 				DataManager.SettingsData.PilotSkin.Add(entry, PilotSkinName.Standard);
 				skin = PilotSkinName.Standard;
 			}
-            ModPilotViewData modPilotData = ModContentManager.GetModPilotData(entry, skin, __instance);
+			PilotDataSO modPilotData = SpriteHelper.GetPilotData(entry, skin, __instance, SpriteHelper.LogLevel.InitialQueryOrFail);
 			if (modPilotData == null)
 				return true;
 
-			__result = modPilotData.dataSO;
+			__result = modPilotData;
 			return false;
 		}
     }
@@ -109,7 +110,7 @@ namespace SVModHelper
 				string name = pilotNamePair.Value;
 				if(!__instance.m_characterInfoCache.ContainsKey(id))
 				{
-					__instance.m_characterInfoCache[id] = new CharacterInfo(id, pilotNamePair.Key.ToString(), null, CharacterType.PC, null);
+					__instance.m_characterInfoCache[id] = new Il2CppPixelCrushers.DialogueSystem.CharacterInfo(id, pilotNamePair.Key.ToString(), null, CharacterType.PC, null);
 				}
 				__instance.m_characterInfoCache[id].Name = name;
 			}
@@ -121,18 +122,9 @@ namespace SVModHelper
 	{
 		public static void Prefix(EndingSceneController __instance)
 		{
-			foreach (var pilotDataPair in ModContentManager.moddedPilotVDs)
+			foreach (var pilotDataPair in ModContentManager.moddedPilotDescriptors)
 			{
 				PilotName pilot = pilotDataPair.Key.Item1;
-				ModPilotViewData viewData = pilotDataPair.Value;
-				if (viewData.lineupSprite == null && pilot >= ModContentManager.MINPILOTID)
-				{
-					//ModContentManager.GetModPilotData can modify moddedPilotVDs, so it can't be used here.
-					//Realistically this failsafe shouldn't ever be used, since the view data should be accessed earlier in gameplay.
-					//The view data should always be valid by the time this function is called.
-					var newData = ModContentManager.GetModPilotInstance(pilot).GetFullPilotData();
-					viewData = newData;
-				}
 
 				int index = __instance._pilotEndingData.FindIndex(new Func<PilotEndingImages, bool>(p => p.PilotName == pilot));
 				if (index < 0)
@@ -141,17 +133,21 @@ namespace SVModHelper
 					__instance._pilotEndingData.Add(new PilotEndingImages());
 					__instance._pilotEndingData[index].PilotName = pilot;
 					//Modded pilots' ending sprites default to Roxy's sprites if not defined.
-					var refData = __instance._pilotEndingData[0];
+					PilotEndingImages refData = __instance._pilotEndingData[0];
 					__instance._pilotEndingData[index].HandshakeSprite = refData.HandshakeSprite;
 					//All lineup objects have the same positions, the sprites themselves are offset.
 					//This could be problematic if more than one modded pilot appears on the lineup screen, but currently that's not possible so I'm not going to worry about it.
 					//The lineup image's sprites should always be overwritten to something, defaulting to a transparent image.
 					__instance._pilotEndingData[index].LineupImage = UnityEngine.Object.Instantiate(refData.LineupImage, refData.LineupImage.transform.parent);
 				}
-				if (viewData.handshakeSprite != null)
-					__instance._pilotEndingData[index].HandshakeSprite = viewData.handshakeSprite;
-				if (viewData.lineupSprite != null)
-					__instance._pilotEndingData[index].LineupImage.sprite = viewData.lineupSprite;
+
+				Sprite handshakeSprite = ModContentManager.GetModPilotHandshakeSprite(pilot);
+				if(handshakeSprite != null)
+					__instance._pilotEndingData[index].HandshakeSprite = handshakeSprite;
+
+                Sprite lineupSprite = ModContentManager.GetModPilotLineupSprite(pilot);
+                if (lineupSprite!= null)
+                    __instance._pilotEndingData[index].LineupImage.sprite = lineupSprite;
 			}
 		}
 
@@ -171,18 +167,9 @@ namespace SVModHelper
 	{
 		public static void Prefix(PhotoSpawnMover __instance)
 		{
-			foreach (var pilotDataPair in ModContentManager.moddedPilotVDs)
+			foreach (var pilotDataPair in ModContentManager.moddedPilotDescriptors)
 			{
 				PilotName pilot = pilotDataPair.Key.Item1;
-				ModPilotViewData viewData = pilotDataPair.Value;
-				if (viewData.lineupSprite == null && pilot >= ModContentManager.MINPILOTID)
-				{
-					//ModContentManager.GetModPilotData can modify moddedPilotVDs, so it can't be used here.
-					//Realistically this failsafe shouldn't ever be used, since the view data should be accessed earlier in gameplay.
-					//The view data should always be valid by the time this function is called.
-					var newData = ModContentManager.GetModPilotInstance(pilot).GetFullPilotData();
-					viewData = newData;
-				}
 
 				int index = __instance._pilotEndingData.FindIndex(new Func<PilotEndingImages, bool>(p => p.PilotName == pilot));
 				if (index < 0)
@@ -195,9 +182,10 @@ namespace SVModHelper
 					//This could be problematic if more than one modded pilot appears on the lineup screen, which is actually possible here, but I'm still not going to worry about it.
 					//The lineup image's sprites should always be overwritten to something, defaulting to a transparent image.
 					__instance._pilotEndingData[index].LineupImage = UnityEngine.Object.Instantiate(refData.LineupImage, refData.LineupImage.transform.parent);
-				}
-				if (viewData.lineupSprite != null)
-					__instance._pilotEndingData[index].LineupImage.sprite = viewData.lineupSprite;
+                }
+                Sprite lineupSprite = ModContentManager.GetModPilotLineupSprite(pilot);
+                if (lineupSprite != null)
+					__instance._pilotEndingData[index].LineupImage.sprite = lineupSprite;
 			}
 		}
 	}

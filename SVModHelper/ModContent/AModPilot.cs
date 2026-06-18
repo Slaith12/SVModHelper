@@ -42,58 +42,60 @@ namespace SVModHelper.ModContent
         /// The sprite used for the pilot's portrait on the Pilot Selection screen.
         /// Defaults to <code>[BaseImagePath]Portrait.png</code>
         /// </summary>
-        public virtual Sprite FrontPortrait => oldGetStandardSprite(BaseImagePath + "Portrait.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual SpriteDescriptor FrontPortrait => GetStandardSprite(BaseImagePath + "Portrait.png");
         /// <summary>
         /// The sprite displayed in front of the pilot's portrait on the Pilot Selection screen.
         /// Defaults to <code>[BaseImagePath]PortraitParallax.png</code>
         /// </summary>
-        public virtual Sprite FrontPortraitParallax => oldGetStandardSprite(BaseImagePath + "PortraitParallax.png", warnOnFail: false) ?? SpriteHelper.GetTransparentSprite();
+        public virtual SpriteDescriptor FrontPortraitParallax => GetStandardSprite(BaseImagePath + "PortraitParallax.png");
         /// <summary>
         /// The sprite used to display the pilot's name on the Pilot Selection screen (standard text is not used for this).
         /// Defaults to <code>[BaseImagePath]Name.png</code>
         /// </summary>
-        public virtual Sprite PilotTitleSprite => oldGetStandardSprite(BaseImagePath + "Name.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual SpriteDescriptor PilotTitleSprite => GetStandardSprite(BaseImagePath + "Name.png");
         /// <summary>
         /// The sprite used in the pilot display during an encounter.
-        /// Defaults to <code>[BaseImagePath]CombatNeutral.png</code> or <code>[BaseImagePath]Combat.png</code>
+        /// Defaults to <code>[BaseImagePath]CombatNeutral.png</code>
         /// </summary>
-        public virtual Sprite CombatPortraitNeutral => oldGetStandardSprite(BaseImagePath + "CombatNeutral.png", warnOnFail: false)
-            ?? oldGetStandardSprite(BaseImagePath + "Combat.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual SpriteDescriptor CombatPortraitNeutral => GetStandardSprite(BaseImagePath + "CombatNeutral.png");
         /// <summary>
         /// The sprite used in the pilot display during an encounter when something good happens.
-        /// Defaults to <code>[BaseImagePath]CombatPositive.png</code> or to the neutral combat portrait.
+        /// Defaults to <code>[BaseImagePath]CombatPositive.png</code>
+        /// If no sprite is found for this member, the neutral combat portrait is used instead.
         /// </summary>
-        public virtual Sprite CombatPortraitPositive => oldGetStandardSprite(BaseImagePath + "CombatPositive.png", warnOnFail: false) ?? CombatPortraitNeutral;
+        public virtual SpriteDescriptor CombatPortraitPositive => GetStandardSprite(BaseImagePath + "CombatPositive.png");
         /// <summary>
         /// The sprite used in the pilot display during an encounter when something bad happens.
-        /// Defaults to <code>[BaseImagePath]CombatNegative.png</code> or to the neutral combat portrait.
+        /// Defaults to <code>[BaseImagePath]CombatNegative.png</code>
+        /// If no sprite is found for this member, the neutral combat portrait is used instead.
         /// </summary>
-        public virtual Sprite CombatPortraitNegative => oldGetStandardSprite(BaseImagePath + "CombatNegative.png", warnOnFail: false) ?? CombatPortraitNeutral;
+        public virtual SpriteDescriptor CombatPortraitNegative => GetStandardSprite(BaseImagePath + "CombatNegative.png");
         /// <summary>
         /// The sprite used in the pilot display during an encounter when the mech overheats (gunner mech only).
-        /// Defaults to <code>[BaseImagePath]CombatBurning.png</code> or to the negative combat portrait.
+        /// Defaults to <code>[BaseImagePath]CombatBurning.png</code>
+        /// If no sprite is found for this member, the negative combat portrait is used instead.
         /// </summary>
-        public virtual Sprite CombatPortraitBurning => oldGetStandardSprite(BaseImagePath + "CombatBurning.png", warnOnFail: false) ?? CombatPortraitNegative;
+        public virtual SpriteDescriptor CombatPortraitBurning => GetStandardSprite(BaseImagePath + "CombatBurning.png");
         /// <summary>
         /// The sprite used in the pilot display during a campaign outside an encounter.
         /// Defaults to <code>[BaseImagePath]Campaign.png</code>
         /// </summary>
-        public virtual Sprite CampaignPortrait => oldGetStandardSprite(BaseImagePath + "Campaign.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual SpriteDescriptor CampaignPortrait => GetStandardSprite(BaseImagePath + "Campaign.png");
         /// <summary>
         /// The sprite used for the photo on the victory screen.
         /// Defaults to <code>[BaseImagePath]Victory.png</code>
         /// </summary>
-        public virtual Sprite VictoryPhoto => oldGetStandardSprite(BaseImagePath + "Victory.png", warnOnFail: true) ?? SpriteHelper.GetTransparentSprite();
+        public virtual SpriteDescriptor VictoryPhoto => GetStandardSprite(BaseImagePath + "Victory.png");
         /// <summary>
         /// The sprite used on the second panel of the true ending cutscene (the handhake with the alien).
         /// Defaults to <code>[BaseImagePath]Handshake.png</code>
         /// </summary>
-        public virtual Sprite TrueEndHandshake => oldGetStandardSprite(BaseImagePath + "Handhake.png", warnOnFail: false) ?? null;
+        public virtual SpriteDescriptor TrueEndHandshake => GetStandardSprite(BaseImagePath + "Handhake.png");
         /// <summary>
         /// The sprite used on the final panel of the true ending cutscene (the lineup with all pilots).
         /// Defaults to <code>[BaseImagePath]Lineup.png</code>
         /// </summary>
-        public virtual Sprite TrueEndLineup => oldGetStandardSprite(BaseImagePath + "Lineup.png", warnOnFail: false) ?? null;
+        public virtual SpriteDescriptor TrueEndLineup => GetStandardSprite(BaseImagePath + "Lineup.png");
 
         /// <summary>
         /// The pilot's dialogue when talking to the Overseer in the true ending. Defaults to a generic sequence for each locale.
@@ -110,42 +112,27 @@ namespace SVModHelper.ModContent
         /// </summary>
         public abstract Il2CppCollections.List<ArtifactName> StartingArtifacts { get; }
 
-        public ModPilotViewData GetFullPilotData(PilotSkinName skinName = PilotSkinName.Standard)
+        internal ModPilotDescriptor GetFullPilotData(PilotSkinName skinName = PilotSkinName.Standard)
         {
             if (skinName != PilotSkinName.Standard)
                 return null;
-            ModPilotViewData result = new();
-            result.dataSO = GetPilotDataSO();
-            result.handshakeSprite = TrueEndHandshake;
-            result.lineupSprite = TrueEndLineup;
-            return result;
-        }
-
-        public PilotDataSO GetPilotDataSO()
-        {
-            var result = ScriptableObject.CreateInstance<PilotDataSO>();
-
-            result.StarterData = GetStarterPlayerData();
-
-            result.ClassName = ClassName;
-            result.PilotName = PilotName;
-            result.SkinName = PilotSkinName.Standard;
-
-            result.Complexity = Complexity;
-
-            // Use centralized sprite management with filenames as keys
-            // In the near future, the sprite properties will be updated to use a centralized cache system, similar to above
-            result.FrontPortrait = FrontPortrait;
-            result.FrontPortraitParallax = FrontPortraitParallax;
-            result.PilotTitleSprite = PilotTitleSprite;
-            result.CombatPortraitNeutral = CombatPortraitNeutral;
-            result.CombatPortraitPositive = CombatPortraitPositive;
-            result.CombatPortraitNegative = CombatPortraitNegative;
-            result.CombatPortraitBurning = CombatPortraitBurning;
-            result.CampaignPortrait = CampaignPortrait;
-            result.VictoryPhoto = VictoryPhoto;
-
-            return result;
+            ModPilotDescriptor data = new();
+            data.PilotName = PilotName;
+            data.ClassName = ClassName;
+            data.StartingCards = StartingCards;
+            data.StartingArtifacts = StartingArtifacts;
+            data.Complexity = Complexity;
+            data.FrontPortrait = FrontPortrait;
+            data.FrontPortraitParallax = FrontPortraitParallax;
+            data.FrontPortraitLocked = new();
+            data.PilotTitleSprite = PilotTitleSprite;
+            data.CombatPortraitNeutral = CombatPortraitNeutral;
+            data.CombatPortraitPositive = CombatPortraitPositive;
+            data.CombatPortraitNegative = CombatPortraitNegative;
+            data.CombatPortraitBurning = CombatPortraitBurning;
+            data.CampaignPortrait = CampaignPortrait;
+            data.VictoryPhoto = VictoryPhoto;
+            return data;
         }
 
         public PlayerDataSO GetStarterPlayerData()
