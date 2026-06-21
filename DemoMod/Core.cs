@@ -153,6 +153,11 @@ namespace DemoMod
                 hasRegeneratingShield = true
             });
 
+            RegisterContentMod(new PilotModification(PilotName.Roxy)
+            {
+                combatPortraitNegative = GetStandardSprite("CombatPortraitSkull.png")
+            });
+
             CardName followThroughName = ModContentManager.GetModCardName<FollowThrough>();
 
             RegisterContentMod(new PilotModification(PilotName.Shun)
