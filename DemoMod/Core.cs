@@ -68,7 +68,7 @@ namespace DemoMod
             {
                 displayName = "Scarlet",
                 description = "Offerings from the Scarlet Mask.",
-                sprite = oldGetStandardSprite("ScarletPack.png"),
+                sprite = GetStandardSprite("ScarletPack.png"),
                 isHidden = false
             });
 

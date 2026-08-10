@@ -47,7 +47,7 @@ namespace SVModHelper
         internal static List<AModPack> moddedPacks;
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
         internal static Dictionary<string, ItemPackName> moddedPackIDDict;
-        internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
+        internal static Dictionary<ItemPackName, SpriteDescriptor> moddedPackVDs;
 
         internal static List<AModPilot> moddedPilots;
         internal static Dictionary<Type, PilotName> moddedPilotDict;
@@ -333,7 +333,7 @@ namespace SVModHelper
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetPackDesc(activeMod.targetPack, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
-                    SetPackImage(activeMod.targetPack, activeMod.sprite);
+                    SetPackImage(activeMod.targetPack, activeMod.sprite.Value);
             }
 
             foreach(ItemPack pack in ItemPackData.AllPackData)
@@ -945,9 +945,9 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetPackImage(ItemPackName packName, Sprite sprite)
+        internal static void SetPackImage(ItemPackName packName, SpriteDescriptor sprite)
         {
-            if (sprite != null)
+            if (!sprite.IsEmpty())
                 moddedPackVDs[packName] = sprite;
         }
 

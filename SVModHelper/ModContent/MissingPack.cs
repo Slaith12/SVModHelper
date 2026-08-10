@@ -8,7 +8,7 @@ namespace SVModHelper.ModContent
         public override string DisplayName => $"{stringID} [Missing]";
         public override string Description => $"This pack was added by a mod when this run was active.\n" +
                                               $"That mod has either since been disabled or no longer includes this pack.";
-        public override Sprite Sprite => null; //TODO: Replace this so there's a distinct sprite in the run history
+        public override SpriteDescriptor Sprite => new(); //TODO: Replace this so there's a distinct sprite in the run history
 
         public override Il2CppCollections.HashSet<CardName> cards => new();
         public override Il2CppCollections.HashSet<ArtifactName> artifacts => new();

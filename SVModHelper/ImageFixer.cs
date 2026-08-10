@@ -55,9 +55,9 @@ namespace SVModHelper
     {
         public static void Postfix(ItemPackSpritesSO __instance)
         {
-            foreach (var vdPair in ModContentManager.moddedPackVDs)
+            foreach ((ItemPackName pack, SpriteDescriptor descriptor) in ModContentManager.moddedPackVDs)
             {
-                __instance._dict[vdPair.Key] = vdPair.Value;
+                __instance._dict[pack] = SpriteHelper.GetSprite(descriptor, SpriteHelper.LogLevel.AllQueriesOrFail);
             }
         }
     }
