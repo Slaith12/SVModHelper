@@ -97,7 +97,7 @@ namespace SVModHelper
         {
             ModContentManager.ApplyMods();
             ModContentManager.FillMissingContent();
-            ModContentManager.CacheSprites(SpriteHelper.LogLevel.AllQueriesOrFail);
+            ModContentManager.CacheSprites();
             ModContentManager.postInit = true;
             ModSaveManager.allowModDataSave = true;
             foreach(SVMod mod in RegisteredMelons.Where(mod => mod is SVMod).Cast<SVMod>())
