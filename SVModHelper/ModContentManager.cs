@@ -42,7 +42,7 @@ namespace SVModHelper
         internal static List<AModItem> moddedItems;
         internal static Dictionary<Type, ItemName> moddedItemDict;
         internal static Dictionary<string, ItemName> moddedItemIDDict;
-        internal static Dictionary<ItemName, ItemViewDataSO> moddedItemVDs;
+        internal static Dictionary<ItemName, ItemViewDescriptor> moddedItemVDs;
 
         internal static List<AModPack> moddedPacks;
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
@@ -297,7 +297,6 @@ namespace SVModHelper
                     SetItemTitle(activeMod.targetItem, locName.Value, locName.Key);
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetItemDesc(activeMod.targetItem, locDesc.Value, locDesc.Key);
-                //this part currently doesn't work
                 if (activeMod.newViewData != null)
                     SetItemImage(activeMod.targetItem, activeMod.newViewData);
             }
@@ -827,7 +826,7 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetItemImage(ItemName itemName, ItemViewDataSO viewData)
+        internal static void SetItemImage(ItemName itemName, ItemViewDescriptor viewData)
         {
             if (viewData != null)
                 moddedItemVDs[itemName] = viewData;
@@ -1200,15 +1199,26 @@ namespace SVModHelper
 
         internal static void CacheSprites(SpriteHelper.LogLevel warnLevel = SpriteHelper.LogLevel.Fail)
         {
+            //Artifacts/Components/Cards/Packs (These all use just the standard LoadSprite)
             foreach (SpriteDescriptor descriptor in moddedArtifactVDs.Values)
                 SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
             foreach (SpriteDescriptor descriptor in moddedComponentVDs.Values)
+                SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
+            foreach (SpriteDescriptor descriptor in moddedPackVDs.Values)
                 SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
             foreach (CardViewDescriptor descriptor in moddedCardVDs.Values)
             {
                 SpriteHelper.LoadSprite(descriptor.sprite, out _, warnLevel);
                 SpriteHelper.LoadSprite(descriptor.outlineSprite, out _, warnLevel);
             }
+
+            //Items
+            foreach(ItemViewDescriptor descriptor in moddedItemVDs.Values)
+            {
+                SpriteHelper.LoadItemData(descriptor, out _, warnLevel);
+            }
+
+            //Pilots (these guys have so much lmao)
             foreach((PilotName pilot, PilotSkinName skin) in moddedPilotDescriptors.Keys)
             {
                 SpriteHelper.LoadPilotData(pilot, out _, skin, null, warnLevel);

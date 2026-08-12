@@ -294,25 +294,6 @@ namespace SVModHelper
             return success;
         }
 
-        //TODO: Update this function to cache textures for future calls
-        protected Texture2D oldGetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
-        {
-            if (!TryGetContentData(imageName, out byte[] data, localName, warnOnFail))
-                return null;
-            Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
-            texture.LoadImage(data);
-            return texture;
-        }
-
-        //TODO: Update this function to cache sprites for future calls
-        protected Sprite oldGetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
-        {
-            Texture2D texture = oldGetTexture(imageName, filter, localName, warnOnFail);
-            if (texture == null)
-                return null;
-            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-        }
-
         protected SpriteDescriptor GetStandardSprite(string imageName, float pixelsPerUnit = 100,
             FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
             Rect? rect = null, Vector2? pivot = null,
@@ -321,22 +302,14 @@ namespace SVModHelper
             return new SpriteDescriptor(GetContentKeyString(imageName, localName), filter, wrapMode, rect, pivot, pixelsPerUnit);
         }
 
-        protected CardViewData GetStandardCardViewData(CardName cardName, string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
+        protected CardViewDescriptor GetStandardCardViewData(string imageName, float pixelsPerUnit = 100,
+            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
+            Rect? rect = null, Vector2? pivot = null, bool useJunkOutline = false,
+            bool localName = true)
         {
-            Sprite sprite = oldGetStandardSprite(imageName, pixelsPerUnit, filter, localName, warnOnFail);
-            if (sprite == null)
-                return null;
-            return new CardViewData(cardName, sprite, null);
-        }
-
-        protected Sprite GetDefaultEntitySprite()
-        {
-            return oldGetStandardSprite("SVModHelper.DefaultEntity.png", localName: false);
-        }
-
-        protected Sprite GetDefaultShadowSprite()
-        {
-            return oldGetStandardSprite("SVModHelper.DefaultShadow.png", localName: false);
+            SpriteDescriptor sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, wrapMode, rect, pivot, localName);
+            
+            return new CardViewDescriptor(sprite);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

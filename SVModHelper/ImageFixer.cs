@@ -45,7 +45,7 @@ namespace SVModHelper
             foreach ((ComponentName component, SpriteDescriptor descriptor) in ModContentManager.moddedComponentVDs)
             {
 
-                __instance._dict[component] = SpriteHelper.GetSprite(descriptor, SpriteHelper.LogLevel.AllQueriesOrFail);
+                __instance._dict[component] = SpriteHelper.GetSprite(descriptor);
             }
         }
     }
@@ -57,7 +57,7 @@ namespace SVModHelper
         {
             foreach ((ItemPackName pack, SpriteDescriptor descriptor) in ModContentManager.moddedPackVDs)
             {
-                __instance._dict[pack] = SpriteHelper.GetSprite(descriptor, SpriteHelper.LogLevel.AllQueriesOrFail);
+                __instance._dict[pack] = SpriteHelper.GetSprite(descriptor);
             }
         }
     }
@@ -70,12 +70,10 @@ namespace SVModHelper
         {
             //The sprites in the cached VDs get deleted sometime after initialization, so we need to recreate the VDs every time.
             //This also means VDs added by ItemModifications are ignored. Even if we checked the mods again here, the VD would probably be deleted already.
-            //if (!ModContentManager.moddedItemVDs.TryGetValue(entry, out var viewData))
-            //    return true;
-            AModItem item = ModContentManager.GetModItemInstance(entry);
-            if (item == null)
+            if (!ModContentManager.moddedItemVDs.TryGetValue(entry, out ItemViewDescriptor descriptor))
                 return true;
-            var viewData = item.ItemViewData;
+            
+            ItemViewDataSO viewData = SpriteHelper.GetItemData(descriptor);
             AsyncOperationBase<AEntityViewDataSO> op = new EntityViewDataInjector(viewData);
             __result = new AsyncOperationHandle<AEntityViewDataSO>(op);
             return false;

@@ -4,16 +4,6 @@ namespace SVModHelper.ModContent
 {
     public abstract class AModCard : AModContent
     {
-        protected CardViewData oldGetStandardCardViewData(string imageName, float pixelsPerUnit = 100,
-            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
-            bool localName = true, bool warnOnFail = true)
-        {
-            Sprite sprite = oldGetStandardSprite(imageName, pixelsPerUnit, filter, wrapMode, localName, warnOnFail);
-            if (sprite == null)
-                return null;
-            return new CardViewData(CardName, sprite, null);
-        }
-
         /// <summary>
         /// Creates a CardViewDescriptor using a particular sprite.
         /// </summary>
@@ -31,8 +21,9 @@ namespace SVModHelper.ModContent
             Rect? rect = null, Vector2? pivot = null, bool useJunkOutline = false,
             bool localName = true)
         {
+            SpriteDescriptor sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, wrapMode, rect, pivot, localName);
             //TODO: add junk outline
-            return new CardViewDescriptor(new SpriteDescriptor(GetContentKeyString(imageName, localName), filter, wrapMode, rect, pivot, pixelsPerUnit));
+            return new CardViewDescriptor(sprite);
         }
 
         public CardName CardName => ModContentManager.GetModCardName(GetType());

@@ -38,6 +38,7 @@ namespace SVModHelper
 
         private static Dictionary<TextureDescriptor, Texture2D> cachedTextures;
         private static Dictionary<SpriteDescriptor, Sprite> cachedSprites;
+        private static Dictionary<ItemViewDescriptor, ItemViewDataSO> cachedItemDatas;
         private static Dictionary<(PilotName, PilotSkinName), PilotDataSO> cachedPilotDatas;
 
         public static Sprite GetTransparentSprite()
@@ -222,6 +223,15 @@ namespace SVModHelper
             return cardViewData;
         }
 
+        /// <summary>
+        /// Loads an PilotDataSO and caches it for later use. If the view data is already cached, the cached data will be overwritten.
+        /// </summary>
+        /// <param name="pilot">The pilot to construct the data for.</param>
+        /// <param name="data">The newly constructed data SO.</param>
+        /// <param name="skin">The skin to construct the data for.</param>
+        /// <param name="vanillaData">The list of vanilla pilot datas to use as a base.</param>
+        /// <param name="logLevel">What types of messages should be printed to the console?</param>
+        /// <returns>Returns true if the data was loaded successfully, otherwise false.</returns>
         public static bool LoadPilotData(PilotName pilot, out PilotDataSO data, PilotSkinName skin = PilotSkinName.Standard, PilotDataDictSO vanillaData = null, LogLevel logLevel = LogLevel.Fail)
         {
             if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
@@ -259,10 +269,18 @@ namespace SVModHelper
             }
         }
 
+        /// <summary>
+        /// Gets a cached PilotDataSO for a given pilot. If the PilotDataSO wasn't cached, it is automatically created
+        /// </summary>
+        /// <param name="pilot">The pilot to get the data for.</param>
+        /// <param name="skin">The skin to get the data for.</param>
+        /// <param name="vanillaData">The list of vanilla pilot datas to use as a base for constructing the data.</param>
+        /// <param name="logLevel">What types of messages should be printed to the console?</param>
+        /// <returns>Returns the cached data.</returns>
         public static PilotDataSO GetPilotData(PilotName pilot, PilotSkinName skin = PilotSkinName.Standard, PilotDataDictSO vanillaData = null, LogLevel logLevel = LogLevel.MissOrFail)
         {
             if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
-                Melon<Core>.Logger.Msg($"Calling LoadPilotData for {pilot} ({skin} skin).");
+                Melon<Core>.Logger.Msg($"Calling GetPilotData for {pilot} ({skin} skin).");
 
             if (cachedPilotDatas.TryGetValue((pilot, skin), out PilotDataSO data) && data != null)
                 return data;
@@ -279,6 +297,53 @@ namespace SVModHelper
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Loads an ItemViewData and caches it for later use. If the view data is already cached, the cached data will be overwritten.
+        /// </summary>
+        /// <param name="descriptor">Descriptor for constructing the data.</param>
+        /// <param name="data">The newly constructed data SO.</param>
+        /// <param name="logLevel">What types of messages should be printed to the console?</param>
+        /// <returns>Returns true if the data was loaded successfully, otherwise false.</returns>
+        public static bool LoadItemData(ItemViewDescriptor descriptor, out ItemViewDataSO data, LogLevel logLevel = LogLevel.Fail)
+        {
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling LoadItemData for {descriptor}.");
+
+            if(descriptor == null)
+            {
+                //exit early without printing warnings
+                data = null;
+                return false;
+            }
+
+            data = ScriptableObject.CreateInstance<ItemViewDataSO>();
+            descriptor.ApplyTo(data, logLevel);
+            cachedItemDatas[descriptor] = data;
+            return true;
+        }
+
+        public static ItemViewDataSO GetItemData(ItemViewDescriptor descriptor, LogLevel logLevel = LogLevel.MissOrFail)
+        {
+            if (logLevel == LogLevel.InitialQueryOrFail || logLevel == LogLevel.AllQueriesOrFail)
+                Melon<Core>.Logger.Msg($"Calling GetItemData for {descriptor}.");
+
+            if (descriptor == null)
+            {
+                //exit early without printing warnings
+                return null;
+            }
+
+            if (cachedItemDatas.TryGetValue(descriptor, out var data) && data != null)
+                return data;
+            
+            if(logLevel == LogLevel.MissOrFail)
+                Melon<Core>.Logger.Warning($"Cache miss when getting item data {descriptor}");
+
+            LogLevel propogatedLog = GetPropogatedLogLevel(logLevel);
+            LoadItemData(descriptor, out data, propogatedLog);
+            return data;
         }
 
         internal static LogLevel GetPropogatedLogLevel(LogLevel logLevel, bool surpressMiss = true)
@@ -325,6 +390,7 @@ namespace SVModHelper
             cachedTextures = new();
             cachedSprites = new();
             cachedPilotDatas = new();
+            cachedItemDatas = new();
             LoadSprite(new SpriteDescriptor(DEFAULT_SHADOW_SPRITE_ID), out _);
             LoadSprite(new SpriteDescriptor(DEFAULT_ENTITY_SPRITE_ID), out _);
             LoadSprite(new SpriteDescriptor(TRANSPARENT_SPRITE_ID), out _);

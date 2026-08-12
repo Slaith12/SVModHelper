@@ -142,13 +142,12 @@ namespace DemoMod
             RegisterContentMod(new ItemModification(ItemName.AegisBomb)
             {
                 displayName = "BIG Bomb!",
-                description = "Due to technical limitations, this is currently only a normal sized bomb. :(",
-                newViewData = new ItemViewDataSO()
+                description = "Don't ask questions",
+                //Changing pixelsPerUnit doesn't actually do anything for some reason, but at least this works now!
+                newViewData = new ItemViewDescriptor(GetStandardSprite("NewAntiMag.png"))
                 {
-                    Sprite = oldGetStandardSprite("AegisBomb.png", 40),
-                    Shadow = GetDefaultShadowSprite(),
-                    SpawnType = SpawnType.Heavy,
-                    Floatiness = 0
+                    spawnType = SpawnType.Heavy,
+                    floatiness = 0
                 },
                 hasRegeneratingShield = true
             });
