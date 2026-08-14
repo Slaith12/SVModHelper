@@ -19,7 +19,7 @@ namespace DemoMod
 
         //No sprite included for this component
         //Overriding sprite property to suppress warning
-        public override Sprite Sprite => null;
+        public override SpriteDescriptor Sprite => new();
 
         public override int BaseCostModifier => 1;
         public override Il2CppCollections.HashSet<MoreInfoWordName> MoreInfoWords => new HashSet<MoreInfoWordName>()

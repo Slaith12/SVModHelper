@@ -16,6 +16,7 @@
 	<ItemGroup>
 	  <None Remove="AegisBomb.png" />
 	  <None Remove="CannonFire.png" />
+	  <None Remove="CombatPortraitSkull.png" />
 	  <None Remove="NewAntiMag.png" />
 	  <None Remove="RapidFire.png" />
 	  <None Remove="ScarletPack.png" />
@@ -419,6 +420,7 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="AegisBomb.png" />
 	  <EmbeddedResource Include="CannonFire.png" />
+	  <EmbeddedResource Include="CombatPortraitSkull.png" />
 	  <EmbeddedResource Include="NewAntiMag.png" />
 	  <EmbeddedResource Include="RapidFire.png" />
 	  <EmbeddedResource Include="ScarletPack.png" />

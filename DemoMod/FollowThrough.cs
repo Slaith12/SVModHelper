@@ -13,6 +13,10 @@ namespace DemoMod
                                               "Move 1 to 2 tiles.\n" +
                                               "When an invader is destroyed, return this card to hand from your discard pile.";
 
+        //No sprite currently included for this card
+        //Overriding sprite property to suppress warning
+        public override CardViewDescriptor CardViewData => new();
+
         public override Il2CppCollections.HashSet<CardTrait> Traits => new HashSet<CardTrait>() 
         {
             CardTrait.Move

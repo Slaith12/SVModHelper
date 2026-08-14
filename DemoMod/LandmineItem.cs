@@ -14,12 +14,11 @@ namespace DemoMod
 
         public override string Description => "Detonates when struck or when an entity moves into an adjacent tile.";
 
-        public override ItemViewDataSO ItemViewData => new ItemViewDataSO()
+        //No sprite included for this item, so use an empty SpriteDescriptor to have it use the default entity sprite.
+        public override ItemViewDescriptor ItemViewData => new ItemViewDescriptor(new SpriteDescriptor())
         {
-            Sprite = GetDefaultEntitySprite(),
-            Shadow = GetDefaultShadowSprite(),
-            Floatiness = 0,
-            SpawnType = SpawnType.Heavy
+            floatiness = 0,
+            spawnType = SpawnType.Heavy
         };
 
         public override Il2CppCollections.HashSet<EntityTrait> Traits => new HashSet<EntityTrait>() { EntityTrait.Bomb }.ToILCPP();

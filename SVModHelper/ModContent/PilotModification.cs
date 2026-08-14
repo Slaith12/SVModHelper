@@ -22,17 +22,17 @@ namespace SVModHelper.ModContent
         public int? complexity;
         //public ClassName? className;
 
-        public Sprite frontPortrait;
-        public Sprite frontPortraitParallax;
-        public Sprite pilotTitleSprite;
-        public Sprite combatPortraitNeutral;
-        public Sprite combatPortraitPositive;
-        public Sprite combatPortraitNegative;
-        public Sprite combatPortraitBurning;
-        public Sprite campaignPortrait;
-        public Sprite victoryPhoto;
-        public Sprite trueEndHandshake;
-        public Sprite trueEndLineup;
+        public SpriteDescriptor? frontPortrait;
+        public SpriteDescriptor? frontPortraitParallax;
+        public SpriteDescriptor? pilotTitleSprite;
+        public SpriteDescriptor? combatPortraitNeutral;
+        public SpriteDescriptor? combatPortraitPositive;
+        public SpriteDescriptor? combatPortraitNegative;
+        public SpriteDescriptor? combatPortraitBurning;
+        public SpriteDescriptor? campaignPortrait;
+        public SpriteDescriptor? victoryPhoto;
+        public SpriteDescriptor? trueEndHandshake;
+        public SpriteDescriptor? trueEndLineup;
         public Dictionary<string, (string dialogue1, string dialogue2)> localizedTrueEndDialogues = new();
 
         public Il2CppCollections.List<PlayerCardData> startingCards;
@@ -125,38 +125,84 @@ namespace SVModHelper.ModContent
             }
         }
 
-        internal void ApplyTo(ModPilotViewData pilotData)
+        internal void ApplyTo(ModPilotDescriptor pilotData)
         {
             if (complexity != null)
-                pilotData.dataSO.Complexity = complexity.Value;
+                pilotData.Complexity = complexity.Value;
             if (frontPortrait != null)
-                pilotData.dataSO.FrontPortrait = frontPortrait;
+                pilotData.FrontPortrait = frontPortrait.Value;
             if (frontPortraitParallax != null)
-                pilotData.dataSO.FrontPortraitParallax = frontPortraitParallax;
+                pilotData.FrontPortraitParallax = frontPortraitParallax.Value;
             if (pilotTitleSprite != null)
-                pilotData.dataSO.PilotTitleSprite = pilotTitleSprite;
+                pilotData.PilotTitleSprite = pilotTitleSprite.Value;
             if (combatPortraitNeutral != null)
-                pilotData.dataSO.CombatPortraitNeutral = combatPortraitNeutral;
+                pilotData.CombatPortraitNeutral = combatPortraitNeutral.Value;
             if (combatPortraitPositive != null)
-                pilotData.dataSO.CombatPortraitPositive = combatPortraitPositive;
+                pilotData.CombatPortraitPositive = combatPortraitPositive.Value;
             if (combatPortraitNegative != null)
-                pilotData.dataSO.CombatPortraitNegative = combatPortraitNegative;
+                pilotData.CombatPortraitNegative = combatPortraitNegative.Value;
             if (combatPortraitBurning != null)
-                pilotData.dataSO.CombatPortraitBurning = combatPortraitBurning;
+                pilotData.CombatPortraitBurning = combatPortraitBurning.Value;
             if (campaignPortrait != null)
-                pilotData.dataSO.CampaignPortrait = campaignPortrait;
+                pilotData.CampaignPortrait = campaignPortrait.Value;
             if (victoryPhoto != null)
-                pilotData.dataSO.VictoryPhoto = victoryPhoto;
+                pilotData.VictoryPhoto = victoryPhoto.Value;
 
             if (startingCards != null)
-                pilotData.dataSO.StarterData.deckCardDataList = startingCards;
+                pilotData.StartingCards = startingCards;
             if (startingArtifacts != null)
-                pilotData.dataSO.StarterData.artifactList = startingArtifacts;
+                pilotData.StartingArtifacts = startingArtifacts;
+        }
 
-            if (trueEndHandshake != null)
-                pilotData.handshakeSprite = trueEndHandshake;
-            if (trueEndLineup != null)
-                pilotData.lineupSprite = trueEndLineup;
+        internal void ApplyTo(PilotDataSO pilotData)
+        {
+            if (complexity != null)
+                pilotData.Complexity = complexity.Value;
+            if (frontPortrait != null)
+                pilotData.FrontPortrait = SpriteHelper.GetSprite(frontPortrait.Value);
+            if (frontPortraitParallax != null)
+                pilotData.FrontPortraitParallax = SpriteHelper.GetSprite(frontPortraitParallax.Value);
+            if (pilotTitleSprite != null)
+                pilotData.PilotTitleSprite = SpriteHelper.GetSprite(pilotTitleSprite.Value);
+            if (combatPortraitNeutral != null)
+                pilotData.CombatPortraitNeutral = SpriteHelper.GetSprite(combatPortraitNeutral.Value);
+            if (combatPortraitPositive != null)
+                pilotData.CombatPortraitPositive = SpriteHelper.GetSprite(combatPortraitPositive.Value);
+            if (combatPortraitNegative != null)
+                pilotData.CombatPortraitNegative = SpriteHelper.GetSprite(combatPortraitNegative.Value);
+            if (combatPortraitBurning != null)
+                pilotData.CombatPortraitBurning = SpriteHelper.GetSprite(combatPortraitBurning.Value);
+            if (campaignPortrait != null)
+                pilotData.CampaignPortrait = SpriteHelper.GetSprite(campaignPortrait.Value);
+            if (victoryPhoto != null)
+                pilotData.VictoryPhoto = SpriteHelper.GetSprite(victoryPhoto.Value);
+
+            if (startingCards != null)
+                pilotData.StarterData.deckCardDataList = startingCards;
+            if (startingArtifacts != null)
+                pilotData.StarterData.artifactList = startingArtifacts;
+        }
+
+        internal void LoadSprites(SpriteHelper.LogLevel logLevel)
+        {
+            if (frontPortrait != null)
+                SpriteHelper.LoadSprite(frontPortrait.Value, out _, logLevel);
+            if (frontPortraitParallax != null)
+                SpriteHelper.LoadSprite(frontPortraitParallax.Value, out _, logLevel);
+            if (pilotTitleSprite != null)
+                SpriteHelper.LoadSprite(pilotTitleSprite.Value, out _, logLevel);
+            if (combatPortraitNeutral != null)
+                SpriteHelper.LoadSprite(combatPortraitNeutral.Value, out _, logLevel);
+            if (combatPortraitPositive != null)
+                SpriteHelper.LoadSprite(combatPortraitPositive.Value, out _, logLevel);
+            if (combatPortraitNegative != null)
+                SpriteHelper.LoadSprite(combatPortraitNegative.Value, out _, logLevel);
+            if (combatPortraitBurning != null)
+                SpriteHelper.LoadSprite(combatPortraitBurning.Value, out _, logLevel);
+            if (campaignPortrait != null)
+                SpriteHelper.LoadSprite(campaignPortrait.Value, out _, logLevel);
+            if (victoryPhoto != null)
+                SpriteHelper.LoadSprite(victoryPhoto.Value, out _, logLevel);
         }
     }
 }

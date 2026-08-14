@@ -14,6 +14,16 @@ namespace SVModHelper
         public List<string> pilotIDs;
         public List<string> itemIDs;
 
+        public void CreateMissingLists()
+        {
+            cardIDs ??= new();
+            artifactIDs ??= new();
+            componentIDs ??= new();
+            packIDs ??= new();
+            pilotIDs ??= new();
+            itemIDs ??= new();
+        }
+
         public override string ToString()
         {
             StringBuilder str = new StringBuilder();
@@ -79,8 +89,7 @@ namespace SVModHelper
             if(File.Exists(idsFilePath))
             {
                 IDSaveDict ids = LoadIDs(idsFilePath);
-                Melon<Core>.Logger.Msg(ids);
-                //TODO: check if ids are compatible with existing dictionary
+                //Melon<Core>.Logger.Msg($"IDs from save file:\n{ids}");
                 bool compatible = ApplySaveDict(ids);
                 if(!compatible)
                 {
@@ -91,7 +100,7 @@ namespace SVModHelper
             }
             else
             {
-                Melon<Core>.Logger.Warning($"Mod data not found at {idsFilePath}");
+                Melon<Core>.Logger.Warning($"Mod data not found.");
             }
         }
 
@@ -115,7 +124,7 @@ namespace SVModHelper
 
         private static void SaveIDs(IDSaveDict ids, string filePath)
         {
-            Melon<Core>.Logger.Msg($"Saving IDs to {filePath}.");
+            //Melon<Core>.Logger.Msg($"Saving IDs to {filePath}.");
             JsonSerializerOptions options = new()
             {
                 IncludeFields = true,
@@ -130,7 +139,7 @@ namespace SVModHelper
 
         private static IDSaveDict LoadIDs(string filePath)
         {
-            Melon<Core>.Logger.Msg($"Loading IDs from {filePath}.");
+            //Melon<Core>.Logger.Msg($"Loading IDs from {filePath}.");
             JsonSerializerOptions options = new()
             {
                 IncludeFields = true,
@@ -142,6 +151,7 @@ namespace SVModHelper
             {
                 ids = JsonSerializer.Deserialize<IDSaveDict>(fileStream, options);
             }
+            ids.CreateMissingLists();
             return ids;
         }
 

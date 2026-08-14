@@ -15,7 +15,7 @@
         public string description;
         public Dictionary<string, string> localizedNames = new();
         public Dictionary<string, string> localizedDescriptions = new();
-        public CardViewData cardView;
+        public CardViewDescriptor? cardView;
 
         public ClassName? newClass;
         public PilotName? newPilot;

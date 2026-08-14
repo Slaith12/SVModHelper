@@ -8,14 +8,19 @@ namespace SVModHelper
     {
         public static void Postfix(CardViewDataSO __instance)
         {
-            foreach(var vdPair in ModContentManager.moddedCardVDs)
+            foreach((CardName card, CardViewDescriptor descriptor) in ModContentManager.moddedCardVDs)
             {
-                if (vdPair.Value._material == null)
-                    vdPair.Value._material = __instance.defaultMat;
-                if (vdPair.Value._outlineSprite == null)
-                    vdPair.Value._outlineSprite = __instance.defaultOutlineSprite;
+                CardViewData viewData = SpriteHelper.GetCardViewData(descriptor);
+                if (viewData == null)
+                    continue;
 
-                __instance._cardViewDataDict[vdPair.Key] = vdPair.Value;
+                viewData._cardName = card;
+                if (viewData._material == null)
+                    viewData._material = __instance.defaultMat;
+                if (viewData._outlineSprite == null)
+                    viewData._outlineSprite = __instance.defaultOutlineSprite;
+
+                __instance._cardViewDataDict[card] = viewData;
             }
         }
     }
@@ -25,9 +30,9 @@ namespace SVModHelper
     {
         public static void Postfix(ArtifactSpritesSO __instance)
         {
-            foreach (var vdPair in ModContentManager.moddedArtifactVDs)
+            foreach ((ArtifactName artifact, SpriteDescriptor descriptor) in ModContentManager.moddedArtifactVDs)
             {
-                __instance._dict[vdPair.Key] = vdPair.Value;
+                __instance._dict[artifact] = SpriteHelper.GetSprite(descriptor);
             }
         }
     }
@@ -37,9 +42,10 @@ namespace SVModHelper
     {
         public static void Postfix(ComponentSpritesSO __instance)
         {
-            foreach (var vdPair in ModContentManager.moddedComponentVDs)
+            foreach ((ComponentName component, SpriteDescriptor descriptor) in ModContentManager.moddedComponentVDs)
             {
-                __instance._dict[vdPair.Key] = vdPair.Value;
+
+                __instance._dict[component] = SpriteHelper.GetSprite(descriptor);
             }
         }
     }
@@ -49,9 +55,9 @@ namespace SVModHelper
     {
         public static void Postfix(ItemPackSpritesSO __instance)
         {
-            foreach (var vdPair in ModContentManager.moddedPackVDs)
+            foreach ((ItemPackName pack, SpriteDescriptor descriptor) in ModContentManager.moddedPackVDs)
             {
-                __instance._dict[vdPair.Key] = vdPair.Value;
+                __instance._dict[pack] = SpriteHelper.GetSprite(descriptor);
             }
         }
     }
@@ -64,12 +70,10 @@ namespace SVModHelper
         {
             //The sprites in the cached VDs get deleted sometime after initialization, so we need to recreate the VDs every time.
             //This also means VDs added by ItemModifications are ignored. Even if we checked the mods again here, the VD would probably be deleted already.
-            //if (!ModContentManager.moddedItemVDs.TryGetValue(entry, out var viewData))
-            //    return true;
-            AModItem item = ModContentManager.GetModItemInstance(entry);
-            if (item == null)
+            if (!ModContentManager.moddedItemVDs.TryGetValue(entry, out ItemViewDescriptor descriptor))
                 return true;
-            var viewData = item.ItemViewData;
+            
+            ItemViewDataSO viewData = SpriteHelper.GetItemData(descriptor);
             AsyncOperationBase<AEntityViewDataSO> op = new EntityViewDataInjector(viewData);
             __result = new AsyncOperationHandle<AEntityViewDataSO>(op);
             return false;

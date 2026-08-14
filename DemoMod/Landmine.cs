@@ -22,7 +22,7 @@ namespace DemoMod
 
         //No sprite included for this card
         //Overriding sprite property to suppress warning
-        public override CardViewData CardViewData => null;
+        public override CardViewDescriptor CardViewData => new();
 
         public override Rarity Rarity => Rarity.Common;
 

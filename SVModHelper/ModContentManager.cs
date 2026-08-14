@@ -27,32 +27,34 @@ namespace SVModHelper
         internal static List<AModCard> moddedCards;
         internal static Dictionary<Type, CardName> moddedCardDict;
         internal static Dictionary<string, CardName> moddedCardIDDict;
-        internal static Dictionary<CardName, CardViewData> moddedCardVDs;
+        internal static Dictionary<CardName, CardViewDescriptor> moddedCardVDs;
 
         internal static List<IHasArtifactID> moddedArtifacts;
         internal static Dictionary<Type, ArtifactName> moddedArtifactDict;
         internal static Dictionary<string, ArtifactName> moddedArtifactIDDict;
-        internal static Dictionary<ArtifactName, Sprite> moddedArtifactVDs;
+        internal static Dictionary<ArtifactName, SpriteDescriptor> moddedArtifactVDs;
 
         internal static List<AModComponent> moddedComponents;
         internal static Dictionary<Type, ComponentName> moddedComponentDict;
         internal static Dictionary<string, ComponentName> moddedComponentIDDict;
-        internal static Dictionary<ComponentName, Sprite> moddedComponentVDs;
+        internal static Dictionary<ComponentName, SpriteDescriptor> moddedComponentVDs;
 
         internal static List<AModItem> moddedItems;
         internal static Dictionary<Type, ItemName> moddedItemDict;
         internal static Dictionary<string, ItemName> moddedItemIDDict;
-        internal static Dictionary<ItemName, ItemViewDataSO> moddedItemVDs;
+        internal static Dictionary<ItemName, ItemViewDescriptor> moddedItemVDs;
 
         internal static List<AModPack> moddedPacks;
         internal static Dictionary<Type, ItemPackName> moddedPackDict;
         internal static Dictionary<string, ItemPackName> moddedPackIDDict;
-        internal static Dictionary<ItemPackName, Sprite> moddedPackVDs;
+        internal static Dictionary<ItemPackName, SpriteDescriptor> moddedPackVDs;
 
         internal static List<AModPilot> moddedPilots;
         internal static Dictionary<Type, PilotName> moddedPilotDict;
         internal static Dictionary<string, PilotName> moddedPilotIDDict;
-        internal static Dictionary<(PilotName, PilotSkinName), ModPilotViewData> moddedPilotVDs;
+        internal static Dictionary<(PilotName, PilotSkinName), ModPilotDescriptor> moddedPilotDescriptors;
+        internal static Dictionary<PilotName, SpriteDescriptor> moddedPilotLineupSprites;
+        internal static Dictionary<PilotName, SpriteDescriptor> moddedPilotHandshakeSprites;
         internal static Dictionary<PilotName, string> moddedPilotNames;
 
 		internal static Dictionary<Type, string> moddedTaskIDs;
@@ -122,7 +124,9 @@ namespace SVModHelper
             moddedPilots = new();
             moddedPilotDict = new();
             moddedPilotIDDict = new();
-            moddedPilotVDs = new();
+            moddedPilotDescriptors = new();
+            moddedPilotHandshakeSprites = new();
+            moddedPilotLineupSprites = new();
             moddedPilotNames = new();
 
             moddedTaskIDs = new();
@@ -169,7 +173,7 @@ namespace SVModHelper
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetCardDesc(activeMod.targetCard, locDesc.Value, locDesc.Key);
                 if (activeMod.cardView != null)
-                    SetCardImage(activeMod.targetCard, activeMod.cardView);
+                    SetCardImage(activeMod.targetCard, activeMod.cardView.Value);
             }
         }
 
@@ -216,7 +220,7 @@ namespace SVModHelper
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetArtifactDesc(activeMod.targetArtifact, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
-                    SetArtifactImage(activeMod.targetArtifact, activeMod.sprite);
+                    SetArtifactImage(activeMod.targetArtifact, activeMod.sprite.Value);
 
                 if(activeMod.isEncounterModifier == true)
                 {
@@ -266,7 +270,7 @@ namespace SVModHelper
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetComponentDesc(activeMod.targetComponent, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
-                    SetComponentImage(activeMod.targetComponent, activeMod.sprite);
+                    SetComponentImage(activeMod.targetComponent, activeMod.sprite.Value);
             }
         }
 
@@ -293,7 +297,6 @@ namespace SVModHelper
                     SetItemTitle(activeMod.targetItem, locName.Value, locName.Key);
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetItemDesc(activeMod.targetItem, locDesc.Value, locDesc.Key);
-                //this part currently doesn't work
                 if (activeMod.newViewData != null)
                     SetItemImage(activeMod.targetItem, activeMod.newViewData);
             }
@@ -329,7 +332,7 @@ namespace SVModHelper
                 foreach (var locDesc in activeMod.localizedDescriptions)
                     SetPackDesc(activeMod.targetPack, locDesc.Value, locDesc.Key);
                 if (activeMod.sprite != null)
-                    SetPackImage(activeMod.targetPack, activeMod.sprite);
+                    SetPackImage(activeMod.targetPack, activeMod.sprite.Value);
             }
 
             foreach(ItemPack pack in ItemPackData.AllPackData)
@@ -368,6 +371,10 @@ namespace SVModHelper
                     SetPilotDesc(activeMod.targetPilot, locDesc.Value, locDesc.Key);
                 foreach (var locDialogue in activeMod.localizedTrueEndDialogues)
                     SetPilotTrueEndDialogue(activeMod.targetPilot, locDialogue.Value.dialogue1, locDialogue.Value.dialogue2, locale: locDialogue.Key);
+                if (activeMod.trueEndHandshake != null)
+                    SetPilotHandshakeSprite(activeMod.targetPilot, activeMod.trueEndHandshake.Value);
+                if (activeMod.trueEndLineup != null)
+                    SetPilotLineupSprite(activeMod.targetPilot, activeMod.trueEndLineup.Value);
             }
         }
         #endregion
@@ -465,9 +472,9 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetCardImage(CardName cardName, CardViewData cardViewData)
+        internal static void SetCardImage(CardName cardName, CardViewDescriptor cardViewData)
         {
-            if(cardViewData != null)
+            if(!cardViewData.IsEmpty())
                 moddedCardVDs[cardName] = cardViewData;
         }
 
@@ -583,9 +590,9 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetArtifactImage(ArtifactName artifactName, Sprite sprite)
+        internal static void SetArtifactImage(ArtifactName artifactName, SpriteDescriptor sprite)
         {
-            if (sprite != null)
+            if(!sprite.IsEmpty())
                 moddedArtifactVDs[artifactName] = sprite;
         }
 
@@ -701,9 +708,9 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetComponentImage(ComponentName componentName, Sprite sprite)
+        internal static void SetComponentImage(ComponentName componentName, SpriteDescriptor sprite)
         {
-            if (sprite != null)
+            if(!sprite.IsEmpty())
                 moddedComponentVDs[componentName] = sprite;
         }
 
@@ -819,7 +826,7 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetItemImage(ItemName itemName, ItemViewDataSO viewData)
+        internal static void SetItemImage(ItemName itemName, ItemViewDescriptor viewData)
         {
             if (viewData != null)
                 moddedItemVDs[itemName] = viewData;
@@ -937,9 +944,9 @@ namespace SVModHelper
             return SetLocalizedString(id, desc, locale);
         }
 
-        internal static void SetPackImage(ItemPackName packName, Sprite sprite)
+        internal static void SetPackImage(ItemPackName packName, SpriteDescriptor sprite)
         {
-            if (sprite != null)
+            if (!sprite.IsEmpty())
                 moddedPackVDs[packName] = sprite;
         }
 
@@ -1013,6 +1020,8 @@ namespace SVModHelper
             SetPilotName(pilotName, modPilotDef.DisplayName);
             SetPilotDesc(pilotName, modPilotDef.Description);
             SetPilotViewData(pilotName, PilotSkinName.Standard, modPilotDef.GetFullPilotData(PilotSkinName.Standard));
+            SetPilotHandshakeSprite(pilotName, modPilotDef.TrueEndHandshake);
+            SetPilotLineupSprite(pilotName, modPilotDef.TrueEndLineup);
             foreach (var locDesc in modPilotDef.LocalizedDescriptions)
             {
                 SetPilotDesc(pilotName, locDesc.Value, locDesc.Key);
@@ -1055,10 +1064,22 @@ namespace SVModHelper
         }
 
         //This essentially replaces SetPilotImage()
-        internal static void SetPilotViewData(PilotName pilotName, PilotSkinName skinName, ModPilotViewData data)
+        internal static void SetPilotViewData(PilotName pilotName, PilotSkinName skinName, ModPilotDescriptor data)
         {
             if (data != null)
-                moddedPilotVDs[(pilotName, skinName)] = data;
+                moddedPilotDescriptors[(pilotName, skinName)] = data;
+        }
+
+        internal static void SetPilotLineupSprite(PilotName pilotName, SpriteDescriptor sprite)
+        {
+            if (!sprite.IsEmpty())
+                moddedPilotLineupSprites[pilotName] = sprite;
+        }
+
+        internal static void SetPilotHandshakeSprite(PilotName pilotName, SpriteDescriptor sprite)
+        {
+            if (!sprite.IsEmpty())
+                moddedPilotHandshakeSprites[pilotName] = sprite;
         }
 
         internal static void SetPilotTrueEndDialogue(PilotName pilotName, string dialogue1, string dialogue2, bool ignoreNull = true, string locale = LocalizationFixer.GLOBALDEFAULT)
@@ -1112,44 +1133,18 @@ namespace SVModHelper
             return moddedPilots[pilotName - MINPILOTID];
         }
 
-        public static ModPilotViewData GetModPilotData(PilotName pilotName, PilotSkinName skinName, PilotDataDictSO vanillaDataDict = null)
+        public static Sprite GetModPilotHandshakeSprite(PilotName pilotName, SpriteHelper.LogLevel logLevel = SpriteHelper.LogLevel.MissOrFail)
         {
-            //The handshake sprite is allowed to be null; it defaults to roxy's handshake in that case.
-            if (moddedPilotVDs.TryGetValue((pilotName, skinName), out ModPilotViewData data) && data != null && data.dataSO != null && data.lineupSprite != null)
-                return data;
+            if (!moddedPilotHandshakeSprites.TryGetValue(pilotName, out SpriteDescriptor descriptor))
+                return null;
+            return SpriteHelper.GetSprite(descriptor, logLevel);
+        }
 
-            //There was no cached VD for this pilot/skin combination, so check if there should be one
-            AModPilot moddedPilot = GetModPilotInstance(pilotName);
-            if (moddedPilot == null) //If it's a vanilla pilot, try checking the PilotDataDictSO first.
-            {
-                PilotDataSO vanillaData = vanillaDataDict?.pilotDataList.Find(new Func<PilotDataSO, bool>(p => p.PilotName == pilotName && p.SkinName == skinName));
-                if (vanillaData != null)
-                {
-                    data = new();
-                    data.dataSO = vanillaData;
-                }
-            }
-            else //If it's a modded pilot, try checking the AModPilot data first.
-            {
-                data = moddedPilot.GetFullPilotData(skinName);
-            }
-
-            if (data != null)
-            {
-                //An appropriate VD was found, apply mods and cache it for later.
-                if (activePilotMods.TryGetValue(pilotName, out var pilotMod))
-                    pilotMod.ApplyTo(data);
-                moddedPilotVDs[(pilotName, skinName)] = data;
-                return data;
-            }
-            else
-            {
-                //If no VD was found, use the default skin (do not cache it under the current skin)
-                if (skinName == PilotSkinName.Standard)
-                    return null;
-                else
-                    return GetModPilotData(pilotName, PilotSkinName.Standard, vanillaDataDict);
-            }
+        public static Sprite GetModPilotLineupSprite(PilotName pilotName, SpriteHelper.LogLevel logLevel = SpriteHelper.LogLevel.MissOrFail)
+        {
+            if (!moddedPilotLineupSprites.TryGetValue(pilotName, out SpriteDescriptor descriptor))
+                return null;
+            return SpriteHelper.GetSprite(descriptor, logLevel);
         }
         #endregion
 
@@ -1200,6 +1195,50 @@ namespace SVModHelper
             FillMissingItems();
             FillMissingPacks();
             FillMissingPilots();
+        }
+
+        internal static void CacheSprites(SpriteHelper.LogLevel warnLevel = SpriteHelper.LogLevel.Fail)
+        {
+            //Artifacts/Components/Cards/Packs (These all use just the standard LoadSprite)
+            foreach (SpriteDescriptor descriptor in moddedArtifactVDs.Values)
+                SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
+            foreach (SpriteDescriptor descriptor in moddedComponentVDs.Values)
+                SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
+            foreach (SpriteDescriptor descriptor in moddedPackVDs.Values)
+                SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
+            foreach (CardViewDescriptor descriptor in moddedCardVDs.Values)
+            {
+                SpriteHelper.LoadSprite(descriptor.sprite, out _, warnLevel);
+                SpriteHelper.LoadSprite(descriptor.outlineSprite, out _, warnLevel);
+            }
+
+            //Items
+            foreach(ItemViewDescriptor descriptor in moddedItemVDs.Values)
+            {
+                SpriteHelper.LoadItemData(descriptor, out _, warnLevel);
+            }
+
+            //Pilots (these guys have so much lmao)
+            foreach((PilotName pilot, PilotSkinName skin) in moddedPilotDescriptors.Keys)
+            {
+                SpriteHelper.LoadPilotData(pilot, out _, skin, null, warnLevel);
+            }
+            foreach((PilotName pilot, PilotModification mod) in activePilotMods)
+            {
+                //only vanilla pilots need their PilotModification sprites pre-loaded
+                //modded pilots would've already been pre-loaded in the previous step
+                if (pilot >= MINPILOTID)
+                    continue;
+                mod.LoadSprites(warnLevel);
+            }
+            foreach(SpriteDescriptor descriptor in moddedPilotLineupSprites.Values)
+            {
+                SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
+            }
+            foreach (SpriteDescriptor descriptor in moddedPilotHandshakeSprites.Values)
+            {
+                SpriteHelper.LoadSprite(descriptor, out _, warnLevel);
+            }
         }
 
         internal static void CheckInitStatus()

@@ -26,11 +26,7 @@
         /// </summary>
         public virtual Dictionary<string, string> LocalizedDescriptions => new();
 
-        public virtual ItemViewDataSO ItemViewData => new ItemViewDataSO() 
-        { 
-            Sprite = GetStandardSprite(GetType().Name + ".png", warnOnFail: true) ?? GetDefaultEntitySprite(),
-            Shadow = GetDefaultShadowSprite()
-        };
+        public virtual ItemViewDescriptor ItemViewData => new ItemViewDescriptor(GetStandardSprite(GetType().Name + ".png"));
 
         /// <summary>
         /// The definition panels that show up in the more info screen of this item.

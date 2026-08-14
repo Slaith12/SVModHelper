@@ -13,7 +13,7 @@ namespace SVModHelper.ModContent
         public string description;
         public Dictionary<string, string> localizedNames = new();
         public Dictionary<string, string> localizedDescriptions = new();
-        public Sprite sprite;
+        public SpriteDescriptor? sprite;
 
         public bool? isHidden;
 

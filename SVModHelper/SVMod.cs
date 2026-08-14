@@ -9,6 +9,12 @@ namespace SVModHelper
     public class SVMod : MelonMod
     {
         /// <summary>
+        /// If true, the mod helper will not save content IDs for future sessions.
+        /// This should be used if the mod fails to properly load all its content during startup.
+        /// </summary>
+        protected internal bool blockModSaves = false;
+
+        /// <summary>
         /// <para>Called by the mod helper when your mod is registered, before any mod's RegisterMod() function is called. Should register all resources/data that your content would depend on.</para>
         /// <para>By default, this registers all resources and tasks in your mod's assembly.</para>
         /// <para>If you add custom more info panels, they should be added in this function.</para>
@@ -55,6 +61,7 @@ namespace SVModHelper
                 catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering card {modCardDef.Name}.\n" + ex);
+                    blockModSaves = true;
                 }
             }
             foreach (Type modArtifactDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModArtifact))))
@@ -66,6 +73,7 @@ namespace SVModHelper
                 catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering artifact {modArtifactDef.Name}.\n" + ex);
+                    blockModSaves = true;
                 }
             }
             foreach (Type modComponentDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModComponent))))
@@ -77,6 +85,7 @@ namespace SVModHelper
                 catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering component {modComponentDef.Name}.\n" + ex);
+                    blockModSaves = true;
                 }
             }
             foreach (Type modItemDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModItem))))
@@ -88,6 +97,7 @@ namespace SVModHelper
                 catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering item {modItemDef.Name}.\n" + ex);
+                    blockModSaves = true;
                 }
             }
             foreach (Type modPackDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModPack))))
@@ -99,6 +109,7 @@ namespace SVModHelper
                 catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering pack {modPackDef.Name}.\n" + ex);
+                    blockModSaves = true;
                 }
             }
             foreach (Type modSpellDef in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModSpell))))
@@ -110,6 +121,7 @@ namespace SVModHelper
                 catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering spell {modSpellDef.Name}.\n" + ex);
+                    blockModSaves = true;
                 }
             }
             foreach (Type modPilot in modAsm.GetTypes().Where(type => type.IsSubclassOf(typeof(AModPilot))))
@@ -121,6 +133,7 @@ namespace SVModHelper
                 catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering pilot {modPilot.Name}.\n" + ex);
+                    blockModSaves = true;
                 }
             }
         }
@@ -281,41 +294,22 @@ namespace SVModHelper
             return success;
         }
 
-        //TODO: Update this function to cache textures for future calls
-        protected Texture2D GetTexture(string imageName, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
+        protected SpriteDescriptor GetStandardSprite(string imageName, float pixelsPerUnit = 100,
+            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
+            Rect? rect = null, Vector2? pivot = null,
+            bool localName = true)
         {
-            if (!TryGetContentData(imageName, out byte[] data, localName, warnOnFail))
-                return null;
-            Texture2D texture = new Texture2D(2, 2) { filterMode = filter };
-            texture.LoadImage(data);
-            return texture;
+            return new SpriteDescriptor(GetContentKeyString(imageName, localName), filter, wrapMode, rect, pivot, pixelsPerUnit);
         }
 
-        //TODO: Update this function to cache sprites for future calls
-        protected Sprite GetStandardSprite(string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
+        protected CardViewDescriptor GetStandardCardViewData(string imageName, float pixelsPerUnit = 100,
+            FilterMode filter = FilterMode.Bilinear, TextureWrapMode wrapMode = TextureWrapMode.Clamp,
+            Rect? rect = null, Vector2? pivot = null, bool useJunkOutline = false,
+            bool localName = true)
         {
-            Texture2D texture = GetTexture(imageName, filter, localName, warnOnFail);
-            if (texture == null)
-                return null;
-            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-        }
-
-        protected CardViewData GetStandardCardViewData(CardName cardName, string imageName, float pixelsPerUnit = 100, FilterMode filter = FilterMode.Bilinear, bool localName = true, bool warnOnFail = true)
-        {
-            Sprite sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, localName, warnOnFail);
-            if (sprite == null)
-                return null;
-            return new CardViewData(cardName, sprite, null);
-        }
-
-        protected Sprite GetDefaultEntitySprite()
-        {
-            return GetStandardSprite("SVModHelper.DefaultEntity.png", localName: false);
-        }
-
-        protected Sprite GetDefaultShadowSprite()
-        {
-            return GetStandardSprite("SVModHelper.DefaultShadow.png", localName: false);
+            SpriteDescriptor sprite = GetStandardSprite(imageName, pixelsPerUnit, filter, wrapMode, rect, pivot, localName);
+            
+            return new CardViewDescriptor(sprite);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

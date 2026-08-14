@@ -27,7 +27,10 @@ namespace SVModHelper.ModContent
         /// The description that's shown for this artifact on different locales. Falls back to Description for any locales that are missing localizations.
         /// </summary>
         public virtual Dictionary<string, string> LocalizedDescriptions => new();
-        public virtual Sprite Sprite => GetStandardSprite(GetType().Name + ".png", warnOnFail: true);
+        /// <summary>
+        /// The sprite used for this artifact.
+        /// </summary>
+        public virtual SpriteDescriptor Sprite => GetStandardSprite(GetType().Name + ".png");
 
         /// <summary>
         /// The mech class that's able to get this card. Set to Neutral to allow any class to get it. Set to UniquePack to restrict it to a pack.

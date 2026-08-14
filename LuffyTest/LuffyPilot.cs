@@ -21,7 +21,18 @@ namespace LuffyTest
 		public override ClassName ClassName => ClassName.Melee;
 
         public override string BaseImagePath => "Luffy";
-        public override Sprite FrontPortrait => GetStandardSprite("LuffySelect2.png");
+        public override SpriteDescriptor FrontPortrait => GetStandardSprite("LuffySelect2.png");
+        public override SpriteDescriptor CombatPortraitNeutral => GetStandardSprite("LuffyCombat.png");
+
+        //surpress warnings for missing sprites
+		//(the combat portraits default to the neutral portrait anyways; none of this is strictly necessary, it's just nice for not showing errors)
+        public override SpriteDescriptor CombatPortraitPositive => CombatPortraitNeutral;
+        public override SpriteDescriptor CombatPortraitNegative => CombatPortraitNeutral;
+        public override SpriteDescriptor CombatPortraitBurning => CombatPortraitNeutral;
+        public override SpriteDescriptor VictoryPhoto => new();
+        public override SpriteDescriptor FrontPortraitParallax => new();
+        public override SpriteDescriptor TrueEndHandshake => new();
+        public override SpriteDescriptor TrueEndLineup => new();
 
 		public override Il2CppCollections.List<PlayerCardData> StartingCards => 
 			new List<PlayerCardData>{

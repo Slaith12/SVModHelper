@@ -16,38 +16,17 @@ namespace SVModHelper
         {
             ModSaveManager.allowModDataSave = false;
             base.OnEarlyInitializeMelon();
-
-            Melon<Core>.Logger.Msg("Loading default sprites");
-            Assembly assembly = typeof(AModContent).Assembly;
-            //I was originally planning on automatically grabbing the shadow sprite from the game directly,
-            //but I'm not sure how to do that so I'm just adding the shadow sprite to the build instead.
-            byte[] arr = ResourceHelper.LoadResource(assembly, "SVModHelper.shadow.png");
-            if (arr == null)
-            {
-                Melon<Core>.Logger.Error("Unable to load default shadow image.");
-            }
-            else
-            {
-                ModContentManager.contentData.Add("SVModHelper.DefaultShadow.png", arr);
-            }
-
-            arr = ResourceHelper.LoadResource(assembly, "SVModHelper.EntityUnknown.png");
-            if (arr == null)
-            {
-                Melon<Core>.Logger.Error("Unable to load default entity image.");
-            }
-            else
-            {
-                ModContentManager.contentData.Add("SVModHelper.DefaultEntity.png", arr);
-            }
-            Melon<Core>.Logger.Msg("Sprites loaded.");
-
         }
 
         public override void OnInitializeMelon()
         {
             RegisterTypeOptions enumLinkOptions = new RegisterTypeOptions() { Interfaces = new Il2CppInterfaceCollection([typeof(Il2CppSystem.Collections.IEnumerator)]) };
             ClassInjector.RegisterTypeInIl2Cpp<EnumeratorLink>(enumLinkOptions);
+
+            Melon<Core>.Logger.Msg("Loading default sprites");
+            SpriteHelper.InitDefaultSprites();
+            SpriteHelper.ResetSpriteCaches();
+            Melon<Core>.Logger.Msg("Sprites loaded.");
 
             Melon<Core>.Logger.Msg("Loading initial mod data.");
             ModSaveManager.LoadInitialModData();
@@ -118,9 +97,18 @@ namespace SVModHelper
         {
             ModContentManager.ApplyMods();
             ModContentManager.FillMissingContent();
+            ModContentManager.CacheSprites();
             ModContentManager.postInit = true;
             ModSaveManager.allowModDataSave = true;
-            ModContentManager.PrintModCardList();
+            foreach(SVMod mod in RegisteredMelons.Where(mod => mod is SVMod).Cast<SVMod>())
+            {
+                if(mod.blockModSaves)
+                {
+                    ModSaveManager.allowModDataSave = false;
+                    Melon<Core>.Logger.Warning("Due to initialization issues, mod data will NOT be saved this session.");
+                    break;
+                }
+            }
         }
     }
 }

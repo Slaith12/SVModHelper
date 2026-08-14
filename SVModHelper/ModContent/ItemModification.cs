@@ -11,7 +11,7 @@
         public string description;
         public Dictionary<string, string> localizedNames = new();
         public Dictionary<string, string> localizedDescriptions = new();
-        public ItemViewDataSO newViewData;
+        public ItemViewDescriptor newViewData;
 
         public HashSet<EntityTrait> extraTraits = new();
         public HashSet<EntityTrait> extraHiddenTraits = new();
