@@ -55,8 +55,8 @@
     {
         public static void Postfix(ref Il2CppCollections.List<AComponent> __result)
         {
-            for (int i = 0; i < ModContentManager.moddedComponents.Count; i++)
-                __result.Add(ComponentFactory.CreateComponent(i + ModContentManager.MINCOMPID));
+            foreach(ComponentName component in ModContentManager.GetAllModComponentNames())
+                __result.Add(ComponentFactory.CreateComponent(component));
         }
     }
 
@@ -65,8 +65,8 @@
     {
         public static void Postfix(CardModel cardModelOnCreate, ref Il2CppCollections.List<AComponent> __result)
         {
-            for (int i = 0; i < ModContentManager.moddedComponents.Count; i++)
-                __result.Add(ComponentFactory.CreateComponent(i + ModContentManager.MINCOMPID, cardModelOnCreate));
+            foreach (ComponentName component in ModContentManager.GetAllModComponentNames())
+                __result.Add(ComponentFactory.CreateComponent(component, cardModelOnCreate));
         }
     }
 }

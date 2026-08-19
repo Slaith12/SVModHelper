@@ -9,9 +9,9 @@ namespace SVModHelper
 	{
 		public static void Postfix(ref Il2CppCollections.List<PilotName> __result)
 		{
-			for (int i = 0; i < ModContentManager.moddedPilots.Count; i++)
-			{
-				__result.Add(i + ModContentManager.MINPILOTID);
+            foreach (PilotName pilot in ModContentManager.GetAllModPilotNames())
+                {
+				__result.Add(pilot);
 			}
 		}
 	}

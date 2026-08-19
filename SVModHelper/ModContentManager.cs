@@ -501,6 +501,17 @@ namespace SVModHelper
             return INVALIDCARDID;
         }
 
+        public static List<CardName> GetAllModCardNames(bool includeMissing = false)
+        {
+            List<CardName> cards = new();
+            for(int i = 0; i < moddedCards.Count; i++)
+            {
+                if (moddedCards[i] != null && (includeMissing || moddedCards[i] is not MissingCard))
+                    cards.Add(i + MINCARDID);
+            }
+            return cards;
+        }
+
         public static AModCard GetModCardInstance(CardName cardName)
         {
             if (cardName < MINCARDID || cardName >= MINCARDID + moddedCards.Count)
@@ -617,6 +628,17 @@ namespace SVModHelper
                 return artifactName;
             }
             return INVALIDARTIFACTID;
+        }
+
+        public static List<ArtifactName> GetAllModArtifactNames(bool includeMissing = false)
+        {
+            List<ArtifactName> artifacts = new();
+            for (int i = 0; i < moddedArtifacts.Count; i++)
+            {
+                if (moddedArtifacts[i] != null && (includeMissing || moddedArtifacts[i] is not MissingArtifact))
+                    artifacts.Add(i + MINARTIFACTID);
+            }
+            return artifacts;
         }
 
         public static IHasArtifactID GetModArtifactInstance(ArtifactName artifactName)
@@ -737,6 +759,17 @@ namespace SVModHelper
             return INVALIDCOMPID;
         }
 
+        public static List<ComponentName> GetAllModComponentNames(bool includeMissing = false)
+        {
+            List<ComponentName> components = new();
+            for (int i = 0; i < moddedComponents.Count; i++)
+            {
+                if (moddedComponents[i] != null && (includeMissing || moddedComponents[i] is not MissingComponent))
+                    components.Add(i + MINCOMPID);
+            }
+            return components;
+        }
+
         public static AModComponent GetModComponentInstance(ComponentName componentName)
         {
             if (componentName < MINCOMPID || componentName >= MINCOMPID + moddedComponents.Count)
@@ -855,6 +888,17 @@ namespace SVModHelper
             return INVALIDITEMID;
         }
 
+        public static List<ItemName> GetAllModItemNames(bool includeMissing = false)
+        {
+            List<ItemName> items = new();
+            for (int i = 0; i < moddedItems.Count; i++)
+            {
+                if (moddedItems[i] != null && (includeMissing || moddedItems[i] is not MissingItem))
+                    items.Add(i + MINITEMID);
+            }
+            return items;
+        }
+
         public static AModItem GetModItemInstance(ItemName itemName)
         {
             if (itemName < MINITEMID || itemName >= MINITEMID + moddedItems.Count)
@@ -971,6 +1015,17 @@ namespace SVModHelper
                 return packName;
             }
             return INVALIDPACKID;
+        }
+
+        public static List<ItemPackName> GetAllModPackNames(bool includeMissing = false)
+        {
+            List<ItemPackName> packs = new();
+            for (int i = 0; i < moddedPacks.Count; i++)
+            {
+                if (moddedPacks[i] != null && (includeMissing || moddedPacks[i] is not MissingPack))
+                    packs.Add(i + MINPACKID);
+            }
+            return packs;
         }
 
         public static AModPack GetModPackInstance(ItemPackName packName)
@@ -1124,6 +1179,17 @@ namespace SVModHelper
                 return pilotName;
             }
             return INVALIDPILOTID;
+        }
+
+        public static List<PilotName> GetAllModPilotNames(bool includeMissing = false)
+        {
+            List<PilotName> pilots = new();
+            for (int i = 0; i < moddedPilots.Count; i++)
+            {
+                if (moddedPilots[i] != null && (includeMissing || moddedPilots[i] is not MissingPilot))
+                    pilots.Add(i + MINPILOTID);
+            }
+            return pilots;
         }
 
         public static AModPilot GetModPilotInstance(PilotName pilotName)

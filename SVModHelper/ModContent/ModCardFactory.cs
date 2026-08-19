@@ -27,10 +27,9 @@
         public static void Postfix(ref Il2CppCollections.List<CardModel> __result)
         {
             CardFactory cardFactory = new CardFactory();
-            for(int i = 0; i < ModContentManager.moddedCards.Count; i++)
+            foreach(CardName card in ModContentManager.GetAllModCardNames())
             {
-                if (ModContentManager.moddedCards[i] != null)
-                    __result.Add(cardFactory.CreateCardModel(i + ModContentManager.MINCARDID));
+                __result.Add(cardFactory.CreateCardModel(card));
             }
         }
     }

@@ -40,8 +40,8 @@
         public static void Postfix(ref Il2CppCollections.List<ArtifactModel> __result)
         {
             ArtifactFactory artifactFactory = new ArtifactFactory();
-            for (int i = 0; i < ModContentManager.moddedArtifacts.Count; i++)
-                __result.Add(artifactFactory.CreateArtifactModel(i + ModContentManager.MINARTIFACTID));
+            foreach(ArtifactName artifact in ModContentManager.GetAllModArtifactNames())
+                __result.Add(artifactFactory.CreateArtifactModel(artifact));
         }
     }
 }
