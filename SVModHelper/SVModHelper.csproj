@@ -448,6 +448,7 @@
 		<Compile Include="ModContentManager.cs" />
 		<Compile Include="ResourceHelper.cs" />
 		<Compile Include="SVMod.cs" />
+		<Compile Include="UnlockAllModContent.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
