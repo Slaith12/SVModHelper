@@ -15,6 +15,12 @@ namespace SVModHelper
         protected internal bool blockModSaves = false;
 
         /// <summary>
+        /// If true, the mod helper will immediately close the game after startup and print a warning to the console.
+        /// This should be used if the mod fails to load any critical content during startup.
+        /// </summary>
+        protected internal bool abortStartup = false;
+
+        /// <summary>
         /// <para>Called by the mod helper when your mod is registered, before any mod's RegisterMod() function is called. Should register all resources/data that your content would depend on.</para>
         /// <para>By default, this registers all resources and tasks in your mod's assembly.</para>
         /// <para>If you add custom more info panels, they should be added in this function.</para>
@@ -39,6 +45,8 @@ namespace SVModHelper
                 catch (Exception ex)
                 {
                     LoggerInstance.Error($"The following error occured while registering task {modTaskDef.Name}.\n" + ex);
+                    blockModSaves = true;
+                    abortStartup = true;
                 }
             }
         }

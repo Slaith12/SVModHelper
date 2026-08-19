@@ -46,9 +46,12 @@ namespace SVModHelper
                     Melon<Core>.Logger.Error($"The following error occured when early registering {mod.Info.Name}:\n{ex}");
                     error = true;
                 }
+                if (mod.abortStartup)
+                    error = true;
             }
             if (error)
             {
+                ModSaveManager.allowModDataSave = false;
                 Melon<Core>.Logger.Warning("Closing game due to mods failing to load.");
                 Melon<Core>.Logger.Warning("Please update or remove erroneous mods before restarting.");
                 Application.Quit();
@@ -65,9 +68,12 @@ namespace SVModHelper
                     Melon<Core>.Logger.Error($"The following error occured when registering {mod.Info.Name}:\n{ex}");
                     error = true;
                 }
+                if (mod.abortStartup)
+                    error = true;
             }
             if (error)
             {
+                ModSaveManager.allowModDataSave = false;
                 Melon<Core>.Logger.Warning("Closing game due to mods failing to load.");
                 Melon<Core>.Logger.Warning("Please update or remove erroneous mods before restarting.");
                 Application.Quit();
@@ -84,9 +90,12 @@ namespace SVModHelper
                     Melon<Core>.Logger.Error($"The following error occured when late registering {mod.Info.Name}:\n{ex}");
                     error = true;
                 }
+                if (mod.abortStartup)
+                    error = true;
             }
             if (error)
             {
+                ModSaveManager.allowModDataSave = false;
                 Melon<Core>.Logger.Warning("Closing game due to mods failing to load.");
                 Melon<Core>.Logger.Warning("Please update or remove erroneous mods before restarting.");
                 Application.Quit();
