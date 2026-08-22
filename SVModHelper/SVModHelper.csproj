@@ -443,6 +443,7 @@
 		<Compile Include="LocalizationFixer.cs" />
 		<Compile Include="PropertyFixer.cs" />
 		<Compile Include="ModSaveManager.cs" />
+		<Compile Include="SettingsFixer.cs" />
 		<Compile Include="SpriteDescriptor.cs" />
 		<Compile Include="SpriteHelper.cs" />
 		<Compile Include="ModContentManager.cs" />
