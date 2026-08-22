@@ -16,6 +16,32 @@ namespace SVModHelper
 		}
 	}
 
+	[HarmonyPatch(typeof(ContentGetter), nameof(ContentGetter.GetClassPilots))]
+	internal static class ModdedGetClassPilots
+	{
+		public static void Postfix(ClassName className, ref Il2CppCollections.List<PilotName> __result)
+		{
+			foreach (var pilot in ModContentManager.moddedPilots.Where(pilot => pilot.ClassName == className))
+				__result.Add(pilot.PilotName);
+		}
+	}
+
+	//patches the delegate used to set the header text for the pilot group
+	[HarmonyPatch(typeof(GlossaryPilotGroup.__c__DisplayClass11_0), nameof(GlossaryPilotGroup.__c__DisplayClass11_0._Initialize_b__0))]
+	internal static class GlossaryPilotGroupFixer
+	{
+		public static void Prefix(GlossaryPilotGroup.__c__DisplayClass11_0 __instance)
+		{
+			//if the pilot name is a number, it's a modded pilot
+			if(int.TryParse(__instance.pilotName, out int num))
+			{
+				AModPilot modPilot = ModContentManager.GetModPilotInstance((PilotName)num);
+				if(modPilot != null)
+					__instance.pilotName = modPilot.DisplayName;
+			}
+		}
+	}
+
 	[HarmonyPatch(typeof(PilotDataDictSO), nameof(PilotDataDictSO.GetData))]
 	internal static class PilotDataDictFixer
 	{
